@@ -30,7 +30,6 @@ import ir.hashemi.market.adapter.AdapterProduct;
 import ir.hashemi.market.connection.API;
 import ir.hashemi.market.connection.RestAdapter;
 import ir.hashemi.market.connection.callbacks.CallbackProduct;
-import ir.hashemi.market.data.AppConfig;
 import ir.hashemi.market.data.Constant;
 import ir.hashemi.market.model.Category;
 import ir.hashemi.market.model.Product;
@@ -128,11 +127,9 @@ public class ActivityCategoryDetails extends AppCompatActivity {
         ((TextView) findViewById(R.id.name)).setText(c.name);
         ((TextView) findViewById(R.id.brief)).setText(c.brief);
         ImageView icon = (ImageView) findViewById(R.id.icon);
-        Tools.displayImageOriginal(this, icon, Constant.getURLimgCategory(c.icon));
+        icon.setImageResource(R.drawable.ic_logo);
+        icon.setColorFilter(Color.WHITE);
         Tools.setSystemBarColorDarker(this, c.color);
-        if (AppConfig.TINT_CATEGORY_ICON) {
-            icon.setColorFilter(Color.WHITE);
-        }
     }
 
 

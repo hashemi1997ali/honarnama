@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Honarnama</string>
-    <string name="logo_wordmark">HONARNAMA</string>
     <string name="app_tag_line">Art marketplace</string>
 
     <string name="title_about">About Honarnama</string>

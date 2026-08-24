@@ -1,6 +1,5 @@
 package ir.hashemi.market.adapter;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,15 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ir.hashemi.market.R;
-import ir.hashemi.market.data.AppConfig;
-import ir.hashemi.market.data.Constant;
 import ir.hashemi.market.model.Category;
-import ir.hashemi.market.utils.Tools;
 
 
 public class AdapterCategory extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Context ctx;
     private List<Category> items = new ArrayList<>();
 
     private OnItemClickListener onItemClickListener;
@@ -55,8 +50,7 @@ public class AdapterCategory extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    public AdapterCategory(Context ctx, List<Category> items) {
-        this.ctx = ctx;
+    public AdapterCategory(List<Category> items) {
         this.items = items;
     }
 
@@ -77,19 +71,8 @@ public class AdapterCategory extends RecyclerView.Adapter<RecyclerView.ViewHolde
             vItem.name.setText(c.name);
             vItem.brief.setText(c.brief);
             vItem.lyt_color.setBackgroundColor(Color.parseColor(c.color));
-            Tools.displayImageThumbnail(
-                    ctx,
-                    vItem.image,
-                    Constant.getURLimgCategory(c.icon),
-                    0.5f,
-                    getCategoryFallback(c.icon)
-            );
-
-            if (AppConfig.TINT_CATEGORY_ICON) {
-                vItem.image.setColorFilter(Color.WHITE);
-            } else {
-                vItem.image.clearColorFilter();
-            }
+            vItem.image.setImageResource(R.drawable.ic_logo);
+            vItem.image.setColorFilter(Color.WHITE);
 
             vItem.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -117,22 +100,5 @@ public class AdapterCategory extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.items = items;
         notifyDataSetChanged();
     }
-
-    private int getCategoryFallback(String icon) {
-        if (icon == null) return R.drawable.loading_placeholder;
-        switch (icon) {
-            case "sample-painting.jpg":
-                return R.drawable.category_painting;
-            case "sample-sculpture.jpg":
-                return R.drawable.category_sculpture;
-            case "sample-photography.jpg":
-                return R.drawable.category_photography;
-            case "sample-handicrafts.jpg":
-                return R.drawable.category_handicrafts;
-            default:
-                return R.drawable.loading_placeholder;
-        }
-    }
-
 
 }

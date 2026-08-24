@@ -67,7 +67,7 @@ public class FragmentCategory extends Fragment {
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
 
         //set data and list adapter
-        adapter = new AdapterCategory(getActivity(), new ArrayList<Category>());
+        adapter = new AdapterCategory(new ArrayList<Category>());
         recyclerView.setAdapter(adapter);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setVisibility(View.GONE);
