@@ -75,6 +75,7 @@ class ProductOrder extends REST {
     public function insertOnePlain($data) {
         $columns = array('code', 'buyer', 'address', 'email', 'shipping', 'date_ship', 'phone', 'comment', 'status', 'total_fees', 'tax', 'created_at', 'last_update');
         $data['code'] = $this->getRandomCode();
+        $data['status'] = $this->normalizeStatus(isset($data['status']) ? $data['status'] : 'WAITING');
         return $this->db->post_one($data, 'id', $columns, 'product_order');
     }
 
@@ -82,6 +83,9 @@ class ProductOrder extends REST {
         if ($this->get_request_method() != "POST") $this->response('', 406);
         $data = json_decode(file_get_contents("php://input"), true);
         if (!isset($data['id'])) $this->responseInvalidParam();
+        if (isset($data['product_order']['status'])) {
+            $data['product_order']['status'] = $this->normalizeStatus($data['product_order']['status']);
+        }
         $columns = array('buyer', 'address', 'email', 'shipping', 'date_ship', 'phone', 'comment', 'status', 'total_fees', 'tax', 'created_at', 'last_update');
         $this->show_response($this->db->post_update((int)$data['id'], $data, 'id', $columns, 'product_order'));
     }
@@ -162,6 +166,23 @@ class ProductOrder extends REST {
         } while ($exists > 0);
 
         return $code;
+    }
+
+    private function normalizeStatus($status) {
+        $legacyStatuses = array(
+            'در انتظار تایید' => 'WAITING',
+            'پردازش شده' => 'PROCESSED',
+            'لغو شده' => 'CANCEL',
+        );
+        $status = trim((string)$status);
+        if (isset($legacyStatuses[$status])) {
+            return $legacyStatuses[$status];
+        }
+
+        $status = strtoupper($status);
+        return in_array($status, array('WAITING', 'PROCESSED', 'CANCEL'), true)
+            ? $status
+            : 'WAITING';
     }
 }
 ?>

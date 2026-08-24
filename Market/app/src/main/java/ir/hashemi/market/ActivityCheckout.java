@@ -272,7 +272,7 @@ public class ActivityCheckout extends AppCompatActivity {
         // prepare checkout data
         Checkout checkout = new Checkout();
         ProductOrder productOrder = new ProductOrder(buyerProfile, shipping.getSelectedItem().toString(), date_ship_millis, comment.getText().toString().trim());
-        productOrder.status = "در انتظار تایید";
+        productOrder.status = "WAITING";
         productOrder.total_fees = _total_fees;
         productOrder.tax = info.tax;
 
@@ -290,7 +290,7 @@ public class ActivityCheckout extends AppCompatActivity {
             @Override
             public void onResponse(Call<CallbackOrder> call, Response<CallbackOrder> response) {
                 CallbackOrder resp = response.body();
-                if (resp != null && resp.status.equals("success")) {
+                if (response.isSuccessful() && resp != null && "success".equals(resp.status) && resp.data != null) {
                     Order order = new Order(resp.data.id, resp.data.code, _total_fees_str);
                     for (Cart c : adapter.getItem()) {
                         c.order_id = order.id;

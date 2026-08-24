@@ -27,15 +27,20 @@ public class Constant {
 
     // Method get path to image
     public static String getURLimgProduct(String file_name) {
-        return WEB_URL + "uploads/product/" + file_name;
+        return getImageUrl("product", file_name);
     }
 
     public static String getURLimgNews(String file_name) {
-        return WEB_URL + "uploads/news/" + file_name;
+        return getImageUrl("news", file_name);
     }
 
     public static String getURLimgCategory(String file_name) {
-        return WEB_URL + "uploads/category/" + file_name;
+        return getImageUrl("category", file_name);
+    }
+
+    private static String getImageUrl(String directory, String fileName) {
+        if (fileName == null || fileName.trim().isEmpty()) return "";
+        return WEB_URL + "uploads/" + directory + "/" + fileName;
     }
 
 }
