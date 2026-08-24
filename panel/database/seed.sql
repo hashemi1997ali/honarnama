@@ -2,10 +2,10 @@ BEGIN;
 
 WITH sample(name, icon, brief, color, priority) AS (
     VALUES
-        ('Painting', 'sample-painting.jpg', 'Original paintings and works on canvas.', '#5C6BC0', 1),
-        ('Sculpture', 'sample-sculpture.jpg', 'Decorative and collectible sculptures.', '#8D6E63', 2),
-        ('Photography', 'sample-photography.jpg', 'Fine-art and documentary photography.', '#546E7A', 3),
-        ('Handicrafts', 'sample-handicrafts.jpg', 'Handmade objects created by local artists.', '#00897B', 4)
+        ('Painting', 'category-painting-icon.png', 'Original paintings and works on canvas.', '#EC75E7', 1),
+        ('Sculpture', 'category-sculpture-icon.png', 'Decorative and collectible sculptures.', '#D46B2D', 2),
+        ('Photography', 'category-photography-icon.png', 'Fine-art and documentary photography.', '#26B8B8', 3),
+        ('Handicrafts', 'category-handicrafts-icon.png', 'Handmade objects created by local artists.', '#5269BF', 4)
 )
 INSERT INTO category (name, icon, draft, brief, color, priority, created_at, last_update)
 SELECT
@@ -150,10 +150,16 @@ WHERE NOT EXISTS (
 );
 
 UPDATE category SET icon = CASE name
-    WHEN 'Painting' THEN 'sample-painting.jpg'
-    WHEN 'Sculpture' THEN 'sample-sculpture.jpg'
-    WHEN 'Photography' THEN 'sample-photography.jpg'
-    WHEN 'Handicrafts' THEN 'sample-handicrafts.jpg'
+    WHEN 'Painting' THEN 'category-painting-icon.png'
+    WHEN 'Sculpture' THEN 'category-sculpture-icon.png'
+    WHEN 'Photography' THEN 'category-photography-icon.png'
+    WHEN 'Handicrafts' THEN 'category-handicrafts-icon.png'
+END,
+color = CASE name
+    WHEN 'Painting' THEN '#EC75E7'
+    WHEN 'Sculpture' THEN '#D46B2D'
+    WHEN 'Photography' THEN '#26B8B8'
+    WHEN 'Handicrafts' THEN '#5269BF'
 END
 WHERE name IN ('Painting', 'Sculpture', 'Photography', 'Handicrafts');
 

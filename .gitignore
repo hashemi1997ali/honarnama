@@ -52,6 +52,7 @@ panel/uploads/product/*
 !panel/uploads/news/.gitkeep
 !panel/uploads/product/.gitkeep
 !panel/uploads/category/sample-*.jpg
+!panel/uploads/category/category-*-icon.png
 !panel/uploads/news/sample-*.jpg
 !panel/uploads/product/sample-*.jpg
 

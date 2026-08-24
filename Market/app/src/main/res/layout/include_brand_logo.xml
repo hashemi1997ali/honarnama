@@ -4,4 +4,4 @@
     android:layout_height="180dp"
     android:contentDescription="@string/app_name"
     android:scaleType="centerInside"
-    android:src="@drawable/drawer_logo_en" />
+    android:src="@drawable/brand_mark" />

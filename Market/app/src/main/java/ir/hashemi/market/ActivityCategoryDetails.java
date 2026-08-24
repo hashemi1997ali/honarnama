@@ -33,6 +33,7 @@ import ir.hashemi.market.connection.callbacks.CallbackProduct;
 import ir.hashemi.market.data.Constant;
 import ir.hashemi.market.model.Category;
 import ir.hashemi.market.model.Product;
+import ir.hashemi.market.utils.CategoryIcons;
 import ir.hashemi.market.utils.NetworkCheck;
 import ir.hashemi.market.utils.Tools;
 import retrofit2.Call;
@@ -127,8 +128,8 @@ public class ActivityCategoryDetails extends AppCompatActivity {
         ((TextView) findViewById(R.id.name)).setText(c.name);
         ((TextView) findViewById(R.id.brief)).setText(c.brief);
         ImageView icon = (ImageView) findViewById(R.id.icon);
-        icon.setImageResource(R.drawable.ic_logo);
-        icon.setColorFilter(Color.WHITE);
+        icon.setImageResource(CategoryIcons.drawableFor(c.name, c.icon));
+        icon.clearColorFilter();
         Tools.setSystemBarColorDarker(this, c.color);
     }
 

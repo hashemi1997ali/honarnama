@@ -16,6 +16,7 @@ import java.util.List;
 
 import ir.hashemi.market.R;
 import ir.hashemi.market.model.Category;
+import ir.hashemi.market.utils.CategoryIcons;
 
 
 public class AdapterCategory extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -71,8 +72,8 @@ public class AdapterCategory extends RecyclerView.Adapter<RecyclerView.ViewHolde
             vItem.name.setText(c.name);
             vItem.brief.setText(c.brief);
             vItem.lyt_color.setBackgroundColor(Color.parseColor(c.color));
-            vItem.image.setImageResource(R.drawable.ic_logo);
-            vItem.image.setColorFilter(Color.WHITE);
+            vItem.image.setImageResource(CategoryIcons.drawableFor(c.name, c.icon));
+            vItem.image.clearColorFilter();
 
             vItem.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override

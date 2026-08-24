@@ -14,7 +14,7 @@
         android:layout_centerInParent="true"
         android:contentDescription="@string/app_name"
         android:scaleType="centerInside"
-        android:src="@drawable/drawer_logo_en" />
+        android:src="@drawable/brand_mark" />
 
     <LinearLayout
         android:layout_width="match_parent"
