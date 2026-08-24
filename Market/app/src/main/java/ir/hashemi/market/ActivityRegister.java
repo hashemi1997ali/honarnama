@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -17,9 +19,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import ir.hashemi.market.connection.API;
 import ir.hashemi.market.connection.RestAdapter;
 import ir.hashemi.market.connection.callbacks.CallbackUser;
@@ -106,35 +105,36 @@ public class ActivityRegister extends AppCompatActivity {
             @Override
             public void onResponse(Call<CallbackUser> call, Response<CallbackUser> response) {
                 CallbackUser resp = response.body();
-                if (resp != null && resp.status.equals("success")) {
+                if (response.isSuccessful() && resp != null && "success".equals(resp.status) && resp.data != null) {
                     User user = resp.data;
                     sharedPref.setUserData(user);
                     Toast.makeText(activityRegister, user.name + " " + getString(R.string.welcome), Toast.LENGTH_SHORT).show();
                     startActivityMainDelay();
                 } else {
-                    Toast.makeText(activityRegister, resp.msg, Toast.LENGTH_SHORT).show();
+                    String message = resp != null && resp.msg != null && !resp.msg.isEmpty()
+                            ? resp.msg
+                            : getString(R.string.msg_failed_load_data);
+                    Toast.makeText(activityRegister, message, Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<CallbackUser> call, Throwable t) {
-                Log.e("onFailure", t.getMessage());
+                Log.e("ActivityRegister", "Registration request failed", t);
                 if (!call.isCanceled()) onFailRequest();
             }
         });
     }
 
     private void startActivityMainDelay() {
-        // Show splash screen for 2 seconds
-        TimerTask task = new TimerTask() {
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
                 Intent i = new Intent(ir.hashemi.market.ActivityRegister.this, ir.hashemi.market.ActivityMain.class);
                 startActivity(i);
-                finish(); // kill current activity
+                finish();
             }
-        };
-        new Timer().schedule(task, 4000);
+        }, 600);
     }
 
     private void onFailRequest() {

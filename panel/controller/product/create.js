@@ -75,7 +75,7 @@ angular.module('App').controller('AddProductController', function ($rootScope, $
 		if (root.constrainFile(files[0])) {
 			self.image.valid = true;
 		}
-		$mdToast.show($mdToast.simple().content("Selected file").position('bottom right'));
+		$mdToast.show($mdToast.simple().textContent("Selected file").position('bottom right'));
 	};
 
 	/* for selecting optional images file */
@@ -85,7 +85,7 @@ angular.module('App').controller('AddProductController', function ($rootScope, $
 		if (root.constrainFile(files[0])) {
 			self.images[idx].valid = true;
 		}
-		$mdToast.show($mdToast.simple().content("Selected file").position('bottom right'));
+		$mdToast.show($mdToast.simple().textContent("Selected file").position('bottom right'));
 	};
 
 	/* method for submit action */

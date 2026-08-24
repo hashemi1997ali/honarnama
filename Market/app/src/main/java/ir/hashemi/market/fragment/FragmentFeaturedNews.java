@@ -2,6 +2,7 @@ package ir.hashemi.market.fragment;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,7 +43,7 @@ public class FragmentFeaturedNews extends Fragment {
 
     private View root_view;
     private ViewPager viewPager;
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler(Looper.getMainLooper());
     private Runnable runnableCode = null;
     private AdapterFeaturedNews adapter;
     private Call<CallbackFeaturedNews> callbackCall;
@@ -86,6 +87,15 @@ public class FragmentFeaturedNews extends Fragment {
     }
 
     private void displayResultData(List<NewsInfo> items) {
+        if (items == null || items.isEmpty()) {
+            adapter.setItems(new ArrayList<NewsInfo>());
+            viewPager.setAdapter(adapter);
+            layout_dots.removeAllViews();
+            lyt_main_content.setVisibility(View.GONE);
+            markNewsLoaded();
+            return;
+        }
+
         adapter.setItems(items);
         viewPager.setAdapter(adapter);
 
@@ -104,9 +114,11 @@ public class FragmentFeaturedNews extends Fragment {
 
             @Override
             public void onPageSelected(int pos) {
-                NewsInfo cur = adapter.getItem(pos);
-                features_news_title.setText(cur.title);
-                addBottomDots(layout_dots, adapter.getCount(), pos);
+                if (pos >= 0 && pos < adapter.getCount()) {
+                    NewsInfo cur = adapter.getItem(pos);
+                    features_news_title.setText(cur.title);
+                    addBottomDots(layout_dots, adapter.getCount(), pos);
+                }
             }
 
             @Override
@@ -125,8 +137,7 @@ public class FragmentFeaturedNews extends Fragment {
         });
 
         lyt_main_content.setVisibility(View.VISIBLE);
-        ActivityMain.getInstance().news_load = true;
-        ActivityMain.getInstance().showDataLoaded();
+        markNewsLoaded();
     }
 
     private void requestFeaturedNews() {
@@ -136,7 +147,7 @@ public class FragmentFeaturedNews extends Fragment {
             @Override
             public void onResponse(Call<CallbackFeaturedNews> call, Response<CallbackFeaturedNews> response) {
                 CallbackFeaturedNews resp = response.body();
-                if (resp != null && resp.status.equals("success")) {
+                if (resp != null && "success".equals(resp.status)) {
                     displayResultData(resp.news_infos);
                 } else {
                     onFailRequest();
@@ -153,6 +164,7 @@ public class FragmentFeaturedNews extends Fragment {
     }
 
     private void startAutoSlider(final int count) {
+        if (count <= 1) return;
         runnableCode = new Runnable() {
             @Override
             public void run() {
@@ -167,13 +179,15 @@ public class FragmentFeaturedNews extends Fragment {
     }
 
     private void prevAction() {
+        if (adapter.getCount() == 0) return;
         int pos = viewPager.getCurrentItem();
         pos = pos - 1;
-        if (pos < 0) pos = adapter.getCount();
+        if (pos < 0) pos = adapter.getCount() - 1;
         viewPager.setCurrentItem(pos);
     }
 
     private void nextAction() {
+        if (adapter.getCount() == 0) return;
         int pos = viewPager.getCurrentItem();
         pos = pos + 1;
         if (pos >= adapter.getCount()) pos = 0;
@@ -216,5 +230,13 @@ public class FragmentFeaturedNews extends Fragment {
 
     private void showFailedView(@StringRes int message) {
         ActivityMain.getInstance().showDialogFailed(message);
+    }
+
+    private void markNewsLoaded() {
+        ActivityMain mainActivity = ActivityMain.getInstance();
+        if (mainActivity != null) {
+            mainActivity.news_load = true;
+            mainActivity.showDataLoaded();
+        }
     }
 }

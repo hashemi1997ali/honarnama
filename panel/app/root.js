@@ -92,7 +92,7 @@ angular.module('App').controller('RootCtrl', function ($rootScope, $scope, $mdSi
             // clear session
             root.clearCookies();
             window.location.href = '#login';
-            $mdToast.show($mdToast.simple().content('با موفقیت خارج شدید').position('bottom right'));
+            $mdToast.show($mdToast.simple().textContent('با موفقیت خارج شدید').position('bottom right'));
         });
     };
 

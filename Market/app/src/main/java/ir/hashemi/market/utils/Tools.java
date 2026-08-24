@@ -108,6 +108,8 @@ public class Tools {
     public static void displayImageOriginal(Context ctx, ImageView img, String url) {
         try {
             Glide.with(ctx).load(url)
+                    .placeholder(R.drawable.loading_placeholder)
+                    .error(R.drawable.loading_placeholder)
                     .transition(withCrossFade())
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(img);
@@ -118,6 +120,8 @@ public class Tools {
     public static void displayImageThumbnail(Context ctx, ImageView img, String url, float thumb) {
         try {
             Glide.with(ctx).load(url)
+                    .placeholder(R.drawable.loading_placeholder)
+                    .error(R.drawable.loading_placeholder)
                     .transition(withCrossFade())
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .thumbnail(thumb)

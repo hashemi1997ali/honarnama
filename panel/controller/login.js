@@ -1,12 +1,15 @@
-angular.module('App').controller('LoginController', function ($rootScope, $scope, $http, $mdToast, $route, $timeout, request) {
+angular.module('App').controller('LoginController', function ($rootScope, $scope, $mdToast, request) {
 	var self = $scope;
 	var root = $rootScope;
+
+	function showToast(message) {
+		$mdToast.show($mdToast.simple().textContent(message).position('bottom right'));
+	}
 
 	if (root.isCookieExist()) {
 		root.isLogin = false;
 		window.location.href = '#dashboard';
-		$mdToast.show($mdToast.simple().content('وارد شدید، در حال انتقال به پنل').position('bottom right'));
-		window.location.reload();
+		return;
 	}
 
 	root.isLogin = true;
@@ -18,23 +21,22 @@ angular.module('App').controller('LoginController', function ($rootScope, $scope
 	self.doLogin = function () {
 		self.submit_loading = true;
 		request.login(self.userdata).then(function (result) {
-		    var resp = result.data;
-			$timeout(function () { // give delay for good UI
-				self.submit_loading = false;
-				if (resp == "") {
-				    $mdToast.show($mdToast.simple().content('Login Failed').position('bottom right'));
-				    return;
-				}
-                if(resp.status == "success"){
-                    // saving session
-                    root.saveCookies(resp.user.id, resp.user.name, resp.user.email, resp.user.password);
-                    $mdToast.show($mdToast.simple().content('با موفقیت وارد شدید').position('bottom right'));
-                    $route.reload();
-                } else {
-				    $mdToast.show($mdToast.simple().content('ورود ناموفق').position('bottom right'));
-                }
-			}, 1000);
-			//console.log(JSON.stringify(result.data));
+			var resp = result.data;
+			if (resp && resp.status === 'success' && resp.user) {
+				root.saveCookies(resp.user.id, resp.user.name, resp.user.email, resp.user.password);
+				root.isLogin = false;
+				showToast('با موفقیت وارد شدید');
+				window.location.href = '#dashboard';
+				return;
+			}
+			showToast(resp && resp.msg ? resp.msg : 'ورود ناموفق');
+		}, function (error) {
+			var message = error && error.data && error.data.msg
+				? error.data.msg
+				: 'ارتباط با سرور برقرار نشد.';
+			showToast(message);
+		}).finally(function () {
+			self.submit_loading = false;
 		});
 	};
 

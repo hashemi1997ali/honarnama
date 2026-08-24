@@ -37,7 +37,7 @@ angular.module('App').controller('AddCategoryController', function ($rootScope, 
 		if (root.constrainFilePng(files[0])) {
 			self.icon.valid = true;
 		}
-		$mdToast.show($mdToast.simple().content("فایل انتخاب شد").position('bottom right'));
+		$mdToast.show($mdToast.simple().textContent("فایل انتخاب شد").position('bottom right'));
 	};
 
 

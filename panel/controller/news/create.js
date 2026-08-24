@@ -40,7 +40,7 @@ angular.module('App').controller('AddNewsController', function ($rootScope, $sco
 		if (root.constrainFile(files[0])) {
 			self.image.valid = true;
 		}
-		$mdToast.show($mdToast.simple().content("فایل انتخاب شد").position('bottom right'));
+		$mdToast.show($mdToast.simple().textContent("فایل انتخاب شد").position('bottom right'));
 	};
 
 

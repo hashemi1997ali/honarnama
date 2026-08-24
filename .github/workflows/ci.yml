@@ -60,6 +60,18 @@ jobs:
           $count = $db->get_count("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = :schema AND table_name IN (\x27product\x27, \x27category\x27, \x27news_info\x27, \x27product_order\x27, \x27app_user\x27)", array("schema" => "public"));
           if ($count !== 5) { throw new RuntimeException("Required tables are missing"); }'
 
+      - name: Verify repeatable sample data
+        run: |
+          php panel/database/seed.php
+          php panel/database/seed.php
+          php -r 'require "panel/services/tools/db.php";
+          $db = new DB();
+          $expected = array("category" => 4, "product" => 6, "news_info" => 3, "product_auction" => 2, "product_order" => 1);
+          foreach ($expected as $table => $count) {
+              $actual = $db->get_count("SELECT COUNT(*) FROM \"$table\"");
+              if ($actual !== $count) { throw new RuntimeException("Unexpected sample count for $table"); }
+          }'
+
   android-build:
     name: Android lint and build
     runs-on: ubuntu-latest

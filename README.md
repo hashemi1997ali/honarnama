@@ -97,8 +97,11 @@ Prepare the database and start the local server:
 
 ```bash
 php panel/database/migrate.php
+php panel/database/seed.php
 php -S 127.0.0.1:8000 dev-router.php
 ```
+
+The optional seed command adds a small, repeatable set of sample categories, products, news, auctions, and one demo order. It does not modify administrator or Android user accounts.
 
 - Admin panel: `http://127.0.0.1:8000/panel/`
 - API: `http://127.0.0.1:8000/panel/services/`
