@@ -118,10 +118,14 @@ public class Tools {
     }
 
     public static void displayImageThumbnail(Context ctx, ImageView img, String url, float thumb) {
+        displayImageThumbnail(ctx, img, url, thumb, R.drawable.loading_placeholder);
+    }
+
+    public static void displayImageThumbnail(Context ctx, ImageView img, String url, float thumb, int fallbackDrawable) {
         try {
             Glide.with(ctx).load(url)
-                    .placeholder(R.drawable.loading_placeholder)
-                    .error(R.drawable.loading_placeholder)
+                    .placeholder(fallbackDrawable)
+                    .error(fallbackDrawable)
                     .transition(withCrossFade())
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .thumbnail(thumb)

@@ -5,6 +5,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -17,6 +20,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 
 import ir.hashemi.market.ActivityCategoryDetails;
+import ir.hashemi.market.ActivityAuctionDetails;
 import ir.hashemi.market.ActivityMain;
 import ir.hashemi.market.R;
 import ir.hashemi.market.adapter.AdapterCategory;
@@ -47,6 +51,18 @@ public class FragmentCategory extends Fragment {
     }
 
     private void initComponent() {
+        View auctionItem = root_view.findViewById(R.id.auction_item);
+        ((TextView) auctionItem.findViewById(R.id.name)).setText(R.string.auction);
+        ((TextView) auctionItem.findViewById(R.id.brief)).setText(R.string.auction_about);
+        ((ImageView) auctionItem.findViewById(R.id.image)).setImageResource(R.drawable.img_auction);
+        ((LinearLayout) auctionItem.findViewById(R.id.lyt_color)).setBackgroundResource(R.color.colorAuction);
+        auctionItem.findViewById(R.id.lyt_parent).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new android.content.Intent(getActivity(), ActivityAuctionDetails.class));
+            }
+        });
+
         recyclerView = (RecyclerView) root_view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
 

@@ -61,7 +61,7 @@
                         android:id="@+id/price"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="30,000 RIAL"
+                        android:text="€480"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
                         android:textColor="@color/colorPrice"
                         android:textStyle="bold" />

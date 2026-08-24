@@ -236,7 +236,7 @@ public class ActivityProductAuctionDetails extends AppCompatActivity {
         webview.setBackgroundColor(Color.TRANSPARENT);
         webview.setWebChromeClient(new WebChromeClient());
         // webview.loadData(html_data, "text/html; charset=UTF-8", null);
-        webview.loadDataWithBaseURL("", "<html dir=\"rtl\" lang=\"\"><body <style>" + html_data + "</body></html>", "text/html", "UTF-8", null);
+        webview.loadDataWithBaseURL("", "<html dir=\"ltr\" lang=\"en\"><body <style>" + html_data + "</body></html>", "text/html", "UTF-8", null);
         // disable scroll on touch
         webview.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {

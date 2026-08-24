@@ -50,7 +50,6 @@ public class ActivityMain extends AppCompatActivity {
     private Toolbar toolbar;
     private FloatingActionButton fab;
     private CardView search_bar;
-    private View auction_view;
     private TextView username;
     private SwipeRefreshLayout swipe_refresh;
     private View parent_view;
@@ -145,7 +144,6 @@ public class ActivityMain extends AppCompatActivity {
     private void initComponent() {
         parent_view = findViewById(R.id.parent_view);
         search_bar = (CardView) findViewById(R.id.search_bar);
-        auction_view = findViewById(R.id.auction_view);
         swipe_refresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         NestedScrollView nested_content = (NestedScrollView) findViewById(R.id.nested_content);
@@ -185,13 +183,6 @@ public class ActivityMain extends AppCompatActivity {
             }
         });
 
-        auction_view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(getApplicationContext(), ir.hashemi.market.ActivityAuctionDetails.class);
-                startActivity(i);
-            }
-        });
     }
 
     private void refreshFragment() {

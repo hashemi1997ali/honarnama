@@ -141,7 +141,7 @@ CREATE INDEX IF NOT EXISTS product_order_detail_order_id_idx ON product_order_de
 CREATE INDEX IF NOT EXISTS product_auction_end_date_idx ON product_auction(end_date DESC);
 
 INSERT INTO config (code, value) VALUES
-    ('CURRENCY', 'IRT'),
+    ('CURRENCY', 'EUR'),
     ('TAX', '0'),
     ('FEATURED_NEWS', '5'),
     ('SHIPPING', '["Standard shipping","Express shipping"]'),
@@ -152,10 +152,10 @@ INSERT INTO config (code, value) VALUES
 ON CONFLICT (code) DO NOTHING;
 
 INSERT INTO currency (code, name) VALUES
-    ('IRT', 'Iranian Toman'),
-    ('IRR', 'Iranian Rial'),
-    ('USD', 'US Dollar'),
     ('EUR', 'Euro')
 ON CONFLICT (code) DO NOTHING;
+
+UPDATE config SET value = 'EUR' WHERE code = 'CURRENCY';
+DELETE FROM currency WHERE code <> 'EUR';
 
 COMMIT;

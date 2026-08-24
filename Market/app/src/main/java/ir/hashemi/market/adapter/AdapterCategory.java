@@ -77,10 +77,18 @@ public class AdapterCategory extends RecyclerView.Adapter<RecyclerView.ViewHolde
             vItem.name.setText(c.name);
             vItem.brief.setText(c.brief);
             vItem.lyt_color.setBackgroundColor(Color.parseColor(c.color));
-            Tools.displayImageThumbnail(ctx, vItem.image, Constant.getURLimgCategory(c.icon), 0.5f);
+            Tools.displayImageThumbnail(
+                    ctx,
+                    vItem.image,
+                    Constant.getURLimgCategory(c.icon),
+                    0.5f,
+                    getCategoryFallback(c.icon)
+            );
 
             if (AppConfig.TINT_CATEGORY_ICON) {
                 vItem.image.setColorFilter(Color.WHITE);
+            } else {
+                vItem.image.clearColorFilter();
             }
 
             vItem.lyt_parent.setOnClickListener(new View.OnClickListener() {
@@ -108,6 +116,22 @@ public class AdapterCategory extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void setItems(List<Category> items) {
         this.items = items;
         notifyDataSetChanged();
+    }
+
+    private int getCategoryFallback(String icon) {
+        if (icon == null) return R.drawable.loading_placeholder;
+        switch (icon) {
+            case "sample-painting.jpg":
+                return R.drawable.category_painting;
+            case "sample-sculpture.jpg":
+                return R.drawable.category_sculpture;
+            case "sample-photography.jpg":
+                return R.drawable.category_photography;
+            case "sample-handicrafts.jpg":
+                return R.drawable.category_handicrafts;
+            default:
+                return R.drawable.loading_placeholder;
+        }
     }
 
 
