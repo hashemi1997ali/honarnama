@@ -1,6 +1,6 @@
 # 🎨 Honarnama Market
 
-Honarnama (هنرنما) is a university artwork marketplace consisting of a native Android application, a PHP REST API, an AngularJS administration panel, and a PostgreSQL database.
+Honarnama is a university artwork marketplace consisting of a native Android application, a PHP REST API, an AngularJS administration panel, and a PostgreSQL database.
 
 The project was originally presented in Dey 1399 and has since been cleaned, modernized, and migrated to Neon/PostgreSQL for portfolio and educational use.
 
@@ -148,7 +148,7 @@ Honarnama was presented as a university project in **Dey 1399** (December 2020�
 
 Ali Ferasatpour, a friend and collaborator on this project, has passed away. This repository is preserved in appreciation of his friendship, contribution, and the work created together.
 
-> His memory is honored. یادش گرامی باد.
+> May his memory always be honored.
 
 ---
 
