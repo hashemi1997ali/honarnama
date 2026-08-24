@@ -1,0 +1,67 @@
+<md-card class="md-whiteframe-1dp">
+    <div class="table-responsive-vertical">
+        <table class="table table-hover">
+            <thead class="sub-menu-bg">
+                <tr>
+                    <th>ID</th>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Starting price</th>
+                    <th>Starts</th>
+                    <th>Ends</th>
+                    <th>Latest bid</th>
+                    <th>Winner</th>
+                    <th>Status</th>
+                    <th style="text-align:center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="auction in auctions">
+                    <td data-title="ID">{{auction.id}}</td>
+                    <td data-title="Image">
+                        <button class="auction-image-button" type="button" ng-click="viewImage($event, 'uploads/product/' + auction.image)">
+                            <img class="auction-thumbnail" ng-src="uploads/product/{{auction.image}}" alt="{{auction.name}}">
+                        </button>
+                    </td>
+                    <td data-title="Name">{{auction.name}}</td>
+                    <td data-title="Starting price">€{{auction.start_price | number:2}}</td>
+                    <td data-title="Starts">{{asDate(auction.start_date) | date:'dd MMM yyyy, HH:mm'}}</td>
+                    <td data-title="Ends">{{asDate(auction.end_date) | date:'dd MMM yyyy, HH:mm'}}</td>
+                    <td data-title="Latest bid">
+                        <span ng-if="auction.winner_price != null">€{{auction.winner_price | number:2}}</span>
+                        <span ng-if="auction.winner_price == null">—</span>
+                    </td>
+                    <td data-title="Winner">{{auction.winner_username || '—'}}</td>
+                    <td data-title="Status">
+                        <span class="auction-status" ng-class="'auction-status-' + statusOf(auction).toLowerCase()">{{statusOf(auction)}}</span>
+                    </td>
+                    <td data-title="Actions">
+                        <div layout="row" layout-align="center center">
+                            <md-button class="md-icon-button" aria-label="Edit auction" ng-click="editAuction(auction)">
+                                <md-icon>create</md-icon>
+                                <md-tooltip>Edit auction</md-tooltip>
+                            </md-button>
+                            <md-button class="md-icon-button" aria-label="Delete auction" ng-click="deleteAuction($event, auction)">
+                                <md-icon>delete</md-icon>
+                                <md-tooltip>Delete auction</md-tooltip>
+                            </md-button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div ng-if="loading" class="auction-loading">
+            <p>Loading auctions...</p>
+            <md-progress-linear md-mode="indeterminate"></md-progress-linear>
+        </div>
+        <div ng-if="!loading && auctions.length === 0" class="auction-empty">
+            No auctions found. Use <b>Add Auction</b> to create one.
+        </div>
+    </div>
+
+    <md-divider></md-divider>
+    <section layout="row" class="sub-menu-bg" flex>
+        <cl-paging flex cl-pages="paging.total" cl-steps="paging.step" cl-page-changed="paging.onPageChanged()" cl-align="center center" cl-current-page="paging.current"></cl-paging>
+    </section>
+</md-card>

@@ -48,6 +48,25 @@
             </div>
         </md-card-content>
     </div>
+    <div layout="row" layout-sm="column">
+        <md-card-content flex>
+            <p class="md-title title-no-top">Auction Overview</p>
+            <md-divider></md-divider>
+            <div layout="row">
+                <item flex="40">Scheduled</item> <item flex="5">:</item> <item flex>{{auction.scheduled}}</item>
+            </div>
+            <div layout="row">
+                <item flex="40">Active</item> <item flex="5">:</item> <item flex>{{auction.active}}</item>
+            </div>
+            <div layout="row">
+                <item flex="40">Ended</item> <item flex="5">:</item> <item flex>{{auction.ended}}</item>
+            </div>
+            <div layout="row">
+                <item flex="40">Total auctions</item> <item flex="5">:</item> <item flex>{{auction.total}}</item>
+            </div>
+        </md-card-content>
+        <md-card-content flex></md-card-content>
+    </div>
 </md-card>
 <br>
 <md-card class="md-whiteframe-1dp md-padding">

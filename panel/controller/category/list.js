@@ -55,7 +55,7 @@ angular.module('App').controller('CategoryController', function ($rootScope, $sc
 
 	self.deleteCategory = function(ev, c) {
 		var confirm = $mdDialog.confirm().title('Delete Confirmation');
-			confirm.content('Are you sure you want to delete: '+c.name+'?');
+			confirm.textContent('Are you sure you want to delete: '+c.name+'?');
 			confirm.targetEvent(ev).ok('Yes').cancel('Cancel');
 			
 		var dir = "../../../uploads/category/";

@@ -50,6 +50,26 @@ angular.module('App').factory("request", function ($http, $cookies) {
 	obj.deleteOneProduct = function (id) {
 		return $http.get(api_base + 'deleteOneProduct?id='+id, config).then(function (results) { return results.data; });
 	};
+
+	// AUCTION --------------------------------------------------------------------------------
+	obj.getOneProductAuction = function (id) {
+		return $http.get(api_base + 'getOneProductAuction?id=' + id, config);
+	};
+	obj.getAllProductAuctionByPage = function (page, limit, q) {
+		return $http.get(api_base + 'getAllProductAuctionByPage?page=' + page + '&limit=' + limit + '&q=' + encodeURIComponent(q || ''), config);
+	};
+	obj.getAllProductAuctionCount = function (q) {
+		return $http.get(api_base + 'getAllProductAuctionCount?q=' + encodeURIComponent(q || ''), config);
+	};
+	obj.insertOneProductAuction = function (object) {
+		return $http.post(api_base + 'insertOneProductAuction', object, config).then(function (results) { return results.data; });
+	};
+	obj.updateOneProductAuction = function (id, object) {
+		return $http.post(api_base + 'updateOneProductAuction', {id: id, product_auction: object}, config).then(function (results) { return results.data; });
+	};
+	obj.deleteOneProductAuction = function (id) {
+		return $http.get(api_base + 'deleteOneProductAuction?id=' + id, config).then(function (results) { return results.data; });
+	};
 	
 	// PRODUCT CATEGORY -----------------------------------------------------------------------
 	obj.insertAllProductCategory = function (object) {

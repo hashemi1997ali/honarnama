@@ -1,0 +1,63 @@
+<md-card class="md-whiteframe-1dp md-padding">
+    <form name="auctionForm" novalidate class="md-padding" ng-if="auction" ng-submit="submit(auction)">
+        <div layout="row" layout-sm="column" layout-xs="column" layout-wrap>
+            <md-input-container flex="50" flex-sm="100" flex-xs="100">
+                <label>Auction name *</label>
+                <input name="name" ng-model="auction.name" required maxlength="100">
+            </md-input-container>
+
+            <md-input-container flex="25" flex-sm="50" flex-xs="100">
+                <label>Starting price (EUR) *</label>
+                <input name="start_price" type="number" min="0" step="0.01" ng-model="auction.start_price" required>
+            </md-input-container>
+        </div>
+
+        <div layout="row" layout-sm="column" layout-xs="column" layout-wrap>
+            <md-input-container flex="40" flex-sm="100" flex-xs="100">
+                <label>Start date and time *</label>
+                <input name="start_date" type="datetime-local" step="1" ng-model="auction.start_date" required>
+            </md-input-container>
+
+            <md-input-container flex="40" flex-sm="100" flex-xs="100">
+                <label>End date and time *</label>
+                <input name="end_date" type="datetime-local" step="1" ng-model="auction.end_date" required>
+            </md-input-container>
+        </div>
+        <p class="red-alert" ng-if="auction.start_date && auction.end_date && !datesValid()">End date must be later than start date.</p>
+
+        <md-input-container class="md-block">
+            <label>Description *</label>
+            <textarea name="description" ng-model="auction.description" rows="5" required maxlength="2000"></textarea>
+        </md-input-container>
+
+        <div class="auction-current-bid" ng-if="!isNewEntry() && auction.winner_price != null">
+            Current highest bid: <b>€{{auction.winner_price | number:2}}</b>
+            <span ng-if="auction.winner_username">by {{auction.winner_username}}</span>
+        </div>
+
+        <fieldset class="standard margin-input-container md-padding">
+            <legend>Auction image *</legend>
+            <div layout="row" layout-align="start center">
+                <input class="padding-top-bottom" type="file" name="image" accept="image/jpeg,image/png" onchange="angular.element(this).scope().onFileSelect(this.files)" flex>
+                <md-button class="md-icon-button" aria-label="View current image" ng-click="viewImage($event, 'uploads/product/' + auction.image)" ng-if="!isNewEntry()">
+                    <md-icon>wallpaper</md-icon>
+                    <md-tooltip>View current image</md-tooltip>
+                </md-button>
+            </div>
+            <div ng-if="!image.valid" class="red-alert">Choose a JPG or PNG image no larger than 0.5 MB.</div>
+            <p class="hint">Recommended aspect ratio: 4:3 or 16:9.</p>
+        </fieldset>
+
+        <div class="md-actions md-padding" layout="row">
+            <span flex></span>
+            <md-button ng-if="!submit_loading" class="md-warn" ng-click="cancel()">Cancel</md-button>
+            <md-button type="submit" ng-if="!submit_loading" class="md-raised md-primary" ng-disabled="auctionForm.$invalid || !isReadySubmit()">{{button_text}}</md-button>
+            <md-progress-circular ng-if="submit_loading" class="md-accent" md-mode="indeterminate" md-diameter="30px"></md-progress-circular>
+        </div>
+    </form>
+
+    <div ng-if="!auction" class="auction-loading">
+        <p>Loading auction...</p>
+        <md-progress-linear md-mode="indeterminate"></md-progress-linear>
+    </div>
+</md-card>

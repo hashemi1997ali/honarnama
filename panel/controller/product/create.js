@@ -237,7 +237,7 @@ angular.module('App').controller('AddProductController', function ($rootScope, $
 
 	/* delete optional image dialog */
 	self.deleteImage = function (ev, img) {
-		var confirm = $mdDialog.confirm().title('Delete Confirmation').content('Are you sure want to delete this image ?').targetEvent(ev).ok('OK').cancel('CANCEL');
+		var confirm = $mdDialog.confirm().title('Delete Confirmation').textContent('Are you sure want to delete this image ?').targetEvent(ev).ok('OK').cancel('CANCEL');
 		$mdDialog.show(confirm).then(function () {
 			request.deleteProductImageByName(img.name).then(function (res) {
 				if (res.status == 'success') {

@@ -67,7 +67,7 @@ angular.module('App').controller('OrderController', function ($rootScope, $scope
 
     self.processedOrderConfirm = function(ev, po) {
         var confirm = $mdDialog.confirm().title('Confirm Order Processing');
-            confirm.content('After processing, the order status cannot be changed and product stock will be updated.' +
+            confirm.textContent('After processing, the order status cannot be changed and product stock will be updated.' +
                             '<br>Please review the order carefully before clicking <b>Process</b>.');
             confirm.targetEvent(ev).ok('Process').cancel('Cancel');
 
@@ -86,7 +86,7 @@ angular.module('App').controller('OrderController', function ($rootScope, $scope
 
     self.cancelOrder = function(ev, po) {
         var confirm = $mdDialog.confirm().title('Confirm Order Deletion');
-            confirm.content('Are you sure you want to delete the order for '+po.buyer+'?');
+            confirm.textContent('Are you sure you want to delete the order for '+po.buyer+'?');
             confirm.targetEvent(ev).ok('Yes').cancel('Cancel');
 
         $mdDialog.show(confirm).then(function() {
@@ -106,7 +106,7 @@ angular.module('App').controller('OrderController', function ($rootScope, $scope
 
     self.deleteOrder = function(ev, po) {
         var confirm = $mdDialog.confirm().title('Confirm Order Cancellation');
-            confirm.content('Are you sure you want to cancel the order for '+po.buyer+'?');
+            confirm.textContent('Are you sure you want to cancel the order for '+po.buyer+'?');
             confirm.targetEvent(ev).ok('Yes').cancel('Cancel');
 
         $mdDialog.show(confirm).then(function() {

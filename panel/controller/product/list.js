@@ -85,7 +85,7 @@ angular.module('App').controller('ProductController', function ($rootScope, $sco
 
 	self.deleteProduct = function(ev, p) {
 		var confirm = $mdDialog.confirm().title('Confirm Deletion');
-			confirm.content('Are you sure you want to delete this product: '+p.name+'?');
+			confirm.textContent('Are you sure you want to delete this product: '+p.name+'?');
 			confirm.targetEvent(ev).ok('Yes').cancel('Cancel');
 			
 		var dir = "../../../uploads/product/";

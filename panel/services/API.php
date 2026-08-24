@@ -287,6 +287,30 @@ class API {
 	private function getProductAuctionDetails(){
 		$this->client->findProductAuctionDetails();
 	}
+	private function getOneProductAuction(){
+		$this->user->checkAuthorization();
+		$this->product_auction->findOne();
+	}
+	private function getAllProductAuctionByPage(){
+		$this->user->checkAuthorization();
+		$this->product_auction->findAllByPage();
+	}
+	private function getAllProductAuctionCount(){
+		$this->user->checkAuthorization();
+		$this->product_auction->allCount();
+	}
+	private function insertOneProductAuction(){
+		$this->user->checkAuthorization();
+		$this->product_auction->insertAdmin();
+	}
+	private function updateOneProductAuction(){
+		$this->user->checkAuthorization();
+		$this->product_auction->updateAdmin();
+	}
+	private function deleteOneProductAuction(){
+		$this->user->checkAuthorization();
+		$this->product_auction->deleteAdmin();
+	}
 
 	/*
 	 * TABLE NEWS_INFO TRANSACTION -------------------------------------------------------------------------------------

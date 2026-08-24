@@ -1,5 +1,6 @@
 <?php
 require_once(realpath(dirname(__FILE__) . "/tools/rest.php"));
+require_once(realpath(dirname(__FILE__) . "/table/ProductAuction.php"));
 
 /*
  * This class handle all data display at dashboard
@@ -15,6 +16,7 @@ class DASHBOARD extends REST{
     private $category 				= NULL;
     private $user 					= NULL;
     private $news_info 				= NULL;
+	private $product_auction		= NULL;
     private $currency 				= NULL;
     private $config 				= NULL;
 
@@ -29,6 +31,7 @@ class DASHBOARD extends REST{
         $this->product_image = new ProductImage($this->db);
         $this->category = new Category($this->db);
         $this->news_info = new NewsInfo($this->db);
+		$this->product_auction = new ProductAuction($this->db);
         $this->currency = new Currency($this->db);
         $this->config = new Config($this->db);
     }
@@ -37,6 +40,7 @@ class DASHBOARD extends REST{
         $order = array('waiting' => 0, 'processed' => 0, 'total' => 0);
         $product = array('published' => 0, 'draft' => 0, 'ready_stock' => 0, 'out_of_stock' => 0, 'suspend' => 0 );
         $category = array('published' => 0, 'draft' => 0);
+		$auction = array('scheduled' => 0, 'active' => 0, 'ended' => 0, 'total' => 0);
 
         $order['waiting'] = $this->product_order->countByStatusPlain('WAITING');
         $order['processed'] = $this->product_order->countByStatusPlain('PROCESSED');
@@ -51,7 +55,12 @@ class DASHBOARD extends REST{
         $category['published'] = $this->category->countByDraftPlain(0);
         $category['draft'] = $this->category->countByDraftPlain(1);
 
-        $data = array('order' => $order, 'product' => $product, 'category' => $category);
+		$auction['scheduled'] = $this->product_auction->countByStatePlain('scheduled');
+		$auction['active'] = $this->product_auction->countByStatePlain('active');
+		$auction['ended'] = $this->product_auction->countByStatePlain('ended');
+		$auction['total'] = $this->product_auction->countAllPlain();
+
+        $data = array('order' => $order, 'product' => $product, 'category' => $category, 'auction' => $auction);
         $this->show_response($data);
     }
 

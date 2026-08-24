@@ -70,7 +70,7 @@ angular.module('App').controller('NewsController', function ($rootScope, $scope,
 
 	self.deleteNewsInfo = function(ev, n) {
 		var confirm = $mdDialog.confirm().title('Delete Confirmation');
-			confirm.content('Are you sure you want to delete this news item: '+n.title+'?');
+			confirm.textContent('Are you sure you want to delete this news item: '+n.title+'?');
 			confirm.targetEvent(ev).ok('Yes').cancel('Cancel');
 			
 		var dir = "../../../uploads/news/";

@@ -12,6 +12,7 @@ angular.module('App').controller('DashboardController', function ($rootScope, $s
         self.order = resp.data.order;
         self.product = resp.data.product;
         self.category = resp.data.category;
+        self.auction = resp.data.auction;
     });
 
     request.getDashboardOthers().then(function (resp) {
