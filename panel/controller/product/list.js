@@ -3,7 +3,7 @@ angular.module('App').controller('ProductController', function ($rootScope, $sco
 	var root = $rootScope;
 
 	// not login checker
-	if (!root.isCookieExist()) { window.location.href = '#login'; }
+	if (!root.isCookieExist()) { window.location.href = '#/login'; }
 	
 	root.pagetitle = 'Products';
 	self.loading = true;
@@ -22,7 +22,7 @@ angular.module('App').controller('ProductController', function ($rootScope, $sco
 	// receiver barAction from rootScope
 	self.$on('barAction', function (event, data) {		
 		root.setCurProductId("");
-		window.location.href = '#create_product';
+		window.location.href = '#/create_product';
 	});
 	
 	// receiver submitSearch from rootScope
@@ -69,7 +69,7 @@ angular.module('App').controller('ProductController', function ($rootScope, $sco
 	
 	self.editProduct = function(ev, p) {
 		root.setCurProductId(p.id);
-		window.location.href = '#create_product';
+		window.location.href = '#/create_product';
 	};
 	
 	self.detailsProduct = function(ev, p) {

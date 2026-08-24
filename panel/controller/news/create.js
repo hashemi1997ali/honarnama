@@ -1,6 +1,6 @@
 angular.module('App').controller('AddNewsController', function ($rootScope, $scope, $http, $mdToast, $mdDialog, $route, $timeout, request) {
 	// not login checker
-	if (!$rootScope.isCookieExist()) window.location.href = '#login';
+	if (!$rootScope.isCookieExist()) window.location.href = '#/login';
 	
 	// define variable
 	var self 		= $scope, root = $rootScope;
@@ -97,7 +97,7 @@ angular.module('App').controller('AddNewsController', function ($rootScope, $sco
 			$timeout(function(){ // give delay for good UI
 				if(self.resp_submit.status == 'success'){
 				    root.showConfirmDialogSimple('', self.resp_submit.msg, function(){
-				        window.location.href = '#news';
+				        window.location.href = '#/news';
 				    });
 				}else{
 				    root.showInfoDialogSimple('Could not save the news item', self.resp_submit.msg);
@@ -119,7 +119,7 @@ angular.module('App').controller('AddNewsController', function ($rootScope, $sco
 	};
 
 
-	self.cancel = function () { window.location.href = '#news'; };
+	self.cancel = function () { window.location.href = '#/news'; };
 	self.isNewEntry = function () { return is_new; };
 
 	/* dialog View Image*/

@@ -1,6 +1,6 @@
 angular.module('App').controller('AddOrderController', function ($rootScope, $scope, $http, $mdToast, $mdDialog, $route, $timeout, request) {
 	// not login checker
-	if (!$rootScope.isCookieExist()) window.location.href = '#login';
+	if (!$rootScope.isCookieExist()) window.location.href = '#/login';
 	
 	// define variable
 	var self 		= $scope, root = $rootScope;
@@ -126,7 +126,7 @@ angular.module('App').controller('AddOrderController', function ($rootScope, $sc
 			$timeout(function(){ // give delay for good UI
 				if(self.resp_submit.status == 'success'){
 				    root.showConfirmDialogSimple('', self.resp_submit.msg, function(){
-				        window.location.href = '#order';
+				        window.location.href = '#/order';
 				    });
 				}else{
                     root.showInfoDialogSimple('', self.resp_submit.msg);
@@ -166,7 +166,7 @@ angular.module('App').controller('AddOrderController', function ($rootScope, $sc
         }
     };
 
-	self.cancel = function () { window.location.href = '#order'; };
+	self.cancel = function () { window.location.href = '#/order'; };
 	self.isNewEntry = function () { return is_new; };
     self.getPriceTotal = function (pod) { return parseFloat(pod.price_item*pod.amount).toFixed(2); };
 

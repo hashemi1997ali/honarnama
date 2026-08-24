@@ -2,7 +2,7 @@ angular.module('App').controller('CategoryController', function ($rootScope, $sc
 	var self = $scope;
 	var root = $rootScope;
 
-	if (!root.isCookieExist()) { window.location.href = '#login'; }
+	if (!root.isCookieExist()) { window.location.href = '#/login'; }
 
 	root.search_enable = true;
 	root.toolbar_menu = { title: 'Add Category' };
@@ -11,7 +11,7 @@ angular.module('App').controller('CategoryController', function ($rootScope, $sc
 	// receiver barAction from rootScope
 	self.$on('barAction', function (event, data) {
 		root.setCurCategoryId("");
-		window.location.href = '#create_category';
+		window.location.href = '#/create_category';
 	});
 	
 	// receiver submitSearch from rootScope
@@ -50,7 +50,7 @@ angular.module('App').controller('CategoryController', function ($rootScope, $sc
 	
 	self.editCategory = function(ev, c) {
 		root.setCurCategoryId(c.id);
-		window.location.href = '#create_category';
+		window.location.href = '#/create_category';
 	};
 
 	self.deleteCategory = function(ev, c) {

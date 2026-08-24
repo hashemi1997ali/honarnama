@@ -1,13 +1,13 @@
 body {
   overflow: hidden;
   background-color: #EEEEEE;
-  direction: rtl;
+  direction: ltr;
   font-family: Tahoma, Arial, sans-serif;
 }
 
 * {
   font-family: Tahoma, Arial, sans-serif;
-  direction: rtl;
+  direction: ltr;
 }
 
 a, p, span, h1, h2, h3, h4, h5, h6 {
@@ -18,17 +18,51 @@ a, p, span, h1, h2, h3, h4, h5, h6 {
 md-list-item p,
 .table > tbody > tr > td,
 .table > thead > tr > th {
-  text-align: right;
+  text-align: left;
 }
 
 md-checkbox .md-container {
   direction: rtl !important;
-  right: 0 !important;
+  left: 0 !important;
+  right: auto !important;
 }
 
 .md-label span {
-  margin-left: 0 !important;
-  margin-right: 25px !important;
+  margin-left: 25px !important;
+  margin-right: 0 !important;
+}
+
+.login-form {
+  min-width: 300px;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+
+.login-field label {
+  color: #616161;
+  font-size: 13px;
+  margin-bottom: 7px;
+}
+
+.login-input {
+  background: #fff;
+  border: 1px solid #bdbdbd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 16px;
+  outline: none;
+  padding: 11px 12px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  width: 100%;
+}
+
+.login-input:focus {
+  border-color: #4DB151;
+  box-shadow: 0 0 0 2px rgba(77, 177, 81, 0.18);
 }
 
 md-whiteframe {

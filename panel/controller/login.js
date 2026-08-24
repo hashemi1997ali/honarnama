@@ -8,7 +8,7 @@ angular.module('App').controller('LoginController', function ($rootScope, $scope
 
 	if (root.isCookieExist()) {
 		root.isLogin = false;
-		window.location.href = '#dashboard';
+		window.location.href = '#/dashboard';
 		return;
 	}
 
@@ -26,7 +26,7 @@ angular.module('App').controller('LoginController', function ($rootScope, $scope
 				root.saveCookies(resp.user.id, resp.user.name, resp.user.email, resp.user.password);
 				root.isLogin = false;
 				showToast('Logged in successfully');
-				window.location.href = '#dashboard';
+				window.location.href = '#/dashboard';
 				return;
 			}
 			showToast(resp && resp.msg ? resp.msg : 'Login failed');

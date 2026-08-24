@@ -1,5 +1,5 @@
 angular.module('App').controller('DashboardController', function ($rootScope, $scope, $http, $mdToast, $cookies, request) {
-	if (!$rootScope.isCookieExist()) { window.location.href = '#login'; }
+	if (!$rootScope.isCookieExist()) { window.location.href = '#/login'; }
 
 	var self = $scope;
 	var root = $rootScope;

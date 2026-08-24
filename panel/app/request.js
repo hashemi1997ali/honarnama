@@ -9,6 +9,13 @@ angular.module('App').factory("request", function ($http, $cookies) {
 	var obj = {};
 	var token = $cookies.get(window.location.origin + '_session_password');
 	var config = { headers: { 'Token': token } };
+	obj.setToken = function (value) {
+		if (value) {
+			config.headers.Token = value;
+		} else {
+			delete config.headers.Token;
+		}
+	};
 
 	// DASHBOARD ------------------------------------------------------------------------------
 	obj.getDashboardProduct = function () {

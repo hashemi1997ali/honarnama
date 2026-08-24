@@ -29,8 +29,9 @@ angular.module('App').config(function ($mdThemingProvider) {
 
 /* Menu Route Configuration
  */
-angular.module('App').config(['$routeProvider',
-	function ($routeProvider) {
+angular.module('App').config(['$routeProvider', '$locationProvider',
+	function ($routeProvider, $locationProvider) {
+		$locationProvider.hashPrefix('');
 		$routeProvider.
 		
 		when('/dashboard', { templateUrl: 'view/dashboard/dashboard.html', controller: 'DashboardController' }).

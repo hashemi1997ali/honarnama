@@ -1,6 +1,6 @@
 angular.module('App').controller('AddProductController', function ($rootScope, $scope, $http, $mdToast, $mdDialog, $route, $timeout, request) {
 	// not login checker
-	if (!$rootScope.isCookieExist()) window.location.href = '#login';
+	if (!$rootScope.isCookieExist()) window.location.href = '#/login';
 	
 	// define variable
 	var self 		= $scope, root = $rootScope;
@@ -142,7 +142,7 @@ angular.module('App').controller('AddProductController', function ($rootScope, $
 			$timeout(function(){ // give delay for good UI
 				if(self.resp_submit.status == 'success'){
                     root.showConfirmDialogSimple('', self.resp_submit.msg, function(){
-                        window.location.href = '#product';
+                        window.location.href = '#/product';
                     });
 				}else{
                     root.showInfoDialogSimple('', self.resp_submit.msg);
@@ -218,7 +218,7 @@ angular.module('App').controller('AddProductController', function ($rootScope, $
 		}
 	}
 
-	self.cancel = function () { window.location.href = '#product'; };
+	self.cancel = function () { window.location.href = '#/product'; };
 	self.isNewEntry = function () { return is_new; };
 
 	/* dialog View Image*/

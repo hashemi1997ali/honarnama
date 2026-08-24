@@ -16,12 +16,12 @@ angular.module('App').controller('RootCtrl', function ($rootScope, $scope, $mdSi
      */
     self.sidenav = {
 		actions: [
-			{ name: 'Dashboard', icon: 'store', link: '#dashboard', sub: false },
-			{ name: 'Orders', icon: 'event_note', link: '#order', sub: false },
-			{ name: 'Products', icon: 'widgets', link: '#product', sub: false },
-			{ name: 'Categories', icon: 'dns', link: '#category', sub : false },
-			{ name: 'News', icon: 'subject', link: '#news', sub: false },
-			{ name: 'Settings', icon: 'settings', link: '#setting', sub: false },
+			{ name: 'Dashboard', icon: 'store', link: '#/dashboard', sub: false },
+			{ name: 'Orders', icon: 'event_note', link: '#/order', sub: false },
+			{ name: 'Products', icon: 'widgets', link: '#/product', sub: false },
+			{ name: 'Categories', icon: 'dns', link: '#/category', sub : false },
+			{ name: 'News', icon: 'subject', link: '#/news', sub: false },
+			{ name: 'Settings', icon: 'settings', link: '#/setting', sub: false },
 		]
 	};
 
@@ -91,7 +91,7 @@ angular.module('App').controller('RootCtrl', function ($rootScope, $scope, $mdSi
         $mdDialog.show(confirm).then(function () {
             // clear session
             root.clearCookies();
-            window.location.href = '#login';
+            window.location.href = '#/login';
             $mdToast.show($mdToast.simple().textContent('Logged out successfully').position('bottom right'));
         });
     };
@@ -102,6 +102,7 @@ angular.module('App').controller('RootCtrl', function ($rootScope, $scope, $mdSi
         $cookies.remove(self.uid_name, null);
         $cookies.remove(self.uid_email, null);
         $cookies.remove(self.uid_password, null);
+		request.setToken(null);
     };
 
     root.saveCookies = function (id, name, email, password) {
@@ -111,7 +112,12 @@ angular.module('App').controller('RootCtrl', function ($rootScope, $scope, $mdSi
         $cookies.put(self.uid_key, id, {expires: now});
         $cookies.put(self.uid_name, name);
         $cookies.put(self.uid_email, email);
-        if (password != '*****') $cookies.put(self.uid_password, password);
+        if (password != '*****') {
+			$cookies.put(self.uid_password, password);
+			request.setToken(password);
+		} else {
+			request.setToken($cookies.get(self.uid_password));
+		}
     };
 
     root.isCookieExist = function () {
@@ -144,7 +150,7 @@ angular.module('App').controller('RootCtrl', function ($rootScope, $scope, $mdSi
     root.sub_obj = '';
     root.subMenuAction = function (ev, obj) {
         root.sub_obj = obj.cat_id;
-        window.location.href = '#place';
+        window.location.href = '#/place';
         root.pagetitle = 'Location: ' + obj.name;
     };
 

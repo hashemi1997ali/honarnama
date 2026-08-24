@@ -1,5 +1,5 @@
 angular.module('App').controller('OrderController', function ($rootScope, $scope, $http, $mdToast, $mdDialog, $cookies, request) {
-	if (!$scope.isCookieExist()) { window.location.href = '#login'; }
+	if (!$scope.isCookieExist()) { window.location.href = '#/login'; }
 
     var self = $scope;
 	var root = $rootScope;
@@ -11,7 +11,7 @@ angular.module('App').controller('OrderController', function ($rootScope, $scope
 	// receiver barAction from rootScope
     self.$on('barAction', function (event, data) {
         root.setCurOrderId("");
-        window.location.href = '#create_order';
+        window.location.href = '#/create_order';
     });
 
     // receiver submitSearch from rootScope
@@ -50,7 +50,7 @@ angular.module('App').controller('OrderController', function ($rootScope, $scope
 
     self.editOrder = function(ev, po) {
         root.setCurOrderId(po.id);
-        window.location.href = '#create_order';
+        window.location.href = '#/create_order';
     };
 
 	self.detailsOrder = function(ev, po) {
@@ -190,7 +190,7 @@ function DetailsOrderControllerDialog($scope, $rootScope, $mdDialog, request, $m
                     $scope.edit   = function() {
                         $mdDialog.cancel();
                         root.setCurOrderId(od.id);
-                        window.location.href = '#create_order';
+                        window.location.href = '#/create_order';
                     };
                 }
             });

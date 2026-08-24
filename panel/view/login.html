@@ -7,20 +7,20 @@
           </div>
       </md-toolbar>
       <md-card-content>
-          <form role="form" name="loginForm" class="md-padding">
+          <form role="form" name="loginForm" class="md-padding login-form" ng-submit="doLogin()" novalidate>
 
-              <md-input-container>
-                <label>Username</label>
-                <input name="username" ng-model="userdata.username" required/>
-              </md-input-container>
+              <div class="login-field">
+                <label for="login-username">Username</label>
+                <input id="login-username" class="login-input" name="username" autocomplete="username" ng-model="userdata.username" required/>
+              </div>
 
-              <md-input-container>
-                <label>Password</label>
-                <input type="password" name="password" ng-model="userdata.password" required />
-              </md-input-container>
+              <div class="login-field">
+                <label for="login-password">Password</label>
+                <input id="login-password" class="login-input" type="password" name="password" autocomplete="current-password" ng-model="userdata.password" required />
+              </div>
 
               <div layout="column" layout-align="center center">
-                <md-button ng-if="!submit_loading" ng-disabled="loginForm.$invalid" ng-click="doLogin()" class="md-raised md-accent" flex="50">Log In</md-button>
+                <md-button type="submit" ng-if="!submit_loading" ng-disabled="loginForm.$invalid" class="md-raised md-accent" flex="50">Log In</md-button>
                 <md-progress-circular ng-if="submit_loading" class="md-accent" md-mode="indeterminate" md-diameter="30px"></md-progress-circular>
               </div>
           </form>

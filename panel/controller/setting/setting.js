@@ -2,7 +2,7 @@ angular.module('App').controller('SettingController', function ($rootScope, $sco
 	var self = $scope;
 	var root = $rootScope;
 
-	if (!root.isCookieExist()) { window.location.href = '#login'; }
+	if (!root.isCookieExist()) { window.location.href = '#/login'; }
 	root.closeAndDisableSearch();
 	root.toolbar_menu = null;
 	$rootScope.pagetitle = 'Settings';

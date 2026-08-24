@@ -1,6 +1,6 @@
 angular.module('App').controller('NewsController', function ($rootScope, $scope, $http, $mdToast, $mdDialog, $route, request) {
 	// not login checker
-	if (!$rootScope.isCookieExist()) { window.location.href = '#login'; }
+	if (!$rootScope.isCookieExist()) { window.location.href = '#/login'; }
 
 	var self = $scope;
 	var root = $rootScope;
@@ -14,7 +14,7 @@ angular.module('App').controller('NewsController', function ($rootScope, $scope,
 	// receiver barAction from rootScope
 	self.$on('barAction', function (event, data) {		
 		root.setCurNewsInfoId("");
-		window.location.href = '#create_news';
+		window.location.href = '#/create_news';
 	});
 	
 	// receiver submitSearch from rootScope
@@ -54,7 +54,7 @@ angular.module('App').controller('NewsController', function ($rootScope, $scope,
 	
 	self.editNewsInfo = function(ev, n) {
 		root.setCurNewsInfoId(n.id);
-		window.location.href = '#create_news';
+		window.location.href = '#/create_news';
 	};
 	
 	self.detailsNewsInfo = function(ev, n) {

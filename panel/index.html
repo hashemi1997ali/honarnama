@@ -5,6 +5,7 @@
   <meta charset="UTF-8"/>
   <title>Honarnama Admin Panel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link rel="icon" href="lib/css/icons/web_icon.svg" type="image/svg+xml"/>
   <link href="lib/css/angular-material.min.css" rel="stylesheet prefetch" type="text/css"/>
   <link href="lib/css/fonts/material.css" rel="stylesheet" type="text/css"/>
   <link href="lib/css/style.css" rel="stylesheet" type="text/css"/>
@@ -64,7 +65,7 @@
 						</md-button>
 						<md-menu-content width=3>
 							<md-menu-item>
-							<md-button layout-fill md-ink-ripple ng-click="directHref('#setting')">Settings</md-button>
+							<md-button layout-fill md-ink-ripple ng-click="directHref('#/setting')">Settings</md-button>
 							</md-menu-item>
 
 							<md-menu-item>
@@ -132,20 +133,16 @@
 						  <md-icon>more_vert</md-icon>
 						</md-button>
 						<md-menu-content width=3>
-						  <md-menu-item> <md-button layout-fill md-ink-ripple ng-click="directHref('#setting')">Settings</md-button> </md-menu-item>
+						  <md-menu-item> <md-button layout-fill md-ink-ripple ng-click="directHref('#/setting')">Settings</md-button> </md-menu-item>
 						  <md-menu-item> <md-button layout-fill md-ink-ripple ng-click="doLogout($event)">Log Out</md-button></md-menu-item>
 						</md-menu-content>
 					</md-menu>
 				</div>
 			</md-toolbar>
 
-			<!-- CONTENT PAGE -->
-			<md-content layout ng-hide="isLogin" md-scroll-y flex class="md-padding" ng-style="{'background' : bgColor}">
-				<div ng-view layout-fill flex></div>
-			</md-content>
-
-			<!-- CONTENT LOGIN -->
-			<md-content layout ng-hide="!isLogin" md-scroll-y layout-align="center center" flex class="md-padding" ng-style="{'background' : bgColor}">
+			<!-- Angular Route supports one active ng-view. The previous duplicate views
+			     instantiated every controller twice and caused Angular Material digest loops. -->
+			<md-content layout md-scroll-y flex class="md-padding" ng-style="{'background' : bgColor}">
 				<div ng-view layout-fill flex></div>
 			</md-content>
 		</div>

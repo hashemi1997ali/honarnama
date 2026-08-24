@@ -1,6 +1,6 @@
 angular.module('App').controller('AddCategoryController', function ($rootScope, $scope, $http, $mdToast, $mdDialog, $route, $timeout, request) {
 	// not login checker
-	if (!$rootScope.isCookieExist()) window.location.href = '#login';
+	if (!$rootScope.isCookieExist()) window.location.href = '#/login';
 	
 	// define variable
 	var self 		= $scope, root = $rootScope;
@@ -95,7 +95,7 @@ angular.module('App').controller('AddCategoryController', function ($rootScope, 
 			$timeout(function(){ // give delay for good UI
 				if(self.resp_submit.status == 'success'){
 				    root.showConfirmDialogSimple('', self.resp_submit.msg, function(){
-				        window.location.href = '#category';
+				        window.location.href = '#/category';
 				    });
 				}else{
                     root.showInfoDialogSimple('', self.resp_submit.msg);
@@ -123,7 +123,7 @@ angular.module('App').controller('AddCategoryController', function ($rootScope, 
 	};
 
 
-	self.cancel = function () { window.location.href = '#category'; };
+	self.cancel = function () { window.location.href = '#/category'; };
 	self.isNewEntry = function () { return is_new; };
 
 	/* dialog View Image*/
