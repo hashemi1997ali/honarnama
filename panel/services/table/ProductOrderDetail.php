@@ -86,12 +86,12 @@ class ProductOrderDetail extends REST {
             );
 
             if (empty($product)) {
-                $status['msg'] = 'محصول موجود نیست';
+                $status['msg'] = 'Product not found';
                 $response['status'] = 'failed';
             } else {
                 $status['stock'] = (int)$product['stock'];
                 if ((int)$product['stock'] < $amount) {
-                    $status['msg'] = 'موجودی کافی نیست';
+                    $status['msg'] = 'Insufficient stock';
                     $response['status'] = 'failed';
                 }
             }

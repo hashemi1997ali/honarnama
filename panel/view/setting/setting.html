@@ -1,15 +1,15 @@
 <md-card class="md-whiteframe-1dp md-padding">
 	<md-card-content>
 		<form role="form" name="thisForm">
-			<h2 class="md-title">تنظیمات اپلیکیشن</h2>
+			<h2 class="md-title">Application Settings</h2>
 			<md-divider></md-divider>
-			<p class="hint"><b>مالیات</b> : این مالیات به قیمت کنونی هر محصولی اضافه می شود.
-			<br><b>اخبار ویژه</b> : حداکثر تعداد خبر نمایشی در صفحه اصلی اپلیکیشن. تعداد پیشنهادی:5</p>
+			<p class="hint"><b>Tax</b>: added to each product price at checkout.
+			<br><b>Featured news</b>: maximum number of items shown on the app home screen. Recommended: 5.</p>
 
 			<br>
 			<div layout="row">
 				<md-input-container flex="30">
-					<label>واحد پولی</label>
+					<label>Currency</label>
 					<md-select ng-model="selected_currency">
 						<md-option ng-repeat="cur in arr_currency" value="{{cur.code}}" selected="{{cur.code===conf_currency?'selected':''}}"> 
 							{{cur.code}} - {{cur.name}} 
@@ -20,57 +20,57 @@
 
 			<div layout="row" layout-align="start center">
 				<md-input-container flex="10">
-					<label>مالیات</label>
+					<label>Tax</label>
 					<input type="number" required name="tax" ng-model="conf_tax" maxlength="4">
 				</md-input-container>
 				<legend flex="5"><b>%</b></legend>
 				<md-input-container flex="15">
-					<label>اخبار ویژه</label>
+					<label>Featured news</label>
 					<input type="number" required name="featured_news" ng-model="conf_featured_news" maxlength="1">
 				</md-input-container>
 			</div>
 
 			<div layout="row" layout-align="start start">
 				<md-input-container flex="50">
-					<label>نوع پرداخت</label>
+					<label>Shipping methods</label>
 					<md-chips ng-model="conf_shipping" required></md-chips>
 				</md-input-container>
-				<md-button md-no-ink class="md-primary" ng-click="resetShipping()" style="margin-top:20px;">پاک کردن</md-button>
+				<md-button md-no-ink class="md-primary" ng-click="resetShipping()" style="margin-top:20px;">Clear</md-button>
 			</div>
 
 			<br>
-			<h2 class="md-title">تنظیمات ارسال ایمیل</h2>
+			<h2 class="md-title">Email Settings</h2>
 			<md-divider></md-divider>
 			<p class="hint">
-				<b>ارسال ایمیل هنگام ثبت سفارش جدید</b> : ارسال ایمیل وضعیت سفارش محصول به <i>مشتری</i> و <i>ادمین های دریافت کننده ایمیل</i>.
-				<br><b>ارسال ایمیل پس از پردازش در سیستم</b> : اطلاع رسانی موقعی که وضعیت محصول به پردازش شده تغییر می کند و این ایمیل فقط برای <i>مشتری</i> ارسال می شود.
-				<br><b>ایمیل ارسال کننده</b> : موقعی که مشتری به ایمیل خرید پاسخ می دهد، این اکانت ایمیل محتوای پیام را دریافت می کند.</p>
+				<b>Email on new order</b>: sends order details to the <i>customer</i> and configured <i>admin recipients</i>.
+				<br><b>Email after processing</b>: notifies the <i>customer</i> when an order is processed.
+				<br><b>Sender email</b>: receives customer replies to order messages.</p>
 			<br>
 
 			<div layout="column" layout-align="start start">
-				<md-checkbox ng-model="conf_email_notif_on_order">ارسال ایمیل هنگام ثبت سفارش جدید</md-checkbox>
-				<md-checkbox ng-model="conf_email_notif_on_order_process">ارسال ایمیل پس از پردازش در سیستم</md-checkbox>
+				<md-checkbox ng-model="conf_email_notif_on_order">Email on new order</md-checkbox>
+				<md-checkbox ng-model="conf_email_notif_on_order_process">Email after processing</md-checkbox>
 			</div>
 			<br><br>
 			<div layout="row" layout-align="start center">
 				<md-input-container flex="30">
-					<label>ایمیل ارسال کننده</label>
+					<label>Sender email</label>
 					<input type="text" required ng-model="conf_email_reply_to" maxlength="50">
 				</md-input-container>
 			</div>
 
 			<div layout="row" layout-align="start start">
 				<md-input-container flex="50">
-					<label>ادمین های دریافت کننده ایمیل</label>
+					<label>Admin email recipients</label>
 					<md-chips ng-model="conf_email_receiver" required readonly="!conf_email_notif_on_order"></md-chips>
 				</md-input-container>
-				<md-button md-no-ink class="md-primary" ng-click="resetEmailReceiver()" style="margin-top:20px;">پاک کردن</md-button>
+				<md-button md-no-ink class="md-primary" ng-click="resetEmailReceiver()" style="margin-top:20px;">Clear</md-button>
 			</div>
 			<br><br>
 
 			<div layout="row" layout-align="end center" flex="100">
 				<md-button ng-if="!submit_loading_conf" ng-disabled="thisForm.$invalid || !isReadySubmitConf()" ng-click="submitConf()" class="md-raised md-accent">
-					ذخیره
+					Save
 				</md-button>
 				<md-progress-circular ng-if="submit_loading_conf" class="md-accent" md-mode="indeterminate" md-diameter="30px"></md-progress-circular>
 			</div>
@@ -82,24 +82,24 @@
 <br>
 <md-card class="md-whiteframe-1dp md-padding">
 	<md-card-content>
-		<h2 class="md-title">تنظیمات پنل کاربر</h2>
+		<h2 class="md-title">Panel User Settings</h2>
 		<form role="form" name="thisFormUser">
 			<div layout="row">
 				<md-input-container flex="30">
-					<label>نام</label>
+					<label>Name</label>
 					<input name="name" minlength="1" maxlength="50" ng-model="userdata.name" required />
 					<div ng-messages="thisForm.name.$error">
-						<div ng-message='required'>اجباری.</div>
-						<div ng-message='minlength'>حداقل 1 کاراکتر</div>
+						<div ng-message='required'>Required.</div>
+						<div ng-message='minlength'>At least 1 character.</div>
 					</div>
 				</md-input-container>
 				<div flex="5"></div>
 				<md-input-container flex="30">
-					<label>ایمیل</label>
+					<label>Email</label>
 					<input type="email" minlength="5" maxlength="50" name="email" ng-model="userdata.email" required />
 					<div ng-messages="thisForm.email.$error">
-						<div ng-message='required'>اجباری.</div>
-						<div ng-message='minlength'>حداقل 10 کاراکتر.</div>
+						<div ng-message='required'>Required.</div>
+						<div ng-message='minlength'>At least 10 characters.</div>
 					</div>
 				</md-input-container>
 			</div>
@@ -107,35 +107,35 @@
 
 			<div layout="row">
 				<md-input-container flex="30">
-					<label>نام کاربری</label>
+					<label>Username</label>
 					<input name="username" minlength="1" maxlength="20" ng-model="userdata.username" required />
 					<div ng-messages="thisForm.username.$error">
-						<div ng-message='required'>اجباری.</div>
-						<div ng-message='minlength'>حداقل 5 کاراکتر.</div>
+						<div ng-message='required'>Required.</div>
+						<div ng-message='minlength'>At least 5 characters.</div>
 					</div>
 				</md-input-container>
 			</div>
 			<div layout="row">
 				<md-input-container flex="30">
-					<label>پسورد</label>
+					<label>Password</label>
 					<input type="password" name="password" ng-model="userdata.password" required />
 					<div ng-messages="thisForm.password.$error">
-						<div ng-message='required'>اجباری.</div>
+						<div ng-message='required'>Required.</div>
 					</div>
 				</md-input-container>
 				<div flex="5"></div>
 				<md-input-container flex="30">
-					<label>تایید پسورد</label>
+					<label>Confirm password</label>
 					<input type="password" name="re_password" ng-model="re_password" />
-					<div ng-if="!isPasswordMatch() || !re_passwordValid" class="red-alert">پسورد ها با هم مطابقت ندارند.</div>
+					<div ng-if="!isPasswordMatch() || !re_passwordValid" class="red-alert">Passwords do not match.</div>
 				</md-input-container>
 			</div>
 			<div layout="row" layout-align="end center" flex="100">
 				<md-button ng-if="!submit_loading" ng-disabled="!isPasswordMatch() || thisFormUser.$invalid || demo_version || isClean()" ng-click="submit(true)" class="md-raised md-accent">
-					افزودن جدید
+					Add New
 				</md-button>
 				<md-button ng-if="!submit_loading" ng-disabled="!isPasswordMatch() || thisFormUser.$invalid || demo_version || isClean()" ng-click="submit(false)" class="md-raised md-accent">
-					بروز رسانی
+					Update
 				</md-button>
 				<md-progress-circular ng-if="submit_loading" class="md-accent" md-mode="indeterminate" md-diameter="30px"></md-progress-circular>
 			</div>

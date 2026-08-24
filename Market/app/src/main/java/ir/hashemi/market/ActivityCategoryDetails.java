@@ -2,7 +2,6 @@ package ir.hashemi.market;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,7 +25,6 @@ import com.google.android.material.appbar.AppBarLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import ir.hashemi.market.adapter.AdapterProduct;
 import ir.hashemi.market.connection.API;
@@ -72,11 +70,6 @@ public class ActivityCategoryDetails extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category_details);
-
-        Configuration configuration = getResources().getConfiguration();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            configuration.setLayoutDirection(new Locale("fa"));
-        }
 
         parent_view = findViewById(android.R.id.content);
         category = (Category) getIntent().getSerializableExtra(EXTRA_OBJECT);

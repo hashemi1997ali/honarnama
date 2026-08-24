@@ -51,6 +51,9 @@ panel/uploads/product/*
 !panel/uploads/category/.gitkeep
 !panel/uploads/news/.gitkeep
 !panel/uploads/product/.gitkeep
+!panel/uploads/category/sample-*.jpg
+!panel/uploads/news/sample-*.jpg
+!panel/uploads/product/sample-*.jpg
 
 # Local database files and backups
 *.dump

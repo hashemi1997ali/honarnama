@@ -2,8 +2,6 @@ package ir.hashemi.market;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,7 +22,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
-import java.util.Locale;
 
 import ir.hashemi.market.adapter.AdapterOrderHistory;
 import ir.hashemi.market.adapter.AdapterShoppingCart;
@@ -47,11 +44,6 @@ public class ActivityOrderHistory extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_history);
-
-        Configuration configuration = getResources().getConfiguration();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            configuration.setLayoutDirection(new Locale("fa"));
-        }
 
         db = new DatabaseHandler(this);
         sharedPref = new SharedPref(this);

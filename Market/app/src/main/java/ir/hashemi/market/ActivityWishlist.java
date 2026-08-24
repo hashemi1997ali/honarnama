@@ -1,8 +1,6 @@
 package ir.hashemi.market;
 
 import android.content.DialogInterface;
-import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
@@ -20,7 +18,6 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import ir.hashemi.market.adapter.AdapterWishlist;
 import ir.hashemi.market.data.Constant;
@@ -39,11 +36,6 @@ public class ActivityWishlist extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wishlist);
-
-        Configuration configuration = getResources().getConfiguration();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            configuration.setLayoutDirection(new Locale("fa"));
-        }
 
         db = new DatabaseHandler(this);
 

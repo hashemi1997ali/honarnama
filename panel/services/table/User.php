@@ -34,7 +34,7 @@ class User extends REST {
         $username = isset($credentials['username']) ? trim($credentials['username']) : '';
         $password = isset($credentials['password']) ? $credentials['password'] : '';
         if ($username === '' || $password === '') {
-            $this->show_response(array('status' => 'failed', 'msg' => 'نام کاربری و پسورد نامعتبر است.'));
+            $this->show_response(array('status' => 'failed', 'msg' => 'Username and password are required.'));
         }
 
         $user = $this->db->get_one(
@@ -42,7 +42,7 @@ class User extends REST {
             array('username' => $username)
         );
         if (empty($user) || !$this->passwordMatches($password, $user['password'])) {
-            $this->show_response(array('status' => 'failed', 'msg' => 'نام کاربری یا پسورد وجود ندارد.'));
+            $this->show_response(array('status' => 'failed', 'msg' => 'Incorrect username or password.'));
         }
 
         if ($this->isLegacyMd5($user['password']) || password_needs_rehash($user['password'], PASSWORD_DEFAULT)) {
@@ -72,7 +72,7 @@ class User extends REST {
     public function updateOne() {
         if ($this->get_request_method() != "POST") $this->response('', 406);
         if ($this->conf->DEMO_VERSION) {
-            $this->show_response(array('status' => 'failed', 'msg' => 'متاسفانه این یک نسخه دمو می باشد.', 'data' => null));
+            $this->show_response(array('status' => 'failed', 'msg' => 'This action is disabled in the demo build.', 'data' => null));
         }
 
         $data = json_decode(file_get_contents("php://input"), true);
@@ -88,7 +88,7 @@ class User extends REST {
     public function insertOne() {
         if ($this->get_request_method() != "POST") $this->response('', 406);
         if ($this->conf->DEMO_VERSION) {
-            $this->show_response(array('status' => 'failed', 'msg' => 'متاسفانه این یک نسخه دمو می باشد.', 'data' => null));
+            $this->show_response(array('status' => 'failed', 'msg' => 'This action is disabled in the demo build.', 'data' => null));
         }
 
         $user = json_decode(file_get_contents("php://input"), true);

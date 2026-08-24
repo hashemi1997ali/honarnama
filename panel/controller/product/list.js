@@ -5,19 +5,19 @@ angular.module('App').controller('ProductController', function ($rootScope, $sco
 	// not login checker
 	if (!root.isCookieExist()) { window.location.href = '#login'; }
 	
-	root.pagetitle = 'محصول';
+	root.pagetitle = 'Products';
 	self.loading = true;
 	self.category_id = -1;
 	self.max_item = 20;
 	self.max_item_array = [];
 	for(var i = 1; i<5; i++){
 	    var _value = 20*i;
-	    var _text = _value+" آیتم";
+	    var _text = _value + " items";
 	    self.max_item_array.push({value:_value, text:_text});
 	}
 
 	root.search_enable = true;
-	root.toolbar_menu = { title: 'افزودن محصول' };
+	root.toolbar_menu = { title: 'Add Product' };
 
 	// receiver barAction from rootScope
 	self.$on('barAction', function (event, data) {		
@@ -32,7 +32,7 @@ angular.module('App').controller('ProductController', function ($rootScope, $sco
 	});
 
 	request.getAllCategory().then(function(resp){
-		var temp_category = {id:-1, name:'همه موضوعات'};
+		var temp_category = {id:-1, name:'All Categories'};
 		self.categories_data = resp.data;
 		self.categories_data.unshift(temp_category);
 	});
@@ -84,9 +84,9 @@ angular.module('App').controller('ProductController', function ($rootScope, $sco
 	};
 
 	self.deleteProduct = function(ev, p) {
-		var confirm = $mdDialog.confirm().title('تاییدیه حذف');
-			confirm.content('آیا اطمینان دارید می خواهید این محصول را حذف کنید : '+p.name+' ?');
-			confirm.targetEvent(ev).ok('بله').cancel('انصراف');
+		var confirm = $mdDialog.confirm().title('Confirm Deletion');
+			confirm.content('Are you sure you want to delete this product: '+p.name+'?');
+			confirm.targetEvent(ev).ok('Yes').cancel('Cancel');
 			
 		var dir = "../../../uploads/product/";
 		var images_obj = new Array();	
@@ -101,11 +101,11 @@ angular.module('App').controller('ProductController', function ($rootScope, $sco
 			request.deleteOneProduct(p.id).then(function(res){
 				if(res.status == 'success'){
 					request.deleteFiles(dir, images_obj).then(function(res){ });
-                    root.showConfirmDialogSimple('', 'محصول '+p.name+' <b>با موفقیت حذف شد</b>!', function(){
+                    root.showConfirmDialogSimple('', 'Product '+p.name+' was <b>deleted successfully</b>.', function(){
                         window.location.reload();
                     });
 				}else{
-                    root.showInfoDialogSimple('', 'متاسفانه این محصول حذف نشد : '+p.name);
+                    root.showInfoDialogSimple('', 'Could not delete product: '+p.name);
 				}
 			});
 		});
@@ -120,11 +120,11 @@ angular.module('App').controller('ProductController', function ($rootScope, $sco
             template:
             '<md-dialog ng-cloak aria-label="publishData">' +
             '  <md-dialog-content>' +
-            '   <h2 class="md-title">تاییدیه انتشار</h2> ' +
-            '   <p>آیا اطمینان دارید می خواهید این محصول را منتشر کنید : <b>{{obj.name}}</b> ?</p><br>' +
+            '   <h2 class="md-title">Confirm Publication</h2> ' +
+            '   <p>Are you sure you want to publish this product: <b>{{obj.name}}</b>?</p><br>' +
             '   <div layout="row"> <span flex></span>' +
-            '       <md-button ng-if="!submit_loading" class="md-warn" ng-click="cancel()" >انصراف</md-button>' +
-            '       <md-button ng-click="publish()" class="md-raised md-primary">بله</md-button>' +
+            '       <md-button ng-if="!submit_loading" class="md-warn" ng-click="cancel()" >Cancel</md-button>' +
+            '       <md-button ng-click="publish()" class="md-raised md-primary">Yes</md-button>' +
             '   </div>' +
             '  </md-dialog-content>' +
             '</md-dialog>'
@@ -136,11 +136,11 @@ angular.module('App').controller('ProductController', function ($rootScope, $sco
         	    $scope.obj.draft = 0;
                 request.updateOneProduct($scope.obj.id, $scope.obj).then(function(resp){
                     if(resp.status == 'success'){
-                        root.showConfirmDialogSimple('', 'محصول '+obj.name+' <b>با موفقیت منتشر شد</b>!', function(){
+                        root.showConfirmDialogSimple('', 'Product '+obj.name+' was <b>published successfully</b>.', function(){
                             window.location.reload();
                         });
                     }else{
-                        var failed_txt = 'متاسفانه این محصول منتشر نشد : '+obj.name;
+                        var failed_txt = 'Could not publish product: '+obj.name;
                         if(resp.msg != null) failed_txt = resp.msg;
                         root.showInfoDialogSimple('', failed_txt);
                     }

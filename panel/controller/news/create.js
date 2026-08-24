@@ -11,8 +11,8 @@ angular.module('App').controller('AddNewsController', function ($rootScope, $sco
 
 	root.search_enable 		= false;
 	root.toolbar_menu 		= null;
-	root.pagetitle 			= (is_new) ? 'افزودن خبر' : 'ویرایش خبر';
-	self.button_text 		= (is_new) ? 'ذخیره' : 'بروز رسانی';
+	root.pagetitle 			= (is_new) ? 'Add News' : 'Edit News';
+	self.button_text 		= (is_new) ? 'Save' : 'Update';
 	self.submit_loading 	= false;
 	self.image 				= {};
 	self.status_array 		= ["NORMAL", "FEATURED"];
@@ -40,7 +40,7 @@ angular.module('App').controller('AddNewsController', function ($rootScope, $sco
 		if (root.constrainFile(files[0])) {
 			self.image.valid = true;
 		}
-		$mdToast.show($mdToast.simple().textContent("فایل انتخاب شد").position('bottom right'));
+		$mdToast.show($mdToast.simple().textContent("File selected").position('bottom right'));
 	};
 
 
@@ -100,7 +100,7 @@ angular.module('App').controller('AddNewsController', function ($rootScope, $sco
 				        window.location.href = '#news';
 				    });
 				}else{
-				    root.showInfoDialogSimple('ذخیره اطلاعات ناموفق بود', self.resp_submit.msg);
+				    root.showInfoDialogSimple('Could not save the news item', self.resp_submit.msg);
 				}
 				self.submit_loading = false;
 			}, 1000);

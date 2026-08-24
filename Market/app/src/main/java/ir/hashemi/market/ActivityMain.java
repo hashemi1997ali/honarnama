@@ -3,8 +3,6 @@ package ir.hashemi.market;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
@@ -37,7 +35,6 @@ import com.google.android.material.navigation.NavigationView;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import ir.hashemi.market.data.DatabaseHandler;
 import ir.hashemi.market.data.SharedPref;
@@ -73,11 +70,6 @@ public class ActivityMain extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Configuration configuration = getResources().getConfiguration();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            configuration.setLayoutDirection(new Locale("fa"));
-        }
 
         activityMain = this;
         db = new DatabaseHandler(this);

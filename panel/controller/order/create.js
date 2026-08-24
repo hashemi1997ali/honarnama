@@ -11,8 +11,8 @@ angular.module('App').controller('AddOrderController', function ($rootScope, $sc
 
 	root.search_enable 		= false;
 	root.toolbar_menu 		= null;
-	root.pagetitle 			= (is_new) ? 'افزودن سفارش' : 'ویرایش سفارش';
-	self.button_text 		= (is_new) ? 'ذخیره' : 'بروز رسانی';
+	root.pagetitle 			= (is_new) ? 'Add Order' : 'Edit Order';
+	self.button_text 		= (is_new) ? 'Save' : 'Update';
 	self.is_new 			= angular.copy(is_new);
 	self.submit_loading 	= false;
 	self.status_array 		= (is_new) ? ["WAITING"] : ["WAITING", "CANCEL"];

@@ -1,8 +1,6 @@
 package ir.hashemi.market;
 
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -12,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import ir.hashemi.market.adapter.AdapterFullScreenImage;
 import ir.hashemi.market.utils.Tools;
@@ -30,11 +27,6 @@ public class ActivityFullScreenImage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_screen_image);
-
-        Configuration configuration = getResources().getConfiguration();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            configuration.setLayoutDirection(new Locale("fa"));
-        }
 
         viewPager = (ViewPager) findViewById(R.id.pager);
         text_page = (TextView) findViewById(R.id.text_page);

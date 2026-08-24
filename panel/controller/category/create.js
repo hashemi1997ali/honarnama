@@ -11,8 +11,8 @@ angular.module('App').controller('AddCategoryController', function ($rootScope, 
 
 	root.search_enable 		= false;
 	root.toolbar_menu 		= null;
-	root.pagetitle 			= (is_new) ? 'افزودن موضوع' : 'ویرایش موضوع';
-	self.button_text 		= (is_new) ? 'ذخیره' : 'بروز رسانی';
+	root.pagetitle 			= (is_new) ? 'Add Category' : 'Edit Category';
+	self.button_text 		= (is_new) ? 'Save' : 'Update';
 	self.submit_loading 	= false;
 	self.icon 				= {};
 	root.closeAndDisableSearch();
@@ -37,7 +37,7 @@ angular.module('App').controller('AddCategoryController', function ($rootScope, 
 		if (root.constrainFilePng(files[0])) {
 			self.icon.valid = true;
 		}
-		$mdToast.show($mdToast.simple().textContent("فایل انتخاب شد").position('bottom right'));
+		$mdToast.show($mdToast.simple().textContent("File selected").position('bottom right'));
 	};
 
 

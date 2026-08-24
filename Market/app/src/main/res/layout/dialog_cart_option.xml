@@ -116,7 +116,7 @@
         android:layout_marginLeft="@dimen/spacing_large"
         android:layout_marginRight="@dimen/spacing_large"
         android:layout_marginTop="@dimen/spacing_middle"
-        android:gravity="right"
+        android:gravity="end"
         android:orientation="horizontal">
 
         <Button

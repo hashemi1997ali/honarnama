@@ -144,7 +144,7 @@ INSERT INTO config (code, value) VALUES
     ('CURRENCY', 'IRT'),
     ('TAX', '0'),
     ('FEATURED_NEWS', '5'),
-    ('SHIPPING', '["پست پیشتاز"]'),
+    ('SHIPPING', '["Standard shipping","Express shipping"]'),
     ('EMAIL_NOTIF_ON_ORDER', 'FALSE'),
     ('EMAIL_NOTIF_ON_ORDER_PROCESS', 'FALSE'),
     ('EMAIL_REPLY_TO', ''),
@@ -152,8 +152,8 @@ INSERT INTO config (code, value) VALUES
 ON CONFLICT (code) DO NOTHING;
 
 INSERT INTO currency (code, name) VALUES
-    ('IRT', 'تومان ایران'),
-    ('IRR', 'ریال ایران'),
+    ('IRT', 'Iranian Toman'),
+    ('IRR', 'Iranian Rial'),
     ('USD', 'US Dollar'),
     ('EUR', 'Euro')
 ON CONFLICT (code) DO NOTHING;

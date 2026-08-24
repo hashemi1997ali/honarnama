@@ -5,7 +5,7 @@ angular.module('App').controller('SettingController', function ($rootScope, $sco
 	if (!root.isCookieExist()) { window.location.href = '#login'; }
 	root.closeAndDisableSearch();
 	root.toolbar_menu = null;
-	$rootScope.pagetitle = 'تنظیمات';
+	$rootScope.pagetitle = 'Settings';
 	
 	/* Script controller for : Application Setting*/
 	

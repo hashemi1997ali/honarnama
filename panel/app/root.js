@@ -4,7 +4,7 @@ angular.module('App').controller('RootCtrl', function ($rootScope, $scope, $mdSi
     var root = $rootScope;
 
 	/* panel name and version */
-	root.PANEL_NAME = "فروشگاه";
+	root.PANEL_NAME = "Honarnama";
 	root.PANEL_VERSION = "2.1";
 
 	/* Constant String data */
@@ -16,12 +16,12 @@ angular.module('App').controller('RootCtrl', function ($rootScope, $scope, $mdSi
      */
     self.sidenav = {
 		actions: [
-			{ name: 'داشبورد', icon: 'store', link: '#dashboard', sub: false },
-			{ name: 'لیست سفارشات', icon: 'event_note', link: '#order', sub: false },
-			{ name: 'محصولات', icon: 'widgets', link: '#product', sub: false },
-			{ name: 'موضوعات', icon: 'dns', link: '#category', sub : false },
-			{ name: 'اخبار', icon: 'subject', link: '#news', sub: false },
-			{ name: 'تنظیمات', icon: 'settings', link: '#setting', sub: false },
+			{ name: 'Dashboard', icon: 'store', link: '#dashboard', sub: false },
+			{ name: 'Orders', icon: 'event_note', link: '#order', sub: false },
+			{ name: 'Products', icon: 'widgets', link: '#product', sub: false },
+			{ name: 'Categories', icon: 'dns', link: '#category', sub : false },
+			{ name: 'News', icon: 'subject', link: '#news', sub: false },
+			{ name: 'Settings', icon: 'settings', link: '#setting', sub: false },
 		]
 	};
 
@@ -84,15 +84,15 @@ angular.module('App').controller('RootCtrl', function ($rootScope, $scope, $mdSi
     };
 
     self.doLogout = function (ev) {
-        var confirm = $mdDialog.confirm().title('تایید خروج')
-            .content('آیا مطمئنید میخواهید خارج شوید؟ : ' + root.getSessionName() + ' ?')
+        var confirm = $mdDialog.confirm().title('Confirm Log Out')
+            .content('Are you sure you want to log out, ' + root.getSessionName() + '?')
             .targetEvent(ev)
-            .ok('بله').cancel('انصراف');
+            .ok('Yes').cancel('Cancel');
         $mdDialog.show(confirm).then(function () {
             // clear session
             root.clearCookies();
             window.location.href = '#login';
-            $mdToast.show($mdToast.simple().textContent('با موفقیت خارج شدید').position('bottom right'));
+            $mdToast.show($mdToast.simple().textContent('Logged out successfully').position('bottom right'));
         });
     };
 
@@ -145,7 +145,7 @@ angular.module('App').controller('RootCtrl', function ($rootScope, $scope, $mdSi
     root.subMenuAction = function (ev, obj) {
         root.sub_obj = obj.cat_id;
         window.location.href = '#place';
-        root.pagetitle = 'مکان : ' + obj.name;
+        root.pagetitle = 'Location: ' + obj.name;
     };
 
     root.sortArrayOfInt = function (array_of_int) {
@@ -209,18 +209,18 @@ angular.module('App').controller('RootCtrl', function ($rootScope, $scope, $mdSi
 
     // show dialog confirmation
     root.showConfirmDialogSimple = function (title, msg, callback) {
-        var confirm = $mdDialog.confirm().title(title).content(msg).ok('بسیار خب');
+        var confirm = $mdDialog.confirm().title(title).content(msg).ok('OK');
         $mdDialog.show(confirm).then(callback);
     };
     root.showConfirmDialog = function (title, msg, callback) {
         var confirm = $mdDialog.confirm().title(title).content(msg);
-        confirm.ok('بسیار خب').cancel('انصراف');
+        confirm.ok('OK').cancel('Cancel');
         $mdDialog.show(confirm).then(callback);
     };
 
     // show dialog info
     root.showInfoDialogSimple = function (title, msg) {
-        var alert = $mdDialog.alert().title(title).content(msg).ok('بستن');
+        var alert = $mdDialog.alert().title(title).content(msg).ok('Close');
         $mdDialog.show(alert)
     };
 

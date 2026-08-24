@@ -2,7 +2,7 @@ package ir.hashemi.market.data;
 
 public class AppConfig {
 
-    // tinting category icon
-    public static final boolean TINT_CATEGORY_ICON = true;
+    // Keep full-color catalog artwork visible for seeded category images.
+    public static final boolean TINT_CATEGORY_ICON = false;
 
 }

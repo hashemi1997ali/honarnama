@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" dir="ltr">
 
 <head>
   <meta charset="UTF-8"/>
-  <title>پنل مدیریت فروشگاه</title>
+  <title>Honarnama Admin Panel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <link href="lib/css/angular-material.min.css" rel="stylesheet prefetch" type="text/css"/>
   <link href="lib/css/fonts/material.css" rel="stylesheet" type="text/css"/>
@@ -64,11 +64,11 @@
 						</md-button>
 						<md-menu-content width=3>
 							<md-menu-item>
-							<md-button layout-fill md-ink-ripple ng-click="directHref('#setting')">تنظیمات</md-button>
+							<md-button layout-fill md-ink-ripple ng-click="directHref('#setting')">Settings</md-button>
 							</md-menu-item>
 
 							<md-menu-item>
-							<md-button layout-fill md-ink-ripple ng-click="doLogout($event)">خروج</md-button>
+							<md-button layout-fill md-ink-ripple ng-click="doLogout($event)">Log Out</md-button>
 							</md-menu-item>
 						</md-menu-content>
 					</md-menu>
@@ -116,7 +116,7 @@
 							<md-input-container flex md-no-float style="padding:6px;margin-left:5px">		
 								<input ng-model="q" id="search_input" class="search" placeholder="Search" ng-keypress="keypressAction($event, q)">
 							</md-input-container>
-							<md-icon ng-click="submitSearch($event, q)" style="color:#4DB151;margin-right:10px;cursor:pointer;">جستجو</md-icon>
+							<md-icon ng-click="submitSearch($event, q)" style="color:#4DB151;margin-right:10px;cursor:pointer;">search</md-icon>
 						</div>
 					</md-card>
 
@@ -132,8 +132,8 @@
 						  <md-icon>more_vert</md-icon>
 						</md-button>
 						<md-menu-content width=3>
-						  <md-menu-item> <md-button layout-fill md-ink-ripple ng-click="directHref('#setting')">تنظیمات</md-button> </md-menu-item>
-						  <md-menu-item> <md-button layout-fill md-ink-ripple ng-click="doLogout($event)">خروج</md-button></md-menu-item>
+						  <md-menu-item> <md-button layout-fill md-ink-ripple ng-click="directHref('#setting')">Settings</md-button> </md-menu-item>
+						  <md-menu-item> <md-button layout-fill md-ink-ripple ng-click="doLogout($event)">Log Out</md-button></md-menu-item>
 						</md-menu-content>
 					</md-menu>
 				</div>

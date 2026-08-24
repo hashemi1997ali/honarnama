@@ -121,6 +121,16 @@
 
         </LinearLayout>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_middle"
+            android:background="@color/grey_5"
+            android:padding="@dimen/spacing_middle"
+            android:text="@string/demo_payment_notice"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:textColor="@color/grey_60" />
+
     </LinearLayout>
 
 </LinearLayout>

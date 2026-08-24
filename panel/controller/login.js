@@ -15,7 +15,7 @@ angular.module('App').controller('LoginController', function ($rootScope, $scope
 	root.isLogin = true;
 	root.toolbar_menu = null;
 
-	$rootScope.pagetitle = 'ورود';
+	$rootScope.pagetitle = 'Log In';
 	self.submit_loading = false;
 
 	self.doLogin = function () {
@@ -25,15 +25,15 @@ angular.module('App').controller('LoginController', function ($rootScope, $scope
 			if (resp && resp.status === 'success' && resp.user) {
 				root.saveCookies(resp.user.id, resp.user.name, resp.user.email, resp.user.password);
 				root.isLogin = false;
-				showToast('با موفقیت وارد شدید');
+				showToast('Logged in successfully');
 				window.location.href = '#dashboard';
 				return;
 			}
-			showToast(resp && resp.msg ? resp.msg : 'ورود ناموفق');
+			showToast(resp && resp.msg ? resp.msg : 'Login failed');
 		}, function (error) {
 			var message = error && error.data && error.data.msg
 				? error.data.msg
-				: 'ارتباط با سرور برقرار نشد.';
+				: 'Could not connect to the server.';
 			showToast(message);
 		}).finally(function () {
 			self.submit_loading = false;

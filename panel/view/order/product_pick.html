@@ -2,7 +2,7 @@
     <form role="form" name="thisForm">
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h2>افزودن سفارش محصول</h2>
+                <h2>Add Product to Order</h2>
                 <span flex></span>
                 <md-card flex="20">
                     <md-input-container flex md-no-float class="header-table-display">
@@ -28,13 +28,13 @@
                 <table id="table" class="table table-hover">
                     <thead class="sub-menu-bg" >
                     <tr >
-                        <th width="1%">شماره</th>
-                        <th width="20%">نام</th>
-                        <th width="3%">نوع</th>
-                        <th width="5%">قیمت</th>
-                        <th width="3%">موجودی</th>
-                        <th width="8%">وضعیت</th>
-                        <th width="3%">عملیات</th>
+                        <th width="1%">ID</th>
+                        <th width="20%">Name</th>
+                        <th width="3%">Type</th>
+                        <th width="5%">Price</th>
+                        <th width="3%">Stock</th>
+                        <th width="8%">Status</th>
+                        <th width="3%">Actions</th>
                     </tr>
                     </thead>
                     <md-divider></md-divider>
@@ -57,7 +57,7 @@
                             <div layout="row" layout-align="left" ng-if="!isExistAtProductOrder(p.id)">
                                 <md-button layout-align="center" class="md-btn-small" ng-click="addItem($event, p)">
                                     <md-icon class="md-ic-small ic-small">add_circle</md-icon>
-                                    <md-tooltip>افزودن به لیست سفارشات</md-tooltip>
+                                    <md-tooltip>Add to order</md-tooltip>
                                 </md-button>
                             </div>
                         </td>
@@ -65,7 +65,7 @@
                     </tbody>
                 </table>
                 <div ng-if="loading" style="text-align:center;" colspan="10">
-                    <p>در حال بارگذاری ...</p>
+                    <p>Loading...</p>
                     <md-progress-linear md-mode="indeterminate"/>
                 </div>
             </div>

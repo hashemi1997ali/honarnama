@@ -3,9 +3,7 @@ package ir.hashemi.market;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
@@ -33,7 +31,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import ir.hashemi.market.adapter.AdapterProductImage;
 import ir.hashemi.market.connection.API;
@@ -87,11 +84,6 @@ public class ActivityProductDetails extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_details);
-
-        Configuration configuration = getResources().getConfiguration();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            configuration.setLayoutDirection(new Locale("fa"));
-        }
         initpDialog();
         showpDialog();
         product_id = getIntent().getLongExtra(EXTRA_OBJECT_ID, -1L);

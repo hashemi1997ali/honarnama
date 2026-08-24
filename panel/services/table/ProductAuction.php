@@ -51,34 +51,34 @@ class ProductAuction extends REST {
         $userId = isset($data['user_id']) ? (int)$data['user_id'] : 0;
         $bidPrice = isset($data['bid_price']) ? (float)$data['bid_price'] : 0;
         if ($auctionId < 1 || $userId < 1 || $bidPrice <= 0) {
-            $this->show_response(array('status' => 'failed', 'msg' => 'این مزایده وجود ندارد.'));
+            $this->show_response(array('status' => 'failed', 'msg' => 'Auction not found.'));
         }
 
         $auction = $this->findOnePlain($auctionId);
         if (empty($auction)) {
-            $this->show_response(array('status' => 'failed', 'msg' => 'این مزایده وجود ندارد.'));
+            $this->show_response(array('status' => 'failed', 'msg' => 'Auction not found.'));
         }
 
         $now = time();
         $start = strtotime($auction['start_date']);
         $end = strtotime($auction['end_date']);
         if ($start !== false && $now < $start) {
-            $this->show_response(array('status' => 'failed', 'msg' => 'این مزایده هنوز شروع نشده است.'));
+            $this->show_response(array('status' => 'failed', 'msg' => 'This auction has not started yet.'));
         }
         if ($end !== false && $now > $end) {
-            $this->show_response(array('status' => 'failed', 'msg' => 'این مزایده تمام شده است.'));
+            $this->show_response(array('status' => 'failed', 'msg' => 'This auction has ended.'));
         }
 
         if ($auction['winner_price'] === null) {
             if ($bidPrice < (float)$auction['start_price']) {
-                $this->show_response(array('status' => 'failed', 'msg' => 'پیشنهاد شما از قیمت پایه کمتر است.'));
+                $this->show_response(array('status' => 'failed', 'msg' => 'Your bid is below the starting price.'));
             }
         } else {
             if ($userId === (int)$auction['winner_id']) {
-                $this->show_response(array('status' => 'failed', 'msg' => 'آخرین پیشنهاد مربوط به شما است.'));
+                $this->show_response(array('status' => 'failed', 'msg' => 'You already placed the latest bid.'));
             }
             if ($bidPrice <= (float)$auction['winner_price']) {
-                $this->show_response(array('status' => 'failed', 'msg' => 'پیشنهاد شما از آخرین پیشنهاد کمتر است.'));
+                $this->show_response(array('status' => 'failed', 'msg' => 'Your bid must be higher than the latest bid.'));
             }
         }
 
@@ -87,7 +87,7 @@ class ProductAuction extends REST {
             array('id' => $userId)
         );
         if (empty($user)) {
-            $this->show_response(array('status' => 'failed', 'msg' => 'کاربر معتبر نیست.'));
+            $this->show_response(array('status' => 'failed', 'msg' => 'User not found.'));
         }
 
         $wrapper = array('product_auction' => array(

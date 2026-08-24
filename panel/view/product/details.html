@@ -14,29 +14,29 @@
       <img class="md-center" style="margin: auto; max-width: 100%;" ng-src="uploads/product/{{product.image}}" flex="40">
       <md-divider ></md-divider>
       <div layout="row">
-        <item flex="25">قیمت</item> <item flex="5"> : </item> <item>{{product.price}}</item>
+        <item flex="25">Price</item> <item flex="5"> : </item> <item>{{product.price}}</item>
       </div>
       <div layout="row">
-        <item flex="25">موجودی</item> <item flex="5"> : </item> <item>{{product.stock}}</item>
+        <item flex="25">Stock</item> <item flex="5"> : </item> <item>{{product.stock}}</item>
       </div>
 
       <md-divider class="margin-divider"></md-divider>
       <div layout="row">
-        <item flex="25">موضوع</item> <item flex="5"> : </item>
+        <item flex="25">Categories</item> <item flex="5"> : </item>
         <md-chips ng-model="categories" readonly="true">
           <md-chip-template><span>{{$chip.name}}</span></md-chip-template>
         </md-chips>
       </div>
 
       <div layout="row">
-        <item flex="25">نوع</item> <item flex="5"> : </item>
+        <item flex="25">Type</item> <item flex="5"> : </item>
 		<item>
-			<draft ng-if="product.draft == 1">پیش نویس</draft>
-			<publish ng-if="product.draft != 1">منتشر شده</publish>
+			<draft ng-if="product.draft == 1">Draft</draft>
+			<publish ng-if="product.draft != 1">Published</publish>
 		</item>
       </div>
       <div layout="row">
-        <item flex="25">وضعیت</item> <item flex="5"> : </item>
+        <item flex="25">Status</item> <item flex="5"> : </item>
 		<item>
 			<ready-stock ng-if="product.status=='READY STOCK'">{{product.status}}</ready-stock>
 			<suspend ng-if="product.status=='SUSPEND'">{{product.status}}</suspend>
@@ -46,15 +46,15 @@
 
       <md-divider class="margin-divider"></md-divider>
       <div layout="row">
-        <item flex="25">ایجاد شده در</item> <item flex="5"> : </item> <item>{{product.created_at | date:'hh.mm, dd MMMM yyyy'}}</item>
+        <item flex="25">Created</item> <item flex="5"> : </item> <item>{{product.created_at | date:'hh.mm, dd MMMM yyyy'}}</item>
       </div>
 	  <div layout="row">
-        <item flex="25">آخرین بروز رسانی</item> <item flex="5"> : </item> <item>{{product.last_update | date:'hh.mm, dd MMMM yyyy'}}</item>
+        <item flex="25">Last updated</item> <item flex="5"> : </item> <item>{{product.last_update | date:'hh.mm, dd MMMM yyyy'}}</item>
       </div>
 
       <md-divider class="margin-divider"></md-divider>
       <div layout="row">
-        <item flex="25">تصاویر (اختیاری)</item> <item flex="5"> : </item>
+        <item flex="25">Images (optional)</item> <item flex="5"> : </item>
       </div>
       <div layout="row">
         <img ng-repeat="i in images" style="margin:5px;width:120px;max-height:120px;" ng-src="uploads/product/{{i.name}}">
@@ -62,7 +62,7 @@
 
       <md-divider class="margin-divider"></md-divider>
       <div layout="row">
-        <item flex="25">توضیحات</item> <item flex="5"> : </item>
+        <item flex="25">Description</item> <item flex="5"> : </item>
       </div>
 	  <div ng-bind-html="product.description"></div>
     </md-dialog-content>

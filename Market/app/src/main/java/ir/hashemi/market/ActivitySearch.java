@@ -3,8 +3,6 @@ package ir.hashemi.market;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -29,7 +27,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import ir.hashemi.market.adapter.AdapterProduct;
 import ir.hashemi.market.adapter.AdapterProductAuction;
@@ -98,11 +95,6 @@ public class ActivitySearch extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-
-        Configuration configuration = getResources().getConfiguration();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            configuration.setLayoutDirection(new Locale("fa"));
-        }
 
         category_id = getIntent().getLongExtra(EXTRA_CATEGORY_ID, -1L);
         category_name = getIntent().getStringExtra(EXTRA_CATEGORY_NAME);

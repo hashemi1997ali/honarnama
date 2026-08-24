@@ -169,16 +169,7 @@ class ProductOrder extends REST {
     }
 
     private function normalizeStatus($status) {
-        $legacyStatuses = array(
-            'در انتظار تایید' => 'WAITING',
-            'پردازش شده' => 'PROCESSED',
-            'لغو شده' => 'CANCEL',
-        );
         $status = trim((string)$status);
-        if (isset($legacyStatuses[$status])) {
-            return $legacyStatuses[$status];
-        }
-
         $status = strtoupper($status);
         return in_array($status, array('WAITING', 'PROCESSED', 'CANCEL'), true)
             ? $status

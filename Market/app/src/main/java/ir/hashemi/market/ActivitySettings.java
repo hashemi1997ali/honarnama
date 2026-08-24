@@ -4,7 +4,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -21,7 +20,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.Locale;
 
 import ir.hashemi.market.utils.Tools;
 
@@ -41,11 +39,6 @@ public class ActivitySettings extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.setting_preferences);
         parent_view = findViewById(android.R.id.content);
-
-        Configuration configuration = getResources().getConfiguration();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            configuration.setLayoutDirection(new Locale("fa"));
-        }
 
         final Preference prefVersion = (Preference) findPreference(getString(R.string.pref_title_build));
         prefVersion.setSummary(Tools.getVersionName(this));

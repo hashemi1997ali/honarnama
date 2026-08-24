@@ -2,8 +2,6 @@ package ir.hashemi.market;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,7 +16,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.Locale;
 import ir.hashemi.market.connection.API;
 import ir.hashemi.market.connection.RestAdapter;
 import ir.hashemi.market.connection.callbacks.CallbackUser;
@@ -48,11 +45,6 @@ public class ActivityRegister extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
-        Configuration configuration = getResources().getConfiguration();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            configuration.setLayoutDirection(new Locale("fa"));
-        }
 
         activityRegister = this;
 

@@ -5,8 +5,8 @@ angular.module('App').controller('OrderController', function ($rootScope, $scope
 	var root = $rootScope;
 
 	root.search_enable = true;
-    root.toolbar_menu = { title: 'افزودن سفارش' };
-	root.pagetitle = 'سفارش';
+    root.toolbar_menu = { title: 'Add Order' };
+	root.pagetitle = 'Orders';
 
 	// receiver barAction from rootScope
     self.$on('barAction', function (event, data) {
@@ -66,10 +66,10 @@ angular.module('App').controller('OrderController', function ($rootScope, $scope
 	};
 
     self.processedOrderConfirm = function(ev, po) {
-        var confirm = $mdDialog.confirm().title('تایید پردازش سفارش');
-            confirm.content('بعد از پردازش، وضعیت محصول نمی تواند تغییر کند و همچنین به موجودی محصول دقت داشته باشید' +
-                            '<br>لطفا سفارش را قبل از کلیک بر روی <b>تایید پردازش</b> با دقت بررسی کنید.');
-            confirm.targetEvent(ev).ok('بله').cancel('انصراف');
+        var confirm = $mdDialog.confirm().title('Confirm Order Processing');
+            confirm.content('After processing, the order status cannot be changed and product stock will be updated.' +
+                            '<br>Please review the order carefully before clicking <b>Process</b>.');
+            confirm.targetEvent(ev).ok('Process').cancel('Cancel');
 
         $mdDialog.show(confirm).then(function() {
             $mdDialog.show({
@@ -85,38 +85,38 @@ angular.module('App').controller('OrderController', function ($rootScope, $scope
     };
 
     self.cancelOrder = function(ev, po) {
-        var confirm = $mdDialog.confirm().title('تایید حذف سفارش');
-            confirm.content('آیا اطمینان دارید می خواهید سفارش این خریدار را حذف کنید : '+po.buyer+' ?');
-            confirm.targetEvent(ev).ok('بله').cancel('انصراف');
+        var confirm = $mdDialog.confirm().title('Confirm Order Deletion');
+            confirm.content('Are you sure you want to delete the order for '+po.buyer+'?');
+            confirm.targetEvent(ev).ok('Yes').cancel('Cancel');
 
         $mdDialog.show(confirm).then(function() {
             var new_ob = angular.copy(po);
             new_ob.status = 'CANCEL';
             request.updateOneProductOrder(new_ob.id, new_ob).then(function(resp){
                 if(resp.status == 'success'){
-				    root.showConfirmDialogSimple('', 'سفارش خریدار '+po.buyer+' <b>با موفقیت حذف شد</b>!', function(){
+				    root.showConfirmDialogSimple('', 'The order for '+po.buyer+' was <b>deleted successfully</b>.', function(){
 				        window.location.reload();
 				    });
                 }else{
-                    root.showInfoDialogSimple('', 'متاسفانه سفارش این خریدار حذف نشد : '+po.buyer);
+                    root.showInfoDialogSimple('', 'Could not delete the order for '+po.buyer+'.');
                 }
             });
         });
     };
 
     self.deleteOrder = function(ev, po) {
-        var confirm = $mdDialog.confirm().title('تاییده باطل کردن سفارش');
-            confirm.content('آیا اطمینان دارید می خواهید سفارش این خریدار را حذف کنید : '+po.buyer+' ?');
-            confirm.targetEvent(ev).ok('بله').cancel('انصراف');
+        var confirm = $mdDialog.confirm().title('Confirm Order Cancellation');
+            confirm.content('Are you sure you want to cancel the order for '+po.buyer+'?');
+            confirm.targetEvent(ev).ok('Yes').cancel('Cancel');
 
         $mdDialog.show(confirm).then(function() {
             request.deleteOneProductOrder(po.id).then(function(resp){
                 if(resp.status == 'success'){
-                    root.showConfirmDialogSimple('', 'سفارش خریدار '+po.buyer+' <b>با موفقیت حذف شد</b>!', function(){
+                    root.showConfirmDialogSimple('', 'The order for '+po.buyer+' was <b>cancelled successfully</b>.', function(){
                         window.location.reload();
                     });
                 }else{
-                    root.showInfoDialogSimple('', 'متاسفانه سفارش این خریدار حذف نشد : '+po.buyer);
+                    root.showInfoDialogSimple('', 'Could not cancel the order for '+po.buyer+'.');
                 }
             });
         });

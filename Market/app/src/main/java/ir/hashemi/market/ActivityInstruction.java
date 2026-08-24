@@ -1,7 +1,6 @@
 package ir.hashemi.market;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,7 +20,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import java.util.Locale;
 
 import ir.hashemi.market.data.SharedPref;
 import ir.hashemi.market.utils.Tools;
@@ -43,11 +41,6 @@ public class ActivityInstruction extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_instruction);
-
-        Configuration configuration = getResources().getConfiguration();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            configuration.setLayoutDirection(new Locale("fa"));
-        }
 
         sharedPref = new SharedPref(this);
         viewPager = (ViewPager) findViewById(R.id.view_pager);

@@ -1,12 +1,12 @@
 <md-dialog layout="column" flex="25" aria-label="dialog category">
     <md-dialog-content class="autoScroll" style="max-width:800px;max-height:810px;">
         <div ng-if="not_exist">
-            <p>سفارشی با نام <b>{{pod.product_name}}</b> وجود ندارد یا هم اکنون حذف شده است</p>
+            <p>The product <b>{{pod.product_name}}</b> no longer exists or has been deleted.</p>
         </div>
         <div ng-if="!not_exist">
-            <p class="hint" ng-if="dif_name">نام محصول جدید : <i>{{product.name}}</i></p>
-            <p>نام محصول : <b>{{pod.product_name}}</b></p>
-            <p flex="30">موجودی : <b>{{product.stock}} item(s)</b></p>
+            <p class="hint" ng-if="dif_name">Current product name: <i>{{product.name}}</i></p>
+            <p>Saved product name: <b>{{pod.product_name}}</b></p>
+            <p flex="30">Stock: <b>{{product.stock}} item(s)</b></p>
         </div>
         <md-divider></md-divider>
 

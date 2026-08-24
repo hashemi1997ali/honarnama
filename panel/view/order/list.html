@@ -3,14 +3,14 @@
 	<table id="table" class="table table-hover">
 		<thead>
 			<tr >
-				<th width="1%">شماره</th>
-				<th width="25%">خریدار</th>
-				<th width="10%">کد</th>
-				<th width="10%">مجموع هزینه ها</th>
-				<th width="10%">تاریخ سفارش</th>
-				<th width="10%">ایجاد شده در</th>
-				<th width="5%">وضعیت</th>
-				<th width="5%">عملیات</th>
+				<th width="1%">ID</th>
+				<th width="25%">Customer</th>
+				<th width="10%">Code</th>
+				<th width="10%">Total</th>
+				<th width="10%">Delivery date</th>
+				<th width="10%">Created</th>
+				<th width="5%">Status</th>
+				<th width="5%">Actions</th>
 			</tr>
 		</thead>
 
@@ -33,32 +33,32 @@
 							<md-icon class="md-ic-small" ng-style="{'font-size': '15px'}">more_vert</md-icon>
 						</md-button>
 						<md-menu-content width=3>
-							<md-title class="md-padding">منو - {{po.buyer}}</md-title>
+							<md-title class="md-padding">Menu — {{po.buyer}}</md-title>
 							<md-menu-item>
 								<md-button layout-fill md-ink-ripple ng-click="detailsOrder($event, po)">
-									<md-icon md-class="md-primary" md-menu-align-target>launch</md-icon>جزییات
+									<md-icon md-class="md-primary" md-menu-align-target>launch</md-icon>Details
 								</md-button>
 							</md-menu-item>
 							<md-menu-item ng-if="po.status=='WAITING'">
 								<md-button layout-fill md-ink-ripple ng-click="processedOrderConfirm($event, po)">
-									<md-icon md-class="md-primary" md-menu-align-target>assignment_turned_in</md-icon>پردازش
+									<md-icon md-class="md-primary" md-menu-align-target>assignment_turned_in</md-icon>Process
 								</md-button>
 							</md-menu-item>
 							<md-menu-item ng-if="po.status!='PROCESSED'">
 								<md-button layout-fill md-ink-ripple ng-click="editOrder($event, po)">
-									<md-icon md-class="md-primary" md-menu-align-target>create</md-icon>ویرایش
+									<md-icon md-class="md-primary" md-menu-align-target>create</md-icon>Edit
 								</md-button>
 							</md-menu-item>
 
 							<md-menu-item ng-if="po.status=='WAITING'">
 								<md-button layout-fill md-ink-ripple ng-click="cancelOrder($event, po)">
-									<md-icon md-class="md-primary" md-menu-align-target>block</md-icon>انصراف
+									<md-icon md-class="md-primary" md-menu-align-target>block</md-icon>Cancel
 								</md-button>
 							</md-menu-item>
 
 							<md-menu-item ng-if="po.status!='PROCESSED'">
 								<md-button layout-fill md-ink-ripple ng-click="deleteOrder($event, po)">
-									<md-icon md-class="md-primary" md-menu-align-target>delete</md-icon>حذف
+									<md-icon md-class="md-primary" md-menu-align-target>delete</md-icon>Delete
 								</md-button>
 							</md-menu-item>
 						</md-menu-content>
@@ -68,7 +68,7 @@
 		</tbody>
 	</table>
 	<div ng-if="loading" style="text-align:center;" colspan="10">
-		<p>در حال بارگذاری</p>
+		<p>Loading...</p>
 		<md-progress-linear md-mode="indeterminate"/>
 	</div>
 </div>

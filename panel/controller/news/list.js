@@ -5,11 +5,11 @@ angular.module('App').controller('NewsController', function ($rootScope, $scope,
 	var self = $scope;
 	var root = $rootScope;
 	
-	root.pagetitle = 'جزییات خبر';
+	root.pagetitle = 'News';
 	self.loading = true;
 
 	root.search_enable = true;
-	root.toolbar_menu = { title: 'افزودن خبر' }
+	root.toolbar_menu = { title: 'Add News' }
 
 	// receiver barAction from rootScope
 	self.$on('barAction', function (event, data) {		
@@ -70,8 +70,8 @@ angular.module('App').controller('NewsController', function ($rootScope, $scope,
 
 	self.deleteNewsInfo = function(ev, n) {
 		var confirm = $mdDialog.confirm().title('Delete Confirmation');
-			confirm.content('آیا اطمینان دارید می خواهید اطلاعات این خبر را حذف کنید : '+n.title+' ?');
-			confirm.targetEvent(ev).ok('بله').cancel('انصراف');
+			confirm.content('Are you sure you want to delete this news item: '+n.title+'?');
+			confirm.targetEvent(ev).ok('Yes').cancel('Cancel');
 			
 		var dir = "../../../uploads/news/";
 		var images_obj = new Array();	
@@ -80,13 +80,13 @@ angular.module('App').controller('NewsController', function ($rootScope, $scope,
 			request.deleteOneNewsInfo(n.id).then(function(resp){
 				if(resp.status == 'success'){
 					request.deleteFiles(dir, images_obj).then(function(res){ });
-				    root.showConfirmDialogSimple('', 'خبر '+n.title+' <b>با موفقیت حذف شد</b>!', function(){
+				    root.showConfirmDialogSimple('', 'News item '+n.title+' was <b>deleted successfully</b>.', function(){
 				        window.location.reload();
 				    });
 				}else{
 				    var failed_txt = '';
                     if(resp.msg != null) failed_txt += '<br>' + resp.msg;
-                    root.showInfoDialogSimple('حذف نشد', failed_txt);
+                    root.showInfoDialogSimple('Deletion Failed', failed_txt);
 				}
 			});
 		});
@@ -101,11 +101,11 @@ angular.module('App').controller('NewsController', function ($rootScope, $scope,
             template:
             '<md-dialog ng-cloak aria-label="publishData">' +
             '  <md-dialog-content>' +
-            '   <h2 class="md-title">تایید انتشار</h2> ' +
-            '   <p>آیا اطمینان دارید می خواهید این خبر را منتشر کنید : <b>{{obj.title}}</b> ?</p><br>' +
+            '   <h2 class="md-title">Confirm Publication</h2> ' +
+            '   <p>Are you sure you want to publish this news item: <b>{{obj.title}}</b>?</p><br>' +
             '   <div layout="row"> <span flex></span>' +
-            '       <md-button ng-if="!submit_loading" class="md-warn" ng-click="cancel()" >انصراف</md-button>' +
-            '       <md-button ng-click="publish()" class="md-raised md-primary">بله</md-button>' +
+            '       <md-button ng-if="!submit_loading" class="md-warn" ng-click="cancel()" >Cancel</md-button>' +
+            '       <md-button ng-click="publish()" class="md-raised md-primary">Yes</md-button>' +
             '   </div>' +
             '  </md-dialog-content>' +
             '</md-dialog>'
@@ -117,11 +117,11 @@ angular.module('App').controller('NewsController', function ($rootScope, $scope,
                 $scope.obj.draft = 0;
                 request.updateOneNewsInfo($scope.obj.id, $scope.obj).then(function(resp){
                     if(resp.status == 'success'){
-                        root.showConfirmDialogSimple('', 'اطلاعات خبر '+obj.title+' <b>با موفقیت منتشر شد</b>!', function(){
+                        root.showConfirmDialogSimple('', 'News item '+obj.title+' was <b>published successfully</b>.', function(){
                             window.location.reload();
                         });
                     }else{
-                        var failed_txt = 'متاسفانه این خبر منتشر نشد : '+obj.title;
+                        var failed_txt = 'Could not publish news item: '+obj.title;
                         if(resp.msg != null) failed_txt = resp.msg;
 				        root.showInfoDialogSimple('', failed_txt);
                     }

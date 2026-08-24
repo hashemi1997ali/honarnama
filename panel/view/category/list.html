@@ -3,13 +3,13 @@
 		<table id="table" class="table table-hover">
 			<thead>
 				<tr >
-					<th width="2%">شماره</th>
-					<th width="25%">نام</th>
-					<th width="3%">الویت</th>
-					<th width="5%">رنگ</th>
-					<th width="5%">نوع</th>
-					<th width="5%">بروز رسانی</th>
-					<th width="5%" style="text-align:center;">عملیات</th>
+					<th width="2%">ID</th>
+					<th width="25%">Name</th>
+					<th width="3%">Priority</th>
+					<th width="5%">Color</th>
+					<th width="5%">Type</th>
+					<th width="5%">Updated</th>
+					<th width="5%" style="text-align:center;">Actions</th>
 				</tr>
 			</thead>
 
@@ -20,27 +20,27 @@
 					<td data-title="Name">{{c.priority}}</td>
 					<td data-title="Color"><generic style="background:{{c.color}};">{{c.color}}</generic></td>
 					<td data-title="Type">
-						<draft ng-if="c.draft == 1">پیش نویس</draft>
-						<publish ng-if="c.draft != 1">منتشر شده</publish>
+						<draft ng-if="c.draft == 1">Draft</draft>
+						<publish ng-if="c.draft != 1">Published</publish>
 					</td>	
 					<td data-title="Update">{{c.last_update | date:'dd MMM yy'}}</td>
 					<td data-title="Action">
 						<div layout="row" layout-align="center">
 							<md-button layout-align="center" class="md-btn-small" ng-click="viewIcon($event, 'uploads/category/'+c.icon)">
 								<md-icon class="md-ic-small ic-small">wallpaper</md-icon>
-								<md-tooltip>مشاهده آیکون</md-tooltip>
+								<md-tooltip>View icon</md-tooltip>
 							</md-button>
 							<md-button layout-align="center" class="md-btn-small" ng-click="deleteCategory($event, c)">
 								<md-icon class="md-ic-small ic-small">delete</md-icon>
-								<md-tooltip>حذف محصول</md-tooltip>
+								<md-tooltip>Delete category</md-tooltip>
 							</md-button>
 							<md-button layout-align="center" class="md-btn-small" ng-click="editCategory($event, c)">
 								<md-icon class="md-ic-small ic-small">create</md-icon>
-								<md-tooltip>ویرایش محصول</md-tooltip>
+								<md-tooltip>Edit category</md-tooltip>
 							</md-button>
 							<md-button layout-align="center" class="md-btn-small" ng-disabled="c.draft==0" ng-click="publishDialog($event, c)">
 								<md-icon class="md-ic-small ic-small">check_circle</md-icon>
-								<md-tooltip>انتشار</md-tooltip>
+								<md-tooltip>Publish</md-tooltip>
 							</md-button>
 						</div>
 					</td>
@@ -48,7 +48,7 @@
 			</tbody>
 		</table>
 		<div ng-if="loading" style="text-align:center;" colspan="10">
-			<p>در حال بارگذاری ...</p>
+			<p>Loading...</p>
 			<md-progress-linear md-mode="indeterminate"/>
 		</div>
 	</div>

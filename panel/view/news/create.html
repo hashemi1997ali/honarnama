@@ -3,58 +3,58 @@
   
 	<div layout="row">
 		<md-input-container flex="70">
-			<label>عنوان خبر *</label>
+			<label>News title *</label>
 			<input required name="title" ng-model="news.title" maxlength="100">
 		</md-input-container>
 	</div>
 
 	<div layout="row" layout-align="start end">
 		<md-input-container flex="20">
-			<label>وضعیت خبر *</label>
+			<label>News status *</label>
 			<md-select required ng-model="news.status"> 
 				<md-option ng-repeat="s in status_array" value="{{s}}">{{s}}</md-option> 
 			</md-select>
 		</md-input-container>
 	</div>
-	<div class="hint" ng-if="featured_exceed==1"><i><b>اخبار ویژه</b> به حداکثر تعداد خود رسیده است.
-		<br>فقط اجازه دارید اخبار با نوع <b>عادی</b> یا <b>ویژه - پیش نویس</b></i> منتشر کنید.<br><br>
+	<div class="hint" ng-if="featured_exceed==1"><i>The <b>featured news</b> limit has been reached.
+		<br>You can only publish <b>normal</b> news or save a <b>featured draft</b>.</i><br><br>
 	</div>
 	
 	<div layout="row">
 		<md-input-container flex="45">
-			<label>خلاصه خبر *</label>
+			<label>News summary *</label>
 			<textarea required name="brief_content" maxlength="200" ng-model="news.brief_content" rows="2"></textarea>
 		</md-input-container>
 	</div>
 	
     <fieldset class="standard margin-input-container md-padding">
-		<legend>تصویر بنر *</legend>
+		<legend>Banner image *</legend>
 		<div layout="row" layout-align="center center">
 			<input class="padding-top-bottom" type="file" name="image" onchange="angular.element(this).scope().onFileSelect(this.files)" flex/>
 			<md-button class="md-icon-button" ng-click="viewImage($event, 'uploads/news/'+news.image)" ng-if="!isNewEntry()">
 				<md-icon>wallpaper</md-icon>
 			</md-button>
 		</div>
-		<div ng-if="!image.valid" class="red-alert">PNG فقط, حداکثر حجم 0.5MB</div>
-		<p class="hint">بهترین نسبت تصویر 2:1, سایز پیشنهادی پیشنهادی عرض:800px طول:400px</p>
+		<div ng-if="!image.valid" class="red-alert">PNG only, maximum size 0.5 MB</div>
+		<p class="hint">Recommended aspect ratio: 2:1; recommended size: 800 × 400 px.</p>
     </fieldset>
 	<br>
-	<legend>متن کامل *</legend>
+	<legend>Full content *</legend>
 	<md-input-container class="md-block">
 		<textarea required name="full_content" ng-model="news.full_content" rows="10"></textarea>
 	</md-input-container>
 
 	<br><br>
 	<md-divider></md-divider>
-	<md-checkbox ng-model="news.draft" ng-true-value="1" ng-false-value="0">ذخیره بعنوان پیش نویس</md-checkbox>
-	<p class="hint">وقتی شما گزینه ذخیره بعنوان <i>پیش نویس</i> را میزنید، داده در دستگاه کاربر نمایش داده نخواهد شد.</p>
+	<md-checkbox ng-model="news.draft" ng-true-value="1" ng-false-value="0">Save as draft</md-checkbox>
+	<p class="hint">Draft news is not shown in the Android app.</p>
 
 	<br><br>
-    <em> (*) فیلد اجباری</em>
+    <em>(*) Required field</em>
 
     <div class="md-actions md-padding" layout="row">
 		<span flex></span>
-		<md-button ng-if="!submit_loading" class="md-warn" ng-click="cancel()" > انصراف </md-button>
+		<md-button ng-if="!submit_loading" class="md-warn" ng-click="cancel()">Cancel</md-button>
 		<md-button ng-if="!submit_loading" ng-disabled="!isReadySubmit() || thisForm.$invalid" ng-click="submit(news)" class="md-raised md-primary"> {{button_text}} </md-button>
 		<md-progress-circular ng-if="submit_loading" class="md-accent" md-mode="indeterminate" md-diameter="30px"></md-progress-circular>
     </div>

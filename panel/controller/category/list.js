@@ -5,8 +5,8 @@ angular.module('App').controller('CategoryController', function ($rootScope, $sc
 	if (!root.isCookieExist()) { window.location.href = '#login'; }
 
 	root.search_enable = true;
-	root.toolbar_menu = { title: 'افزودن موضوع' };
-	root.pagetitle = 'موضوع';
+	root.toolbar_menu = { title: 'Add Category' };
+	root.pagetitle = 'Categories';
 	
 	// receiver barAction from rootScope
 	self.$on('barAction', function (event, data) {
@@ -55,8 +55,8 @@ angular.module('App').controller('CategoryController', function ($rootScope, $sc
 
 	self.deleteCategory = function(ev, c) {
 		var confirm = $mdDialog.confirm().title('Delete Confirmation');
-			confirm.content('آیا اطمینان دارید می خواهید حذف کنید : '+c.name+' ?');
-			confirm.targetEvent(ev).ok('بله').cancel('انصراف');
+			confirm.content('Are you sure you want to delete: '+c.name+'?');
+			confirm.targetEvent(ev).ok('Yes').cancel('Cancel');
 			
 		var dir = "../../../uploads/category/";
 		var images_obj = new Array();	
@@ -65,11 +65,11 @@ angular.module('App').controller('CategoryController', function ($rootScope, $sc
 			request.deleteOneCategory(c.id).then(function(res){
 				if(res.status == 'success'){
 					request.deleteFiles(dir, images_obj).then(function(res){ });
-				    root.showConfirmDialogSimple('', 'دسته بندی '+c.name+' <b>با موفقیت حذف شد</b>!', function(){
+				    root.showConfirmDialogSimple('', 'Category '+c.name+' was <b>deleted successfully</b>.', function(){
 				        window.location.reload();
 				    });
 				}else{
-				    root.showInfoDialogSimple('', 'متاسفانه این دسته بندی حذف نشد : '+c.name+'<br>این دسته بندی ممکن است در حال استفاده توسط محصولی باشد');
+				    root.showInfoDialogSimple('', 'Could not delete category: '+c.name+'<br>It may still be used by a product.');
 				}
 			});
 		});
@@ -98,11 +98,11 @@ angular.module('App').controller('CategoryController', function ($rootScope, $sc
             template:
             '<md-dialog ng-cloak aria-label="publishData">' +
             '  <md-dialog-content>' +
-            '   <h2 class="md-title">تایید انتشار</h2> ' +
-            '   <p>آیا اطمینان دارید می خواهید این دسته بندی را ایجاد کنید : <b>{{obj.name}}</b> ?</p><br>' +
+            '   <h2 class="md-title">Confirm Publication</h2> ' +
+            '   <p>Are you sure you want to publish this category: <b>{{obj.name}}</b>?</p><br>' +
             '   <div layout="row"> <span flex></span>' +
-            '       <md-button ng-if="!submit_loading" class="md-warn" ng-click="cancel()" >انصراف</md-button>' +
-            '       <md-button ng-click="publish()" class="md-raised md-primary">بله</md-button>' +
+            '       <md-button ng-if="!submit_loading" class="md-warn" ng-click="cancel()" >Cancel</md-button>' +
+            '       <md-button ng-click="publish()" class="md-raised md-primary">Yes</md-button>' +
             '   </div>' +
             '  </md-dialog-content>' +
             '</md-dialog>'
@@ -115,11 +115,11 @@ angular.module('App').controller('CategoryController', function ($rootScope, $sc
                 request.updateOneCategory($scope.obj.id, $scope.obj).then(function(resp){
                     self.resp_submit = resp;
                     if(resp.status == 'success'){
-                        root.showConfirmDialogSimple('', 'دسته بندی '+obj.name+' <b>با موفقیت منتشر شد</b>!', function(){
+                        root.showConfirmDialogSimple('', 'Category '+obj.name+' was <b>published successfully</b>.', function(){
                             window.location.reload();
                         });
                     }else{
-                        var failed_txt = 'این دسته بندی منتشر نشد : '+obj.name;
+                        var failed_txt = 'Could not publish category: '+obj.name;
                         if(resp.msg != null) failed_txt = resp.msg;
                         root.showInfoDialogSimple('', failed_txt);
                     }

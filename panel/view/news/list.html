@@ -3,12 +3,12 @@
 		<table id="table" class="table table-hover">
 			<thead class="sub-menu-bg" >
 				<tr >
-					<th width="1%">شماره</th>
-					<th width="20%">عنوان</th>
-					<th width="5%">نوع</th>
-					<th width="5%">وضعیت</th>
-					<th width="5%">بروز رسانی</th>
-					<th width="5%">عملیات</th>
+					<th width="1%">ID</th>
+					<th width="20%">Title</th>
+					<th width="5%">Type</th>
+					<th width="5%">Status</th>
+					<th width="5%">Updated</th>
+					<th width="5%">Actions</th>
 				</tr>
 			</thead>
 			<md-divider></md-divider>
@@ -17,8 +17,8 @@
 					<td data-title="No">{{($index+1) + (paging.current * paging.limit) - paging.limit}}</td>
 					<td data-title="Title">{{n.title | cut:false:50:' ...'}}</td>
 					<td data-title="Type">
-						<draft ng-if="n.draft == 1">پیش نویس</draft>
-						<publish ng-if="n.draft != 1">منتشر شده</publish>
+						<draft ng-if="n.draft == 1">Draft</draft>
+						<publish ng-if="n.draft != 1">Published</publish>
 					</td>	
 					<td data-title="Status">
 						<featured ng-if="n.status=='FEATURED'">{{n.status}}</featured>
@@ -31,25 +31,25 @@
 								<md-icon class="md-ic-small" ng-style="{'font-size': '15px'}">more_vert</md-icon>
 							</md-button>
 							<md-menu-content width=3>
-								<md-title class="md-padding"><b>منو - {{n.title}}</b></md-title>
+								<md-title class="md-padding"><b>Menu — {{n.title}}</b></md-title>
 								<md-menu-item>
 									<md-button layout-fill md-ink-ripple ng-click="detailsNewsInfo($event, n)">
-										<md-icon md-class="md-primary" md-menu-align-target>launch</md-icon>جزییات
+										<md-icon md-class="md-primary" md-menu-align-target>launch</md-icon>Details
 									</md-button>
 								</md-menu-item>
 								<md-menu-item>
 									<md-button layout-fill md-ink-ripple ng-click="editNewsInfo($event, n)">
-										<md-icon md-class="md-primary" md-menu-align-target>create</md-icon>ویرایش
+										<md-icon md-class="md-primary" md-menu-align-target>create</md-icon>Edit
 									</md-button>
 								</md-menu-item>
 								<md-menu-item ng-if="n.draft == 1">
 									<md-button layout-fill md-ink-ripple ng-click="publishDialog($event, n)">
-										<md-icon md-class="md-primary" md-menu-align-target>check_circle</md-icon>انتشار
+										<md-icon md-class="md-primary" md-menu-align-target>check_circle</md-icon>Publish
 									</md-button>
 								</md-menu-item>
 								<md-menu-item>
 									<md-button layout-fill md-ink-ripple ng-click="deleteNewsInfo($event, n)">
-										<md-icon md-class="md-primary" md-menu-align-target>delete</md-icon>حذف
+										<md-icon md-class="md-primary" md-menu-align-target>delete</md-icon>Delete
 									</md-button>
 								</md-menu-item>
 							</md-menu-content>  
@@ -59,7 +59,7 @@
 			</tbody>
 		</table>
 		<div ng-if="loading" style="text-align:center;" colspan="10">
-			<p>در حال بارگذاری ...</p>
+			<p>Loading...</p>
 			<md-progress-linear md-mode="indeterminate"/>
 		</div>
 	</div>

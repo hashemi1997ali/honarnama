@@ -6,7 +6,7 @@ angular.module('App').controller('DashboardController', function ($rootScope, $s
 
 	root.closeAndDisableSearch();
 	root.toolbar_menu = null;
-	$rootScope.pagetitle = 'داشبورد';
+	$rootScope.pagetitle = 'Dashboard';
 
     request.getDashboardProduct().then(function (resp) {
         self.order = resp.data.order;

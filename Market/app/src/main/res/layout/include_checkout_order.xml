@@ -12,7 +12,7 @@
         android:gravity="center_vertical|start"
         android:paddingLeft="@dimen/spacing_middle"
         android:paddingRight="@dimen/spacing_middle"
-        android:text="لیست محصولات"
+        android:text="@string/order_items"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:textColor="@color/grey_20" />
 

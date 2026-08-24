@@ -18,7 +18,7 @@ class Bid extends REST {
         $auctionId = isset($data['product_auction_id']) ? (int)$data['product_auction_id'] : 0;
         $userId = isset($data['user_id']) ? (int)$data['user_id'] : 0;
         if ($auctionId < 1 || $userId < 1 || empty($this->product_auction->findOnePlain($auctionId))) {
-            $this->show_response(array('status' => 'failed', 'msg' => 'پیشنهاد نامعتبر است.'));
+            $this->show_response(array('status' => 'failed', 'msg' => 'Invalid bid.'));
         }
         $bid = $this->db->get_one(
             'SELECT id FROM bid WHERE product_auction_id = :auction_id AND user_id = :user_id LIMIT 1',

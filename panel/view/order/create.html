@@ -4,33 +4,33 @@
 	  <!--original = { buyer: null, address: null, email: null, shipping: null, date_ship: now, phone: null, comment: null, status: "WAITING", total_fees: 0 , created_at: now, last_update: now };-->
 	<div layout="row">
 		<md-input-container flex="45">
-			<label>نام خریدار *</label>
+			<label>Customer name *</label>
 			<input required name="name" ng-model="order.buyer" maxlength="50">
 		</md-input-container>
 	</div>
 
 	<div layout="row">
 		<md-input-container flex="20">
-		  	<label>تلفن *</label>
+			<label>Phone *</label>
 		  	<input required name="email" ng-model="order.email" maxlength="50">
 		</md-input-container>
 		<span flex="5"></span>
 		<md-input-container flex="20">
-			<label>ایمیل *</label>
+			<label>Email *</label>
 			<input required name="phone" ng-model="order.phone" maxlength="50">
 		</md-input-container>
 	</div>
 
 	<div layout="row">
 		<md-input-container flex="45">
-			<label>آدرس *</label>
+			<label>Address *</label>
 			<textarea required name="address" maxlength="200" ng-model="order.address" rows="2"></textarea>
 		</md-input-container>
 	</div>
 
 	<div layout="row">
 		<md-input-container flex="20">
-		  	<label>نوع پرداخت *</label>
+			<label>Shipping method *</label>
 			<md-select required ng-model="order.shipping">
 				<md-option ng-repeat="s in shipping_array" value="{{s}}">{{s}}</md-option>
 			</md-select>
@@ -41,7 +41,7 @@
 
 	<div layout="row">
 	  	<md-input-container flex="20">
-			<label>وضعیت سفارش *</label>
+			<label>Order status *</label>
 			<md-select required ng-model="order.status">
 			  	<md-option ng-repeat="s in status_array" value="{{s}}">{{s}}</md-option>
 			</md-select>
@@ -49,17 +49,17 @@
 	</div>
 	<div layout="row">
 		<md-input-container flex="45">
-		  	<label>توضیحات</label>
+			<label>Notes</label>
 		  	<textarea name="address" maxlength="200" ng-model="order.comment" rows="2"></textarea>
 		</md-input-container>
 	</div>
 	<div>
-		<h4>لیست سفارش محصول : </h4>
+		<h4>Order items:</h4>
 		<md-divider></md-divider>
 		<div layout="row">
-		  	<item flex="5">شماره.</item> <item flex="50">محصول</item> <item flex="15">قیمت محصول</item> <item flex="5">تعداد</item>
-			<item flex="15" layout="row" layout-align="end center">قیمت کل</item>
-			<item flex="10" layout="row" layout-align="center">عملیات</item>
+			<item flex="5">No.</item> <item flex="50">Product</item> <item flex="15">Unit price</item> <item flex="5">Quantity</item>
+			<item flex="15" layout="row" layout-align="end center">Line total</item>
+			<item flex="10" layout="row" layout-align="center">Actions</item>
 		</div>
 		<md-divider></md-divider>
 		<div layout="row" ng-repeat="pod in order_details">
@@ -77,33 +77,33 @@
 			</item>
 		</div>
 		<div layout="row">
-			<md-button flex="100" md-no-ink ng-click="addProductDialog($event)" class="md-accent md-raised md-hue-1">افزودن محصول جدید</md-button>
+			<md-button flex="100" md-no-ink ng-click="addProductDialog($event)" class="md-accent md-raised md-hue-1">Add Product</md-button>
 		</div>
 		<md-divider></md-divider>
 		<div layout="row">
-		  	<item flex="70">مجموع</item> <item flex="5">{{amount_total}}</item>
+			<item flex="70">Subtotal</item> <item flex="5">{{amount_total}}</item>
 			<item flex="15" layout="row" layout-align="end center">{{price_total_formatted}} {{conf_currency}}</item>
 		</div>
 		<div layout="row">
-		  	<item flex="75">مالیات * ({{order.tax}} %)</item>
+			<item flex="75">Tax * ({{order.tax}} %)</item>
 			<item flex="15" layout="row" layout-align="end center">{{price_tax_formatted}} {{conf_currency}}</item>
 		</div>
 		<md-divider></md-divider>
 		<div layout="row">
-		  	<item flex="75">مجموع با احتساب مالیات</item>
+			<item flex="75">Total including tax</item>
 			<item flex="15" layout="row" layout-align="end center">{{price_after_tax}} {{conf_currency}}</item>
 		</div>
 		<md-divider></md-divider>
-		<p class="hint" ng-if="!isNewEntry()"><i> * این مالیات ممکن است با مالیات فعلی متفاوت باشد. مالیات اصلی زمانی محاسبه می شود که کاربر سفارش خود را ثبت کند.</i></p>
+		<p class="hint" ng-if="!isNewEntry()"><i>* This saved tax may differ from the current setting. Tax is calculated when the customer places the order.</i></p>
 	</div>
 	<br><br>
-	<md-checkbox ng-if="!is_new" ng-model="send_email_update">ارسال ایمیل اطلاع رسانی تغییرات برای خریدار</md-checkbox>
+	<md-checkbox ng-if="!is_new" ng-model="send_email_update">Email order changes to the customer</md-checkbox>
 	<br><br>
-    <em> (*) فیلد اجباری</em>
+    <em>(*) Required field</em>
 
     <div class="md-actions md-padding" layout="row">
 		<span flex></span>
-		<md-button ng-if="!submit_loading" class="md-warn" ng-click="cancel()" > انصراف </md-button>
+		<md-button ng-if="!submit_loading" class="md-warn" ng-click="cancel()">Cancel</md-button>
 		<md-button ng-if="!submit_loading" ng-disabled="!isReadySubmit() || thisForm.$invalid" ng-click="submit(order)" class="md-raised md-primary"> {{button_text}} </md-button>
 		<md-progress-circular ng-if="submit_loading" class="md-accent" md-mode="indeterminate" md-diameter="30px"></md-progress-circular>
     </div>

@@ -32,7 +32,7 @@ class AppUser extends REST {
         $username = isset($data['username']) ? trim($data['username']) : '';
         $password = isset($data['password']) ? $data['password'] : '';
         if ($username === '' || $password === '') {
-            $this->show_response(array('status' => 'failed', 'msg' => 'نام کاربری یا رمز عبور نامعتبر است.'));
+            $this->show_response(array('status' => 'failed', 'msg' => 'Username and password are required.'));
         }
 
         $existing = $this->db->get_one(
@@ -40,7 +40,7 @@ class AppUser extends REST {
             array('username' => $username)
         );
         if (!empty($existing)) {
-            $this->show_response(array('status' => 'failed', 'msg' => 'نام کاربری از قبل وجود دارد.'));
+            $this->show_response(array('status' => 'failed', 'msg' => 'That username already exists.'));
         }
 
         $data['username'] = $username;
@@ -58,7 +58,7 @@ class AppUser extends REST {
         $username = isset($data['username']) ? trim($data['username']) : '';
         $password = isset($data['password']) ? $data['password'] : '';
         if ($username === '' || $password === '') {
-            $this->show_response(array('status' => 'failed', 'msg' => 'نام کاربری یا رمز عبور نامعتبر است.'));
+            $this->show_response(array('status' => 'failed', 'msg' => 'Username and password are required.'));
         }
 
         $user = $this->db->get_one(
@@ -66,7 +66,7 @@ class AppUser extends REST {
             array('username' => $username)
         );
         if (empty($user) || !$this->passwordMatches($password, $user['password'])) {
-            $this->show_response(array('status' => 'failed', 'msg' => 'نام کاربری یا رمز عبور اشتباه است.'));
+            $this->show_response(array('status' => 'failed', 'msg' => 'Incorrect username or password.'));
         }
 
         if (!str_starts_with($user['password'], '$') || password_needs_rehash($user['password'], PASSWORD_DEFAULT)) {
