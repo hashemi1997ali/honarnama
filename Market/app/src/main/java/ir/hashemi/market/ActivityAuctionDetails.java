@@ -1,0 +1,262 @@
+package ir.hashemi.market;
+
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Color;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.google.android.material.appbar.AppBarLayout;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import ir.hashemi.market.adapter.AdapterProductAuction;
+import ir.hashemi.market.connection.API;
+import ir.hashemi.market.connection.RestAdapter;
+import ir.hashemi.market.connection.callbacks.CallbackProductAuction;
+import ir.hashemi.market.data.Constant;
+import ir.hashemi.market.model.Category;
+import ir.hashemi.market.model.ProductAuction;
+import ir.hashemi.market.utils.NetworkCheck;
+import ir.hashemi.market.utils.Tools;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class ActivityAuctionDetails extends AppCompatActivity {
+
+    private Toolbar toolbar;
+    private ActionBar actionBar;
+    private View parent_view;
+    private SwipeRefreshLayout swipe_refresh;
+    private Call<CallbackProductAuction> callbackCall = null;
+
+    private RecyclerView recyclerView;
+    private AdapterProductAuction mAdapter;
+
+    private int post_total = 0;
+    private int failed_page = 0;
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_auction_details);
+
+        Configuration configuration = getResources().getConfiguration();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            configuration.setLayoutDirection(new Locale("fa"));
+        }
+
+        parent_view = findViewById(android.R.id.content);
+        initComponent();
+        initToolbar();
+
+        requestAction(1);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @SuppressLint("ResourceType")
+    private void initComponent() {
+        swipe_refresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, Tools.getGridSpanCount(this)));
+
+        ((AppBarLayout) findViewById(R.id.app_bar_layout)).setBackgroundColor(Color.parseColor(getResources().getString(R.color.colorAuction)));
+        Tools.setSystemBarColorDarker(this, getResources().getString(R.color.colorAuction));
+
+        //set data and list adapter
+        mAdapter = new AdapterProductAuction(this, recyclerView, new ArrayList<ProductAuction>());
+        recyclerView.setAdapter(mAdapter);
+
+        // on item list clicked
+        mAdapter.setOnItemClickListener(new AdapterProductAuction.OnItemClickListener() {
+            @Override
+            public void onItemClick(View v, ProductAuction obj, int position) {
+                ActivityProductAuctionDetails.navigate(ir.hashemi.market.ActivityAuctionDetails.this, obj.id);
+            }
+        });
+
+        // detect when scroll reach bottom
+        mAdapter.setOnLoadMoreListener(new AdapterProductAuction.OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(int current_page) {
+                if (post_total > mAdapter.getItemCount() && current_page != 0) {
+                    int next_page = current_page + 1;
+                    requestAction(next_page);
+                } else {
+                    mAdapter.setLoaded();
+                }
+            }
+        });
+
+        // on swipe list
+        swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (callbackCall != null && callbackCall.isExecuted()) callbackCall.cancel();
+                mAdapter.resetListData();
+                requestAction(1);
+            }
+        });
+    }
+
+    private void initToolbar() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setTitle("");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_activity_category_details, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int item_id = item.getItemId();
+        if(item_id == android.R.id.home){
+            getOnBackPressedDispatcher().onBackPressed();
+        } else if(item_id == R.id.action_search){
+            ActivitySearch.navigate(ir.hashemi.market.ActivityAuctionDetails.this, true);
+        } else if(item_id == R.id.action_cart){
+            Intent i = new Intent(this, ActivityShoppingCart.class);
+            startActivity(i);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void displayApiResult(final List<ProductAuction> items) {
+        mAdapter.insertData(items);
+        swipeProgress(false);
+        if (items.size() == 0) showNoItemView(true);
+    }
+
+    private void requestListProductAuction(final int page_no) {
+        API api = RestAdapter.createAPI();
+        callbackCall = api.getListProductAuction(page_no, Constant.PRODUCT_PER_REQUEST, null);
+        callbackCall.enqueue(new Callback<CallbackProductAuction>() {
+            @Override
+            public void onResponse(Call<CallbackProductAuction> call, Response<CallbackProductAuction> response) {
+                CallbackProductAuction resp = response.body();
+                if (resp != null && resp.status.equals("success")) {
+                    post_total = resp.count_total;
+                    displayApiResult(resp.products_auction);
+                } else {
+                    onFailRequest(page_no);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CallbackProductAuction> call, Throwable t) {
+                if (!call.isCanceled()) onFailRequest(page_no);
+            }
+
+        });
+    }
+
+    private void onFailRequest(int page_no) {
+        failed_page = page_no;
+        mAdapter.setLoaded();
+        swipeProgress(false);
+        if (NetworkCheck.isConnect(this)) {
+            showFailedView(true, getString(R.string.failed_text));
+        } else {
+            showFailedView(true, getString(R.string.no_internet_text));
+        }
+    }
+
+    private void requestAction(final int page_no) {
+        showFailedView(false, "");
+        showNoItemView(false);
+        if (page_no == 1) {
+            swipeProgress(true);
+        } else {
+            mAdapter.setLoading();
+        }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                requestListProductAuction(page_no);
+            }
+        }, 1000);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        swipeProgress(false);
+        if (callbackCall != null && callbackCall.isExecuted()) {
+            callbackCall.cancel();
+        }
+    }
+
+    private void showFailedView(boolean show, String message) {
+        View lyt_failed = (View) findViewById(R.id.lyt_failed);
+        ((TextView) findViewById(R.id.failed_message)).setText(message);
+        if (show) {
+            recyclerView.setVisibility(View.GONE);
+            lyt_failed.setVisibility(View.VISIBLE);
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            lyt_failed.setVisibility(View.GONE);
+        }
+        ((Button) findViewById(R.id.failed_retry)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                requestAction(failed_page);
+            }
+        });
+    }
+
+    private void showNoItemView(boolean show) {
+        View lyt_no_item = (View) findViewById(R.id.lyt_no_item);
+        if (show) {
+            recyclerView.setVisibility(View.GONE);
+            lyt_no_item.setVisibility(View.VISIBLE);
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            lyt_no_item.setVisibility(View.GONE);
+        }
+    }
+
+    private void swipeProgress(final boolean show) {
+        if (!show) {
+            swipe_refresh.setRefreshing(show);
+            return;
+        }
+        swipe_refresh.post(new Runnable() {
+            @Override
+            public void run() {
+                swipe_refresh.setRefreshing(show);
+            }
+        });
+    }
+}

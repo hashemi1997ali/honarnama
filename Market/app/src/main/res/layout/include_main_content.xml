@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parent_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:orientation="vertical"
+            app:layout_scrollFlags="scroll|enterAlways" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nested_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/grey_10"
+            android:clipToPadding="false"
+            android:scrollbars="none"
+            android:scrollingCache="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/grey_10"
+                android:focusableInTouchMode="true"
+                android:orientation="vertical">
+
+                <!--Fragment new product slider-->
+                <FrameLayout
+                    android:id="@+id/frame_content_new_product"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/spacing_middle"
+                    android:layout_marginTop="@dimen/spacing_middle"
+                    android:layout_marginRight="@dimen/spacing_middle"
+                    android:layout_marginBottom="@dimen/spacing_middle"
+                    android:clickable="true"
+                    android:clipToPadding="false"
+                    app:cardBackgroundColor="@android:color/white"
+                    app:cardCornerRadius="@dimen/card_radius"
+                    app:cardElevation="@dimen/card_elevation"
+                    app:cardUseCompatPadding="false">
+
+                    <FrameLayout
+                        android:id="@+id/auction_view"
+                        style="@style/RippleStyleBlack"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:id="@+id/lyt_color"
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:background="@color/colorAuction"
+                                android:padding="@dimen/spacing_large">
+
+                                <ImageView
+                                    android:id="@+id/image"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:scaleType="centerCrop"
+                                    android:src="@drawable/img_auction" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/white"
+                                android:orientation="vertical"
+                                android:paddingLeft="@dimen/spacing_large"
+                                android:paddingTop="@dimen/spacing_middle"
+                                android:paddingRight="@dimen/spacing_large"
+                                android:paddingBottom="@dimen/spacing_middle">
+
+                                <TextView
+                                    android:id="@+id/name"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/auction"
+                                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
+                                    android:textColor="@color/grey_80"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/brief"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/spacing_small"
+                                    android:maxLines="2"
+                                    android:text="@string/auction_about"
+                                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
+                                    android:textColor="@color/grey_40" />
+
+                            </LinearLayout>
+                        </LinearLayout>
+
+                    </FrameLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <!--new product slider-->
+                <FrameLayout
+                    android:id="@+id/frame_content_category"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/spacing_large"
+        android:clickable="true"
+        android:src="@drawable/ic_cart"
+        app:backgroundTint="@color/colorAccent"
+        app:layout_anchor="@id/swipe_refresh_layout"
+        app:layout_anchorGravity="bottom|end" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

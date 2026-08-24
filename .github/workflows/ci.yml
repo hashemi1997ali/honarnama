@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  php-lint:
+    name: PHP and PostgreSQL
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: honarnama
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d honarnama"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/honarnama?sslmode=disable
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@127.0.0.1:5432/honarnama?sslmode=disable
+      ADMIN_NAME: CI Administrator
+      ADMIN_USERNAME: ci-admin
+      ADMIN_EMAIL: ci@example.com
+      ADMIN_PASSWORD: CI-only-password-2026
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo_pgsql
+          coverage: none
+
+      - name: Lint PHP files
+        shell: bash
+        run: |
+          while IFS= read -r -d '' file; do
+            php -l "$file"
+          done < <(find panel -type f -name '*.php' -print0)
+
+      - name: Apply PostgreSQL schema
+        run: php panel/database/migrate.php
+
+      - name: Verify required tables
+        run: >-
+          php -r 'require "panel/services/tools/db.php";
+          $db = new DB();
+          $count = $db->get_count("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = :schema AND table_name IN (\x27product\x27, \x27category\x27, \x27news_info\x27, \x27product_order\x27, \x27app_user\x27)", array("schema" => "public"));
+          if ($count !== 5) { throw new RuntimeException("Required tables are missing"); }'
+
+  android-build:
+    name: Android lint and build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Market
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Lint and build
+        run: ./gradlew lintDebug assembleDebug --stacktrace

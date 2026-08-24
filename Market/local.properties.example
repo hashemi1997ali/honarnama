@@ -1,0 +1,7 @@
+# Android Studio writes sdk.dir automatically. Copy the other values into the
+# ignored local.properties file. The emulator reaches this Mac at 10.0.2.2.
+BACKEND_URL=http://10.0.2.2:8000/panel/
+SECURITY_CODE=use-the-same-value-as-the-root-env-file
+CONTACT_EMAIL=contact@example.com
+
+# Release builds should use an HTTPS backend URL instead of the local HTTP URL.

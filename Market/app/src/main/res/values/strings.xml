@@ -1,0 +1,224 @@
+<resources>
+    <string name="app_name">هنرنما</string>
+    <string name="app_tag_line"></string>
+
+    <string name="title_about">درباره هنرنما</string>
+    <string name="content_about">
+	بزرگترین فروشگاه آثار هنری
+        ||
+و مرجع معرفی هنرمندان
+||
+با پیک رایگان برای خریدهای بالای 200 هزار تومان
+||
+ارسال در کمترین زمان ممکن
+||
+ پشتیبانی:
+        ||
+09140440271
+	</string>
+
+    <string name="title_activity_news_info">اطلاعات اخبار</string>
+    <string name="title_activity_wishlist">علاقه مندی</string>
+    <string name="title_activity_cart">سبد خرید</string>
+    <string name="title_activity_checkout">بررسی</string>
+    <string name="title_activity_history">تاریخچه</string>
+    <string name="title_activity_settings">تنظیمات</string>
+
+    <!--All data for ActivityLogin.java and ActivityRegister.java-->
+    <string name="hint_user_name">نام و نام خانوادگی</string>
+    <string name="hint_user_username">نام کاربری</string>
+    <string name="hint_user_password">رمز عبور</string>
+    <string name="login">ورود</string>
+    <string name="not_have_account">حساب کاربری ندارید؟</string>
+    <string name="have_account">حساب کاربری دارید؟</string>
+    <string name="register">ثبت نام</string>
+    <string name="welcome">خوش آمدید</string>
+
+    <!--All data for ActivityMain.java -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="str_nav_username">نام کاربری :</string>
+    <string name="str_nav_shopping_cart">سبد خرید</string>
+    <string name="str_nav_wishlist">علاقه مندی</string>
+    <string name="str_nav_history">تاریخچه</string>
+    <string name="str_nav_news">اطلاعات اخبار</string>
+    <string name="sub_title_nav_others">بیشتر</string>
+    <string name="str_nav_instruction">راهنما خرید</string>
+    <string name="str_nav_setting">تنظیمات</string>
+    <string name="str_nav_about">درباره</string>
+    <string name="str_nav_exit">خروج از حساب</string>
+    <string name="press_again_exit_app">برای خروج دو بار پشت سر هم ضربه بزنید</string>
+    <string name="title_logout">خروج از حساب کاربری</string>
+    <string name="msg_logout">از خروج حساب کاربری خود مطمئن هستید؟</string>
+
+    <string name="title_what_news">چه خبر</string>
+    <string name="title_category">دسته بندی</string>
+
+    <!--All data for ActivityAuction.java -->
+    <string name="auction">مزایده</string>
+    <string name="auction_about">مشاهده محصولات بخش مزایده</string>
+    <string name="remaining_time">زمان باقی مانده :</string>
+    <string name="top_bid_price">بالاترین پیشنهاد :</string>
+    <string name="top_bidder">پیشنهاد دهنده :</string>
+    <string name="auction_start_date">زمان شروع :</string>
+    <string name="auction_end_date">زمان پایان :</string>
+    <string name="basic_price">قیمت پایه :</string>
+    <string name="add_bid">ثبت پیشنهاد</string>
+    <string name="bid_price">قیمت پیشنهادی (تومان)</string>
+    <string name="not_started">آغاز نشده است</string>
+    <string name="on_performing">در حال برگزاری است</string>
+    <string name="finished">پایان یافته است</string>
+    <string name="bid_added_seccessful">پیشنهاد با موفقیت ثبت شد</string>
+    <string name="bid_price_not_acceptable">قیمت پیشنهادی نامعتبر است</string>
+    <string name="day">روز ،</string>
+
+
+    <!--All data for ActivityCategoryDetails.java -->
+    <string name="title_menu_search">جستجو</string>
+    <string name="title_menu_delete">حذف</string>
+
+    <!--All data for ActivityProductDetails.java -->
+    <string name="please_wait_text">لطفا صبر کنید داده ها در حال بارگزاری می باشند</string>
+    <string name="categories_product">دسته بندی :&#160;</string>
+    <string name="cannot_add_wishlist">امکان افزودن به علاقه مندی ها وجود ندارد</string>
+    <string name="add_wishlist">افزودن به مورد علاقه</string>
+    <string name="remove_wishlist">حذف از لیست مورد علاقه</string>
+    <string name="add_cart">افزودن به سبد خرید</string>
+    <string name="remove_cart">حذف از سبد خرید</string>
+    <string name="msg_out_of_stock">این محصول در انبار موجود نمی باشد</string>
+    <string name="msg_suspend">فروش این محصول متوقف شده است</string>
+    <string name="out_of_stock">ناموجود</string>
+    <string name="suspend">تعلیق</string>
+    <string name="ready_stock">موجود</string>
+    <string name="bt_add_cart">افزودن به سبد</string>
+    <string name="bt_remove_cart">حذف از سبد</string>
+
+    <!--All data for ActivitySplash.java -->
+    <string name="title_unable_connect">مشکل در ارتباط با سرور</string>
+    <string name="msg_unable_connect">اتصال اینترنت خود را بررسی کنید</string>
+    <string name="msg_no_internet">لطفا اتصال اینترنت خود را بررسی کنید و دوباره تلاش کنید</string>
+    <string name="title_no_internet">اتصال اینترنت وجود ندارد</string>
+
+    <!--All data for ActivityWishlist.java -->
+    <string name="msg_wishlist_empty">لیست علاقه مندی خالیست</string>
+    <string name="title_menu_wishlist">مورد علاقه</string>
+
+    <!--All data for ActivityShoppingCart.java -->
+    <string name="msg_cart_empty">سبد خرید خالیست</string>
+    <string name="before_tax">( با هزینه پیک )</string>
+    <string name="total">جمع&#160;</string>
+    <string name="stock">موجود : &#160;</string>
+    <string name="QUANTITY">مقدار</string>
+    <string name="items">مورد</string>
+    <string name="title_menu_checkout">بررسی</string>
+
+    <!--All data for ActivitySearch.java -->
+    <string name="ALL">همه</string>
+    <string name="Category">دسته بندی :&#160;</string>
+    <string name="hint_input_search">ورودی جستجو</string>
+    <string name="please_fill">لطفا متن جستجو را وارد کنید</string>
+
+    <!--All data for ActivityOrderHistory.java -->
+    <string name="msg_history_empty">تاریخچه خالیست</string>
+    <string name="title_history_details">اطلاعات تاریخچه</string>
+
+    <!--All data for ActivityCheckout.java -->
+    <string name="cost_details">محاسبه</string>
+    <string name="total_order">جمع کل :&#160;</string>
+    <string name="tax">مالیات&#160;</string>
+    <string name="total_fess">جمع کل :&#160;</string>
+    <string name="buyer_profile">اطلاعات خریدار</string>
+    <string name="hint_name">نام</string>
+    <string name="hint_email">ایمیل</string>
+    <string name="hint_phone">شماره تماس</string>
+    <string name="hint_address">آدرس</string>
+    <string name="choose_shipping">روش خرید</string>
+    <string name="hint_date_ship">تاریخ خرید</string>
+    <string name="hint_comment">توضیحات</string>
+
+    <string name="invalid_name">نام نامعتبر</string>
+    <string name="invalid_email">ایمیل اشتباه است</string>
+    <string name="invalid_phone">شماره تماس اشتباه است</string>
+    <string name="invalid_address">ادرس نامعتبر است</string>
+    <string name="invalid_shipping">روش خرید انتخاب نشده</string>
+    <string name="invalid_shipping_date">تاریخ خرید انتخاب نشده</string>
+
+    <string name="title_please_wait">لطفا صبر کنید</string>
+    <string name="content_submit_checkout">در حال ارسال اطلاعات&#8230;</string>
+    <string name="confirmation">تائیدیه</string>
+    <string name="confirm_checkout">برای خرید مطمئن هستید؟</string>
+    <string name="failed_checkout">
+        ثبت سفارش انجام نشد
+        \n\nاتصال اینترنت خودتون را بررسی کنید, مشکل از اینترنت نیست؟ با استفاده از اطلاعات درج شده در بخش تنظیمات با ما ارتباط برقرار کنید
+    </string>
+    <string name="success_checkout">تبریک میگم</string>
+    <string name="msg_success_checkout">
+        خرید شما با موفقیت ثبت شد.\nکد خرید شما برای پیگیری : %1$s\n\nمنتظر تماس تایید خرید ما باشید. اطلاعات بیشتر برای شما ایمیل خواهد شد.
+    </string>
+    <string name="process_checkout">نهایی سازی خرید</string>
+
+    <!--All data ActivityNewsInfoDetails.java -->
+    <string name="featured">ویژه</string>
+
+    <!--All data ActivityFullScreenImage.java -->
+    <string name="image_of">%1$d از %2$d</string>
+
+    <!--All data related about page-->
+    <!--Size three array below must be same -->
+    <string-array name="about_title_array">
+        <item>خوش آمدید</item>
+        <item>بررسی و انتخاب</item>
+        <item>افزودن به سبد</item>
+        <item>تایید و دریافت</item>
+    </string-array>
+
+    <string-array name="about_description_array">
+        <item>از خرید خود لذت ببرید</item>
+        <item>قبل از خرید بررسی کنید</item>
+        <item>کالای مورد نظر را به سبد خرید اضافه کنید</item>
+        <item>خرید خود را نهایی کنید و منتظر کالا باشید</item>
+    </string-array>
+
+    <integer-array name="about_images_array">
+        <item>@drawable/intro_img_1</item>
+        <item>@drawable/intro_img_2</item>
+        <item>@drawable/intro_img_3</item>
+        <item>@drawable/intro_img_4</item>
+    </integer-array>
+
+    <!-- Activity Setting : xml/setting_preference.xml -->
+    <string name="app_version">نسخه</string>
+    <string name="pref_group_others">بیشتر</string>
+    <string name="pref_title_contact_us">ارتباط با ما</string>
+    <string name="pref_title_build">نسخه برنامه</string>
+    <string name="version_unknown">Unknown</string>
+
+
+    <!-- Other String -->
+    <string name="failed_text">خطا در بارگزاری</string>
+    <string name="no_internet_text">ارتباط اینترنت وجود ندارد</string>
+    <string name="no_item">موردی وجود ندارد</string>
+    <string name="msg_data_loaded">بارگزاری کامل شد</string>
+    <string name="msg_failed_load_data">خطا در بارگزاری اطلاعات</string>
+    <string name="title_delete_confirm">تائیدیه حذف</string>
+    <string name="content_delete_confirm">میخواهید همه موارد حذف شوند از</string>
+    <string name="delete_success">با موفقیت حذف شد</string>
+    <string name="msg_copied_clipboard">متن کپی شد</string>
+    <string name="failed">نا موفق</string>
+
+    <string name="OK">باشه</string>
+    <string name="GOT_IT">رفتن به</string>
+    <string name="YES">بله</string>
+    <string name="NO">خیر</string>
+    <string name="SETTING">تنظیمات</string>
+    <string name="CANCEL">لغو</string>
+    <string name="CLOSE">بستن</string>
+    <string name="TRY_AGAIN">تلاش دوباره</string>
+    <string name="DELETE">حذف</string>
+    <string name="SAVE">ذخیره</string>
+    <string name="NEXT">بعدی</string>
+    <string name="SKIP">رد کردن</string>
+
+    <string name="msg_loading">لطفا صبر کنید&#8230;</string>
+
+</resources>

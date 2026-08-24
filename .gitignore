@@ -1,0 +1,87 @@
+# Android / Gradle
+.gradle/
+**/build/
+local.properties
+*.iml
+.idea/
+.run/
+captures/
+.externalNativeBuild/
+.cxx/
+.kotlin/
+out/
+*.hprof
+
+# PHP dependencies, caches, and logs
+vendor/
+.phpunit.cache/
+.phpunit.result.cache
+.php-cs-fixer.cache
+coverage/
+logs/
+*.log
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.jks
+*.keystore
+keystore.properties
+*.p12
+*.pfx
+*.pem
+*.key
+.pgpass
+pgpass.conf
+
+# Generated Android packages
+*.apk
+*.aab
+
+# Runtime uploads (keep only the protected directory structure)
+panel/uploads/*
+!panel/uploads/index.php
+!panel/uploads/category/
+!panel/uploads/news/
+!panel/uploads/product/
+panel/uploads/category/*
+panel/uploads/news/*
+panel/uploads/product/*
+!panel/uploads/category/.gitkeep
+!panel/uploads/news/.gitkeep
+!panel/uploads/product/.gitkeep
+
+# Local database files and backups
+*.dump
+*.backup
+*.sql.gz
+*.sqlite
+*.sqlite3
+*.db
+
+# Operating system, editor, and temporary files
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
+*.swp
+*.swo
+*~
+*.tmp
+*.temp
+*.orig
+.cache/
+tmp/
+temp/
+
+# Private project material
+*.psd
+*.docx
+*.pages
+/poster.jpg
+/pictures/
+/photos/
+/personal/
+/private/
+/docs/
