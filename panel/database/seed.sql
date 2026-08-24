@@ -2,10 +2,11 @@ BEGIN;
 
 WITH sample(name, icon, brief, color, priority) AS (
     VALUES
-        ('Painting', 'category-painting-icon.png', 'Original paintings and works on canvas.', '#EC75E7', 1),
-        ('Sculpture', 'category-sculpture-icon.png', 'Decorative and collectible sculptures.', '#D46B2D', 2),
-        ('Photography', 'category-photography-icon.png', 'Fine-art and documentary photography.', '#26B8B8', 3),
-        ('Handicrafts', 'category-handicrafts-icon.png', 'Handmade objects created by local artists.', '#5269BF', 4)
+        ('Auctions', 'category-auction-icon.png', 'Browse artwork available in demo auctions.', '#FFC107', 1),
+        ('Painting', 'category-painting-icon.png', 'Original paintings and works on canvas.', '#EC75E7', 2),
+        ('Sculpture', 'category-sculpture-icon.png', 'Decorative and collectible sculptures.', '#D46B2D', 3),
+        ('Photography', 'category-photography-icon.png', 'Fine-art and documentary photography.', '#26B8B8', 4),
+        ('Handicrafts', 'category-handicrafts-icon.png', 'Handmade objects created by local artists.', '#5269BF', 5)
 )
 INSERT INTO category (name, icon, draft, brief, color, priority, created_at, last_update)
 SELECT
@@ -150,18 +151,34 @@ WHERE NOT EXISTS (
 );
 
 UPDATE category SET icon = CASE name
+    WHEN 'Auctions' THEN 'category-auction-icon.png'
     WHEN 'Painting' THEN 'category-painting-icon.png'
     WHEN 'Sculpture' THEN 'category-sculpture-icon.png'
     WHEN 'Photography' THEN 'category-photography-icon.png'
     WHEN 'Handicrafts' THEN 'category-handicrafts-icon.png'
 END,
 color = CASE name
+    WHEN 'Auctions' THEN '#FFC107'
     WHEN 'Painting' THEN '#EC75E7'
     WHEN 'Sculpture' THEN '#D46B2D'
     WHEN 'Photography' THEN '#26B8B8'
     WHEN 'Handicrafts' THEN '#5269BF'
+END,
+priority = CASE name
+    WHEN 'Auctions' THEN 1
+    WHEN 'Painting' THEN 2
+    WHEN 'Sculpture' THEN 3
+    WHEN 'Photography' THEN 4
+    WHEN 'Handicrafts' THEN 5
+END,
+brief = CASE name
+    WHEN 'Auctions' THEN 'Browse artwork available in demo auctions.'
+    WHEN 'Painting' THEN 'Original paintings and works on canvas.'
+    WHEN 'Sculpture' THEN 'Decorative and collectible sculptures.'
+    WHEN 'Photography' THEN 'Fine-art and documentary photography.'
+    WHEN 'Handicrafts' THEN 'Handmade objects created by local artists.'
 END
-WHERE name IN ('Painting', 'Sculpture', 'Photography', 'Handicrafts');
+WHERE name IN ('Auctions', 'Painting', 'Sculpture', 'Photography', 'Handicrafts');
 
 UPDATE product SET image = CASE name
     WHEN 'Azure Horizon' THEN 'sample-painting.jpg'

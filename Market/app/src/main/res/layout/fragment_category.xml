@@ -15,10 +15,6 @@
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
         android:textColor="@color/grey_60" />
 
-    <include
-        android:id="@+id/auction_item"
-        layout="@layout/item_category" />
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
