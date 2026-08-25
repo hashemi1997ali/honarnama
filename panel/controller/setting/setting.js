@@ -44,7 +44,6 @@ angular.module('App').controller('SettingController', function ($rootScope, $sco
 	
 	request.getAllCurrency().then(function (resp) {
 		self.arr_currency = resp.data;
-		//console.log(JSON.stringify(self.arr_currency));
 	});
 	
 	self.setValue = function (code, value) {
@@ -81,7 +80,6 @@ angular.module('App').controller('SettingController', function ($rootScope, $sco
 	
 	self.submitConf = function() {	
 		self.submit_loading_conf = true;
-		//console.log(JSON.stringify(self.config));
 		request.updateAllConfig(self.config).then(function(resp){ 
 			if(resp.status == 'success'){
 				root.showConfirmDialogSimple('', resp.msg, function(){
@@ -105,7 +103,6 @@ angular.module('App').controller('SettingController', function ($rootScope, $sco
 		self.userdata = data.data;
 		self.userdata.password = '*****';
 		original = angular.copy(self.userdata);
-		//console.log(JSON.stringify(self.userdata));
 	});
 
 	self.isClean = function () {
@@ -127,7 +124,6 @@ angular.module('App').controller('SettingController', function ($rootScope, $sco
 	self.submit = function (is_new) {
 		self.submit_loading = true;
 		if (!is_new) {
-			//console.log(JSON.stringify(self.userdata));
 			request.updateOneUser(cur_id, self.userdata).then(function (resp) {
 				if (resp.status == 'success') {
 					// saving session

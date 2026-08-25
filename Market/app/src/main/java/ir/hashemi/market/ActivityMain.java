@@ -5,10 +5,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -23,6 +27,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.view.GravityCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
@@ -34,21 +42,33 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import ir.hashemi.market.connection.RestAdapter;
+import ir.hashemi.market.connection.callbacks.CallbackOrderHistory;
 import ir.hashemi.market.data.DatabaseHandler;
 import ir.hashemi.market.data.SharedPref;
 import ir.hashemi.market.fragment.FragmentCategory;
 import ir.hashemi.market.fragment.FragmentFeaturedNews;
+import ir.hashemi.market.model.Order;
+import ir.hashemi.market.model.OrderHistoryRequest;
+import ir.hashemi.market.model.User;
 import ir.hashemi.market.utils.CallbackDialog;
 import ir.hashemi.market.utils.DialogUtils;
 import ir.hashemi.market.utils.Tools;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ActivityMain extends AppCompatActivity {
 
     private ActionBar actionBar;
     private Toolbar toolbar;
     private FloatingActionButton fab;
+    private View cartFabContainer;
+    private TextView cartBadge;
     private CardView search_bar;
     private TextView username;
     private SwipeRefreshLayout swipe_refresh;
@@ -56,6 +76,7 @@ public class ActivityMain extends AppCompatActivity {
     private NavigationView nav_view;
     private DatabaseHandler db;
     private SharedPref sharedPref;
+    private Call<CallbackOrderHistory> orderHistoryCall;
     private Dialog dialog_failed = null;
     public boolean category_load = false, news_load = false;
 
@@ -68,7 +89,11 @@ public class ActivityMain extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_main);
+
+        applySystemBarInsets();
+        addStatusBarBackground();
 
         activityMain = this;
         db = new DatabaseHandler(this);
@@ -120,7 +145,6 @@ public class ActivityMain extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(final MenuItem item) {
                 onItemSelected(item.getItemId());
-                //drawer.closeDrawers();
                 return true;
             }
         });
@@ -146,6 +170,8 @@ public class ActivityMain extends AppCompatActivity {
         search_bar = (CardView) findViewById(R.id.search_bar);
         swipe_refresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        cartFabContainer = findViewById(R.id.cart_fab_container);
+        cartBadge = (TextView) findViewById(R.id.cart_badge);
         NestedScrollView nested_content = (NestedScrollView) findViewById(R.id.nested_content);
         nested_content.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
@@ -183,6 +209,78 @@ public class ActivityMain extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void applySystemBarInsets() {
+        final View root = findViewById(R.id.drawer_layout);
+        final View headerSpacer = findViewById(R.id.main_header_spacer);
+        final View searchBar = findViewById(R.id.search_bar);
+        final NavigationView navigationView = findViewById(R.id.nav_view);
+
+        final int headerBaseHeight = headerSpacer.getLayoutParams().height;
+        final ViewGroup.MarginLayoutParams searchBaseParams =
+                (ViewGroup.MarginLayoutParams) searchBar.getLayoutParams();
+        final int searchBaseTopMargin = searchBaseParams.topMargin;
+        final int navigationPaddingLeft = navigationView.getPaddingLeft();
+        final int navigationPaddingTop = navigationView.getPaddingTop();
+        final int navigationPaddingRight = navigationView.getPaddingRight();
+        final int navigationPaddingBottom = navigationView.getPaddingBottom();
+
+        ViewCompat.setOnApplyWindowInsetsListener(root, (view, windowInsets) -> {
+            Insets statusBars = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());
+            Insets navigationBars = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars());
+
+            ViewGroup.LayoutParams headerParams = headerSpacer.getLayoutParams();
+            int headerHeight = headerBaseHeight + statusBars.top;
+            if (headerParams.height != headerHeight) {
+                headerParams.height = headerHeight;
+                headerSpacer.setLayoutParams(headerParams);
+            }
+
+            ViewGroup.MarginLayoutParams searchParams =
+                    (ViewGroup.MarginLayoutParams) searchBar.getLayoutParams();
+            int searchTopMargin = searchBaseTopMargin + statusBars.top;
+            if (searchParams.topMargin != searchTopMargin) {
+                searchParams.topMargin = searchTopMargin;
+                searchBar.setLayoutParams(searchParams);
+            }
+
+            navigationView.setPadding(
+                    navigationPaddingLeft,
+                    navigationPaddingTop + statusBars.top,
+                    navigationPaddingRight,
+                    navigationPaddingBottom + navigationBars.bottom
+            );
+            return windowInsets;
+        });
+        ViewCompat.requestApplyInsets(root);
+    }
+
+    private void addStatusBarBackground() {
+        ViewGroup decor = (ViewGroup) getWindow().getDecorView();
+        View statusBarBackground = new View(this);
+        statusBarBackground.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        statusBarBackground.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                0,
+                Gravity.TOP
+        );
+        decor.addView(statusBarBackground, params);
+
+        ViewCompat.setOnApplyWindowInsetsListener(statusBarBackground, (view, windowInsets) -> {
+            Insets safeTop = windowInsets.getInsets(
+                    WindowInsetsCompat.Type.statusBars()
+                            | WindowInsetsCompat.Type.displayCutout()
+            );
+            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+            if (layoutParams.height != safeTop.top) {
+                layoutParams.height = safeTop.top;
+                view.setLayoutParams(layoutParams);
+            }
+            return windowInsets;
+        });
+        ViewCompat.requestApplyInsets(statusBarBackground);
     }
 
     private void refreshFragment() {
@@ -296,8 +394,8 @@ public class ActivityMain extends AppCompatActivity {
     private void animateFab(final boolean hide) {
         if (isFabHide && hide || !isFabHide && !hide) return;
         isFabHide = hide;
-        int moveY = hide ? (2 * fab.getHeight()) : 0;
-        fab.animate().translationY(moveY).setStartDelay(100).setDuration(300).start();
+        int moveY = hide ? (2 * cartFabContainer.getHeight()) : 0;
+        cartFabContainer.animate().translationY(moveY).setStartDelay(100).setDuration(300).start();
     }
 
     boolean isSearchBarHide = false;
@@ -313,6 +411,7 @@ public class ActivityMain extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         updateNavCounter(nav_view);
+        syncOrderHistory();
     }
 
     private void handleBackNavigation() {
@@ -337,7 +436,6 @@ public class ActivityMain extends AppCompatActivity {
     public void showDataLoaded() {
         if (category_load && news_load) {
             swipeProgress(false);
-            //Snackbar.make(parent_view, R.string.msg_data_loaded, Snackbar.LENGTH_SHORT).show();
         }
     }
 
@@ -362,12 +460,78 @@ public class ActivityMain extends AppCompatActivity {
         Menu menu = nav.getMenu();
         // update cart counter
         int cart_count = db.getActiveCartSize();
-        ((TextView) menu.findItem(R.id.nav_cart).getActionView().findViewById(R.id.counter)).setText(String.valueOf(cart_count));
+        View cartAction = menu.findItem(R.id.nav_cart).getActionView();
+        if (cartAction != null) {
+            ((TextView) cartAction.findViewById(R.id.counter)).setText(String.valueOf(cart_count));
+        }
+        if (cartBadge != null) {
+            cartBadge.setText(cart_count > 99 ? "99+" : String.valueOf(cart_count));
+            cartBadge.setVisibility(cart_count > 0 ? View.VISIBLE : View.GONE);
+        }
 
         // update wishlist counter
         int wishlist_count = db.getWishlistSize();
-        ((TextView) menu.findItem(R.id.nav_wish).getActionView().findViewById(R.id.counter)).setText(String.valueOf(wishlist_count));
+        View wishlistAction = menu.findItem(R.id.nav_wish).getActionView();
+        if (wishlistAction != null) {
+            ((TextView) wishlistAction.findViewById(R.id.counter)).setText(String.valueOf(wishlist_count));
+        }
 
+        // update order history counter
+        int order_count = db.getOrderSize();
+        View historyAction = menu.findItem(R.id.nav_history).getActionView();
+        if (historyAction != null) {
+            ((TextView) historyAction.findViewById(R.id.counter)).setText(String.valueOf(order_count));
+        }
+
+    }
+
+    private void syncOrderHistory() {
+        User user = sharedPref.getUserData();
+        if (user == null || user.auth_token == null || user.auth_token.trim().isEmpty()) return;
+
+        if (orderHistoryCall != null) orderHistoryCall.cancel();
+        OrderHistoryRequest request = new OrderHistoryRequest();
+        request.auth_token = user.auth_token;
+        for (Order localOrder : db.getOrderList()) {
+            if (localOrder.id != null && localOrder.code != null) {
+                request.legacy_orders.add(
+                        new OrderHistoryRequest.LegacyOrder(localOrder.id, localOrder.code)
+                );
+            }
+        }
+
+        orderHistoryCall = RestAdapter.createAPI().listOrderHistory(request);
+        orderHistoryCall.enqueue(new Callback<CallbackOrderHistory>() {
+            @Override
+            public void onResponse(
+                    Call<CallbackOrderHistory> call,
+                    Response<CallbackOrderHistory> response
+            ) {
+                CallbackOrderHistory result = response.body();
+                if (!response.isSuccessful() || result == null || !"success".equals(result.status)) {
+                    Log.w("OrderHistory", "Main-screen order sync was not successful");
+                    return;
+                }
+
+                List<Order> orders = result.data == null ? new ArrayList<>() : result.data;
+                db.replaceOrderHistory(orders);
+                updateNavCounter(nav_view);
+            }
+
+            @Override
+            public void onFailure(Call<CallbackOrderHistory> call, Throwable throwable) {
+                if (!call.isCanceled()) {
+                    Log.w("OrderHistory", "Main-screen order sync failed", throwable);
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (orderHistoryCall != null) orderHistoryCall.cancel();
+        if (activityMain == this) activityMain = null;
+        super.onDestroy();
     }
 
 

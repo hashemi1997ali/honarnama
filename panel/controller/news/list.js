@@ -66,7 +66,7 @@ angular.module('App').controller('NewsController', function ($rootScope, $scope,
 			parent              : angular.element(document.body),
 			targetEvent         : ev,
 			clickOutsideToClose : true,
-			news             	: n
+			locals              : { news: angular.copy(n) }
 		})
 	};
 
@@ -99,7 +99,8 @@ angular.module('App').controller('NewsController', function ($rootScope, $scope,
     self.publishDialog = function (ev, o) {
         $mdDialog.show({
             controller : PublishNewsInfoDialogCtl,
-            parent: angular.element(document.body), targetEvent: ev, clickOutsideToClose: true, obj: o,
+	            parent: angular.element(document.body), targetEvent: ev, clickOutsideToClose: true,
+	            locals: { obj: angular.copy(o) },
             template:
             '<md-dialog ng-cloak aria-label="publishData">' +
             '  <md-dialog-content>' +

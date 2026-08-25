@@ -72,12 +72,6 @@ angular.module('App').factory('focus', function($timeout, $window) {
 	};
 });
 
-angular.module('App').run(function ($location, $rootScope, $cookies) {
-	$rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
-		// $rootScope.title = current.$$route.title;
-	});
-});
-
 angular.module('App').filter('cut', function () {
 	return function (value, wordwise, max, tail) {
 		if (!value) return '';
@@ -90,7 +84,6 @@ angular.module('App').filter('cut', function () {
 		if (wordwise) {
 			var lastspace = value.lastIndexOf(' ');
 			if (lastspace != -1) {
-				//Also remove . and , so its gives a cleaner result.
 				if (value.charAt(lastspace-1) == '.' || value.charAt(lastspace-1) == ',') {
 					lastspace = lastspace - 1;
 				}

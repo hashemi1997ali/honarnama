@@ -1,6 +1,7 @@
 package ir.hashemi.market.adapter;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import ir.hashemi.market.R;
 import ir.hashemi.market.data.Constant;
@@ -55,6 +57,7 @@ public class AdapterProduct extends RecyclerView.Adapter<RecyclerView.ViewHolder
         // each data item is just a string in this case
         public TextView name;
         public TextView price;
+        public TextView originalPrice;
         public ImageView image;
         public View lyt_parent;
 
@@ -62,6 +65,7 @@ public class AdapterProduct extends RecyclerView.Adapter<RecyclerView.ViewHolder
             super(v);
             name = (TextView) v.findViewById(R.id.name);
             price = (TextView) v.findViewById(R.id.price);
+            originalPrice = (TextView) v.findViewById(R.id.original_price);
             image = (ImageView) v.findViewById(R.id.image);
             lyt_parent = v.findViewById(R.id.lyt_parent);
         }
@@ -97,7 +101,15 @@ public class AdapterProduct extends RecyclerView.Adapter<RecyclerView.ViewHolder
             final Product p = items.get(position);
             OriginalViewHolder vItem = (OriginalViewHolder) holder;
             vItem.name.setText(p.name);
-            vItem.price.setText(p.price.longValue() + " " + sharedPref.getInfoData().currency);
+            String currency = sharedPref.getInfoData().currency;
+            vItem.price.setText(formatPrice(p.getEffectivePrice(), currency));
+            if (p.hasDiscount()) {
+                vItem.originalPrice.setText(formatPrice(p.price, currency));
+                vItem.originalPrice.setPaintFlags(vItem.originalPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                vItem.originalPrice.setVisibility(View.VISIBLE);
+            } else {
+                vItem.originalPrice.setVisibility(View.GONE);
+            }
             Tools.displayImageOriginal(ctx, vItem.image, Constant.getURLimgProduct(p.image));
             vItem.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -183,6 +195,10 @@ public class AdapterProduct extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public interface OnLoadMoreListener {
         void onLoadMore(int current_page);
+    }
+
+    private String formatPrice(double price, String currency) {
+        return String.format(Locale.US, "%1$,.2f %2$s", price, currency);
     }
 
 }

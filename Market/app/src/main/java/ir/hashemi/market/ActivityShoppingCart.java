@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,13 +25,24 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 import ir.hashemi.market.adapter.AdapterShoppingCart;
+import ir.hashemi.market.connection.API;
+import ir.hashemi.market.connection.RestAdapter;
+import ir.hashemi.market.connection.callbacks.CallbackCartValidation;
 import ir.hashemi.market.data.DatabaseHandler;
 import ir.hashemi.market.data.SharedPref;
 import ir.hashemi.market.model.Cart;
+import ir.hashemi.market.model.Checkout;
 import ir.hashemi.market.model.Info;
+import ir.hashemi.market.model.ProductOrderDetail;
 import ir.hashemi.market.utils.Tools;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ActivityShoppingCart extends AppCompatActivity {
 
@@ -41,11 +53,14 @@ public class ActivityShoppingCart extends AppCompatActivity {
     private TextView price_total;
     private SharedPref sharedPref;
     private Info info;
+    private Call<CallbackCartValidation> validationCall;
+    private boolean cartValidating;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping_cart);
+        Tools.applyTopWindowInsets(this, findViewById(R.id.app_bar_layout));
 
         db = new DatabaseHandler(this);
         sharedPref = new SharedPref(this);
@@ -85,6 +100,10 @@ public class ActivityShoppingCart extends AppCompatActivity {
         if (item_id == android.R.id.home) {
             getOnBackPressedDispatcher().onBackPressed();
         } else if (item_id == R.id.action_checkout) {
+            if (cartValidating) {
+                Snackbar.make(parent_view, R.string.please_wait_text, Snackbar.LENGTH_SHORT).show();
+                return true;
+            }
             if (adapter.getItemCount() > 0) {
                 Intent intent = new Intent(ir.hashemi.market.ActivityShoppingCart.this, ActivityCheckout.class);
                 startActivity(intent);
@@ -108,6 +127,11 @@ public class ActivityShoppingCart extends AppCompatActivity {
     }
 
     private void displayData() {
+        renderData();
+        validateCart(adapter.getItem());
+    }
+
+    private void renderData() {
         List<Cart> items = db.getActiveCartList();
         adapter = new AdapterShoppingCart(this, true, items);
         recyclerView.setAdapter(adapter);
@@ -128,6 +152,92 @@ public class ActivityShoppingCart extends AppCompatActivity {
         setTotalPrice();
     }
 
+    private void validateCart(List<Cart> items) {
+        if (items == null || items.isEmpty() || cartValidating) return;
+        cartValidating = true;
+
+        Checkout checkout = new Checkout();
+        checkout.product_order_detail.clear();
+        for (Cart cart : items) {
+            checkout.product_order_detail.add(new ProductOrderDetail(
+                    cart.product_id, cart.product_name, cart.amount, cart.price_item
+            ));
+        }
+
+        validationCall = RestAdapter.createAPI().validateCart(checkout);
+        validationCall.enqueue(new Callback<CallbackCartValidation>() {
+            @Override
+            public void onResponse(Call<CallbackCartValidation> call, Response<CallbackCartValidation> response) {
+                cartValidating = false;
+                CallbackCartValidation result = response.body();
+                if (!response.isSuccessful() || result == null || !"success".equals(result.status)) {
+                    Snackbar.make(parent_view, R.string.cart_validation_failed, Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
+
+                boolean changed = false;
+                Set<Long> checkedProductIds = new HashSet<>();
+                for (CallbackCartValidation.Item current : result.data) {
+                    if (current.product_id == null) continue;
+                    checkedProductIds.add(current.product_id);
+                    Cart local = db.getCart(current.product_id);
+                    if (local == null) continue;
+                    if (!current.available || current.stock == null || current.stock <= 0) {
+                        db.deleteActiveCart(current.product_id);
+                        changed = true;
+                        continue;
+                    }
+
+                    int allowedAmount = Math.min(local.amount, current.stock.intValue());
+                    String refreshedName = current.product_name == null ? local.product_name : current.product_name;
+                    String refreshedImage = current.image == null ? local.image : current.image;
+                    double localPrice = local.price_item == null ? 0 : local.price_item;
+                    double refreshedPrice = current.price_item == null ? localPrice : current.price_item;
+                    long localStock = local.stock == null ? 0 : local.stock;
+                    if (allowedAmount != local.amount || localStock != current.stock
+                            || Double.compare(localPrice, refreshedPrice) != 0
+                            || !Objects.equals(local.product_name, refreshedName)
+                            || !Objects.equals(local.image, refreshedImage)) {
+                        changed = true;
+                    }
+                    local.amount = allowedAmount;
+                    local.stock = current.stock;
+                    local.product_name = refreshedName;
+                    local.image = refreshedImage;
+                    local.price_item = refreshedPrice;
+                    db.saveCart(local);
+                }
+
+                for (Cart local : items) {
+                    if (!checkedProductIds.contains(local.product_id)) {
+                        db.deleteActiveCart(local.product_id);
+                        changed = true;
+                    }
+                }
+
+                if (changed) {
+                    renderData();
+                    Snackbar.make(parent_view, R.string.cart_updated_for_stock, Snackbar.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CallbackCartValidation> call, Throwable throwable) {
+                cartValidating = false;
+                if (!call.isCanceled()) {
+                    Log.e("CartValidation", throwable.getMessage() == null ? "Request failed" : throwable.getMessage());
+                    Snackbar.make(parent_view, R.string.cart_validation_failed, Snackbar.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (validationCall != null) validationCall.cancel();
+        super.onDestroy();
+    }
+
     private void setTotalPrice() {
         List<Cart> items = adapter.getItem();
         Double _price_total = 0D;
@@ -135,7 +245,7 @@ public class ActivityShoppingCart extends AppCompatActivity {
         for (Cart c : items) {
             _price_total = _price_total + (c.amount * c.price_item);
         }
-        _price_total_tax_str = String.format(Locale.US, "%1$,.0f", _price_total);
+        _price_total_tax_str = String.format(Locale.US, "%1$,.2f", _price_total);
         price_total.setText(" " + _price_total_tax_str + " " + info.currency);
     }
 

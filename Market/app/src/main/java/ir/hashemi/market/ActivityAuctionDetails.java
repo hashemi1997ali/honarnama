@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
@@ -15,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -38,6 +36,7 @@ import ir.hashemi.market.data.Constant;
 import ir.hashemi.market.model.Category;
 import ir.hashemi.market.model.ProductAuction;
 import ir.hashemi.market.utils.NetworkCheck;
+import ir.hashemi.market.utils.CartMenuBadge;
 import ir.hashemi.market.utils.Tools;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -57,11 +56,11 @@ public class ActivityAuctionDetails extends AppCompatActivity {
     private int post_total = 0;
     private int failed_page = 0;
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auction_details);
+        Tools.applyTopWindowInsets(this, findViewById(R.id.app_bar_layout));
 
         parent_view = findViewById(android.R.id.content);
         initComponent();
@@ -70,7 +69,6 @@ public class ActivityAuctionDetails extends AppCompatActivity {
         requestAction(1);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint("ResourceType")
     private void initComponent() {
         swipe_refresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
@@ -128,7 +126,14 @@ public class ActivityAuctionDetails extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_activity_category_details, menu);
+        CartMenuBadge.bind(this, menu);
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        invalidateOptionsMenu();
     }
 
     @Override

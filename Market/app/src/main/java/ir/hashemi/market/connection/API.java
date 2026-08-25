@@ -2,11 +2,13 @@ package ir.hashemi.market.connection;
 
 import ir.hashemi.market.connection.callbacks.CallbackBid;
 import ir.hashemi.market.connection.callbacks.CallbackCategory;
+import ir.hashemi.market.connection.callbacks.CallbackCartValidation;
 import ir.hashemi.market.connection.callbacks.CallbackFeaturedNews;
 import ir.hashemi.market.connection.callbacks.CallbackInfo;
 import ir.hashemi.market.connection.callbacks.CallbackNewsInfo;
 import ir.hashemi.market.connection.callbacks.CallbackNewsInfoDetails;
 import ir.hashemi.market.connection.callbacks.CallbackOrder;
+import ir.hashemi.market.connection.callbacks.CallbackOrderHistory;
 import ir.hashemi.market.connection.callbacks.CallbackProduct;
 import ir.hashemi.market.connection.callbacks.CallbackProductAuction;
 import ir.hashemi.market.connection.callbacks.CallbackProductAuctionDetails;
@@ -16,6 +18,7 @@ import ir.hashemi.market.data.Constant;
 import ir.hashemi.market.model.Bid;
 import ir.hashemi.market.model.Checkout;
 import ir.hashemi.market.model.User;
+import ir.hashemi.market.model.OrderHistoryRequest;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -121,6 +124,18 @@ public interface API {
     @POST("services/submitProductOrder")
     Call<CallbackOrder> submitProductOrder(
             @Body Checkout checkout
+    );
+
+    @Headers({CACHE, AGENT, SECURITY})
+    @POST("services/validateCart")
+    Call<CallbackCartValidation> validateCart(
+            @Body Checkout checkout
+    );
+
+    @Headers({CACHE, AGENT, SECURITY})
+    @POST("services/listOrderHistory")
+    Call<CallbackOrderHistory> listOrderHistory(
+            @Body OrderHistoryRequest request
     );
 
 }

@@ -45,6 +45,7 @@
     <string name="remaining_time">Time remaining:</string>
     <string name="top_bid_price">Highest bid:</string>
     <string name="top_bidder">Highest bidder:</string>
+    <string name="no_bids_yet">No bids yet</string>
     <string name="auction_start_date">Starts:</string>
     <string name="auction_end_date">Ends:</string>
     <string name="basic_price">Starting price:</string>
@@ -58,6 +59,7 @@
     <string name="day">day(s),</string>
 
     <string name="title_menu_search">Search</string>
+    <string name="clear_search">Clear search</string>
     <string name="title_menu_delete">Delete</string>
 
     <string name="please_wait_text">Please wait while the data loads</string>
@@ -68,7 +70,6 @@
     <string name="add_cart">Add to Cart</string>
     <string name="remove_cart">Remove from Cart</string>
     <string name="msg_out_of_stock">This product is out of stock</string>
-    <string name="msg_suspend">Sales for this product are suspended</string>
     <string name="out_of_stock">Out of stock</string>
     <string name="suspend">Suspended</string>
     <string name="ready_stock">In stock</string>
@@ -84,6 +85,9 @@
     <string name="title_menu_wishlist">Wishlist</string>
 
     <string name="msg_cart_empty">Your cart is empty</string>
+    <string name="cart_item_removed_unavailable">This product is no longer available and was removed from your cart</string>
+    <string name="cart_updated_for_stock">Your cart was updated to match current prices and stock</string>
+    <string name="cart_validation_failed">Could not refresh current product availability</string>
     <string name="before_tax">Before tax</string>
     <string name="total">Total&#160;</string>
     <string name="stock">Stock:&#160;</string>
@@ -96,7 +100,8 @@
     <string name="hint_input_search">Search products and auctions</string>
     <string name="please_fill">Enter a search term</string>
 
-    <string name="msg_history_empty">Your order history is empty</string>
+    <string name="msg_history_sync_failed">Could not refresh order history from the server</string>
+    <string name="msg_session_expired">Your session has expired. Please log in again.</string>
     <string name="title_history_details">Order Details</string>
 
     <string name="cost_details">Order Summary</string>

@@ -87,17 +87,27 @@ class Product extends REST {
     public function insertOne() {
         if ($this->get_request_method() != "POST") $this->response('', 406);
         $data = json_decode(file_get_contents("php://input"), true);
-        if (!isset($data)) $this->responseInvalidParam();
-        $columns = array('name', 'image', 'price', 'price_discount', 'stock', 'draft', 'description', 'status', 'created_at', 'last_update');
-        $this->show_response($this->db->post_one($data, 'id', $columns, 'product'));
+        if (!is_array($data)) $this->responseInvalidParam();
+        try {
+            $data = $this->prepareData($data);
+            $columns = array('name', 'image', 'price', 'price_discount', 'stock', 'draft', 'description', 'status', 'created_at', 'last_update');
+            $this->show_response($this->db->post_one($data, 'id', $columns, 'product'));
+        } catch (InvalidArgumentException $exception) {
+            $this->show_response(array('status' => 'failed', 'msg' => $exception->getMessage(), 'data' => null));
+        }
     }
 
     public function updateOne() {
         if ($this->get_request_method() != "POST") $this->response('', 406);
         $data = json_decode(file_get_contents("php://input"), true);
-        if (!isset($data['id'])) $this->responseInvalidParam();
-        $columns = array('name', 'image', 'price', 'price_discount', 'stock', 'draft', 'description', 'status', 'created_at', 'last_update');
-        $this->show_response($this->db->post_update((int)$data['id'], $data, 'id', $columns, 'product'));
+        if (!isset($data['id'], $data['product']) || !is_array($data['product'])) $this->responseInvalidParam();
+        try {
+            $data['product'] = $this->prepareData($data['product']);
+            $columns = array('name', 'image', 'price', 'price_discount', 'stock', 'draft', 'description', 'status', 'created_at', 'last_update');
+            $this->show_response($this->db->post_update((int)$data['id'], $data, 'id', $columns, 'product'));
+        } catch (InvalidArgumentException $exception) {
+            $this->show_response(array('status' => 'failed', 'msg' => $exception->getMessage(), 'data' => null));
+        }
     }
 
     public function deleteOne() {
@@ -147,6 +157,43 @@ class Product extends REST {
 
     private function safeLimit($limit) {
         return min(100, max(1, (int)$limit));
+    }
+
+    private function prepareData($data) {
+        $name = isset($data['name']) ? trim((string)$data['name']) : '';
+        $price = isset($data['price']) && is_numeric($data['price']) ? (float)$data['price'] : -1;
+        $discountPrice = isset($data['price_discount']) && is_numeric($data['price_discount'])
+            ? (float)$data['price_discount']
+            : 0;
+        $stockValue = isset($data['stock']) && is_numeric($data['stock']) ? (float)$data['stock'] : -1;
+        $stock = (int)$stockValue;
+
+        if ($name === '') throw new InvalidArgumentException('Product name is required.');
+        if ($price < 0) throw new InvalidArgumentException('Price must be zero or greater.');
+        if ($discountPrice < 0 || ($discountPrice > 0 && $discountPrice > $price)) {
+            throw new InvalidArgumentException('Discounted price must be between zero and the regular price.');
+        }
+        if ((float)$stock !== $stockValue) {
+            throw new InvalidArgumentException('Stock must be a whole number.');
+        }
+        if ($stock < 0) throw new InvalidArgumentException('Stock must be a whole number of zero or greater.');
+
+        $status = strtoupper(trim(isset($data['status']) ? (string)$data['status'] : 'READY STOCK'));
+        if (!in_array($status, array('READY STOCK', 'OUT OF STOCK', 'SUSPEND'), true)) {
+            throw new InvalidArgumentException('Invalid product status.');
+        }
+        if ($stock === 0 && $status === 'READY STOCK') {
+            $status = 'OUT OF STOCK';
+        }
+
+        $data['name'] = $name;
+        $data['price'] = $price;
+        $data['price_discount'] = $discountPrice;
+        $data['stock'] = $stock;
+        $data['draft'] = !empty($data['draft']) ? 1 : 0;
+        $data['status'] = $status;
+        $data['description'] = isset($data['description']) ? (string)$data['description'] : '';
+        return $data;
     }
 }
 ?>

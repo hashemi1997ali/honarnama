@@ -59,6 +59,7 @@ import ir.hashemi.market.model.ProductImage;
 import ir.hashemi.market.model.User;
 import ir.hashemi.market.model.Wishlist;
 import ir.hashemi.market.utils.NetworkCheck;
+import ir.hashemi.market.utils.CartMenuBadge;
 import ir.hashemi.market.utils.Tools;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -103,6 +104,7 @@ public class ActivityProductAuctionDetails extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_auction_details);
+        Tools.applyTopWindowInsets(this, findViewById(R.id.app_bar_layout));
 
         initpDialog();
         showpDialog();
@@ -247,11 +249,11 @@ public class ActivityProductAuctionDetails extends AppCompatActivity {
         // ((TextView) findViewById(R.id.date)).setText(Tools.getFormattedDate(product.last_update));
         Log.i("LOG", product_auction.start_date);
         if (product_auction.winner_price == null)
-            ((TextView) findViewById(R.id.winner)).setText("-");
+            ((TextView) findViewById(R.id.winner)).setText(R.string.no_bids_yet);
         else
             ((TextView) findViewById(R.id.winner)).setText(product_auction.winner_username);
         if (product_auction.winner_price == null)
-            ((TextView) findViewById(R.id.price)).setText("- " + sharedPref.getInfoData().currency);
+            ((TextView) findViewById(R.id.price)).setText(R.string.no_bids_yet);
         else
             ((TextView) findViewById(R.id.price)).setText(product_auction.winner_price.longValue() + " " + sharedPref.getInfoData().currency);
         ((TextView) findViewById(R.id.basicPrice)).setText(product_auction.start_price.longValue() + " " + sharedPref.getInfoData().currency);
@@ -309,7 +311,6 @@ public class ActivityProductAuctionDetails extends AppCompatActivity {
         // display Image slider
         displayImageSlider();
 
-        //Toast.makeText(this, R.string.msg_data_loaded, Toast.LENGTH_SHORT).show();
         hidepDialog();
     }
 
@@ -429,6 +430,7 @@ public class ActivityProductAuctionDetails extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_activity_product_details, menu);
+        CartMenuBadge.bind(this, menu);
         wishlist_menu = menu.findItem(R.id.action_wish);
         return true;
     }
@@ -457,6 +459,7 @@ public class ActivityProductAuctionDetails extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        invalidateOptionsMenu();
         if (webview != null) webview.onPause();
     }
 

@@ -13,8 +13,9 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <LinearLayout
+            android:id="@+id/main_header_spacer"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="80dp"
             android:orientation="vertical"
             app:layout_scrollFlags="scroll|enterAlways" />
 
@@ -61,15 +62,35 @@
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <FrameLayout
+        android:id="@+id/cart_fab_container"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_margin="@dimen/spacing_large"
-        android:clickable="true"
-        android:src="@drawable/ic_cart"
-        app:backgroundTint="@color/colorAccent"
         app:layout_anchor="@id/swipe_refresh_layout"
-        app:layout_anchorGravity="bottom|end" />
+        app:layout_anchorGravity="bottom|end">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:clickable="true"
+            android:contentDescription="@string/str_nav_shopping_cart"
+            android:src="@drawable/ic_cart"
+            app:backgroundTint="@color/colorAccent" />
+
+        <TextView
+            android:id="@+id/cart_badge"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="top|end"
+            android:background="@drawable/cart_badge_background"
+            android:gravity="center"
+            android:text="0"
+            android:textColor="@android:color/white"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -18,7 +18,8 @@
         <item
             android:id="@+id/nav_history"
             android:icon="@drawable/ic_nav_history"
-            android:title="@string/str_nav_history" />
+            android:title="@string/str_nav_history"
+            app:actionLayout="@layout/menu_counter_plain_" />
 
         <item
             android:id="@+id/nav_news"

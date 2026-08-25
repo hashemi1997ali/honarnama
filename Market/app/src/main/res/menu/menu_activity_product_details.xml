@@ -7,6 +7,7 @@
         android:icon="@drawable/ic_cart"
         android:orderInCategory="100"
         android:title="@string/str_nav_shopping_cart"
+        app:actionLayout="@layout/menu_cart_badge"
         app:showAsAction="always" />
 
     <item

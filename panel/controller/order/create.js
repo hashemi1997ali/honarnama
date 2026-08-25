@@ -94,7 +94,15 @@ angular.module('App').controller('AddOrderController', function ($rootScope, $sc
 				    self.done_arr[0] = true;
 				    self.prepareOrderDetails(resp.data.id);
 				    // insert to product order details
-                    request.insertAllProductOrderDetail(self.order_details, 1).then(function(){self.done_arr[1] = true;});
+                    request.insertAllProductOrderDetail(self.order_details, 1).then(function(detailResp){
+                        if(detailResp.status == 'success') {
+                            self.done_arr[1] = true;
+                        } else {
+                            self.resp_submit = detailResp;
+                            self.submit_done = true;
+                            request.updateOneProductOrder(resp.data.id, angular.extend({}, o, {status: 'CANCEL'}));
+                        }
+                    });
 				} else {
 					self.submit_done = true;
 				}
@@ -106,11 +114,16 @@ angular.module('App').controller('AddOrderController', function ($rootScope, $sc
 				    self.done_arr[0] = true;
 				    self.prepareOrderDetails(o.id);
 				    // insert to product order details
-                    request.insertAllProductOrderDetail(self.order_details, 0).then(function(){
-                    	self.done_arr[1] = true;
-                    	if(self.send_email_update){ // send email
-                            request.sendEmail(resp.data.id, "ORDER_UPDATE");
-						}
+                    request.insertAllProductOrderDetail(self.order_details, 0).then(function(detailResp){
+                        if(detailResp.status == 'success') {
+                            self.done_arr[1] = true;
+                            if(self.send_email_update){
+                                request.sendEmail(o.id, "ORDER_UPDATE");
+							}
+                        } else {
+                            self.resp_submit = detailResp;
+                            self.submit_done = true;
+                        }
                     });
 				} else {
 					self.submit_done = true;
@@ -162,7 +175,7 @@ angular.module('App').controller('AddOrderController', function ($rootScope, $sc
             return (!self.is_clean && self.order_details.length > 0);
         } else {
             self.is_clean = angular.equals(original, self.order);
-            return (!self.is_clean || original_detail.length != self.order_details.length) && self.order_details.length > 0;
+	            return (!self.is_clean || !angular.equals(original_detail, self.order_details)) && self.order_details.length > 0;
         }
     };
 
@@ -177,7 +190,7 @@ angular.module('App').controller('AddOrderController', function ($rootScope, $sc
 			parent              : angular.element(document.body),
 			targetEvent         : ev,
 			clickOutsideToClose : false,
-			parentScope         : self
+			locals              : { parentScope: self }
 		})
 	};
 
@@ -187,9 +200,8 @@ angular.module('App').controller('AddOrderController', function ($rootScope, $sc
             templateUrl         : 'view/order/product_edit.html',
             parent              : angular.element(document.body),
             targetEvent         : ev,
-            clickOutsideToClose : true,
-			parentScope         : self,
-            pod                 : pod
+	            clickOutsideToClose : true,
+	            locals              : { parentScope: self, pod: pod }
         })
     };
 
@@ -206,14 +218,30 @@ function EditProductControllerDialog($scope, $rootScope, $mdDialog, request, $md
 	self.not_exist      = false;
 	self.dif_name       = false;
 
-    request.getOneProduct(pod.product_id).then(function(resp){
-        self.product = resp.data;
-        self.not_exist = (self.product.id == null);
-        self.dif_name = (pod.product_name != self.product.name);
-        if(!self.not_exist && self.pod.amount > self.product.stock){
-            self.pod.amount = self.product.stock;
-        }
-    });
+	    request.getOneProduct(pod.product_id).then(function(resp){
+	        self.product = resp.data;
+	        self.not_exist = (self.product.id == null);
+	        self.dif_name = (pod.product_name != self.product.name);
+	        if(!self.not_exist){
+            self.unavailable = self.product.stock <= 0 || self.product.status != 'READY STOCK' || self.product.draft == 1;
+            if(self.unavailable) {
+                parentScope.removeProduct(self.pod);
+                self.cancel();
+                return;
+            }
+            self.pod.product_name = self.product.name;
+            self.pod.price_item = self.effectivePrice(self.product);
+	            if(self.pod.amount > self.product.stock){
+	                self.pod.amount = self.product.stock;
+	            }
+	            parentScope.calculateTotal();
+	        }
+	    });
+
+	self.effectivePrice = function(product) {
+		var discounted = Number(product.price_discount || 0);
+		return discounted > 0 ? discounted : Number(product.price || 0);
+	};
 
     self.decreaseAmount = function(){
         if(self.pod.amount > 1){
@@ -252,12 +280,22 @@ function AddProductControllerDialog($scope, $rootScope, $mdDialog, request, $mdT
     });
 
     // add item to product order
-    self.addItem = function (ev, p) {
-        var item = {order_id: null, product_id: p.id, product_name: p.name, amount: 1, price_item: p.price, created_at: now, last_update: now};
-        parentScope.order_details.push(item);
+	    self.addItem = function (ev, p) {
+        if(!self.isAvailable(p)) return;
+	        var item = {order_id: null, product_id: p.id, product_name: p.name, amount: 1, price_item: self.effectivePrice(p), created_at: now, last_update: now};
+	        parentScope.order_details.push(item);
         parentScope.calculateTotal();
         self.cancel();
-    }
+	    }
+
+	self.effectivePrice = function(product) {
+		var discounted = Number(product.price_discount || 0);
+		return discounted > 0 ? discounted : Number(product.price || 0);
+	};
+
+	self.isAvailable = function(product) {
+		return product && product.draft != 1 && product.status == 'READY STOCK' && Number(product.stock) > 0;
+	};
 
     // check if product already exist
     self.isExistAtProductOrder = function(id){
@@ -271,29 +309,26 @@ function AddProductControllerDialog($scope, $rootScope, $mdDialog, request, $mdT
 
 	// load pages from database and display
     self.loadPages = function () {
-        $_q = self.q ? self.q : '';
-        request.getAllProductCount($_q, self.category_id).then(function (resp) {
-            self.paging.total = Math.ceil(resp.data / self.paging.limit);
-            self.paging.modulo_item = resp.data % self.paging.limit;
-        });
-        $limit = self.paging.limit;
-        $current = (self.paging.current * self.paging.limit) - self.paging.limit + 1;
-        if (self.paging.current == self.paging.total && self.paging.modulo_item > 0) {
-            self.limit = self.paging.modulo_item;
-        }
-        request.getAllProductByPage($current, $limit, $_q, self.category_id).then(function (resp) {
-            self.product = resp.data;
+	        var query = self.q ? self.q : '';
+	        self.loading = true;
+	        request.getAllProductCount(query, self.category_id).then(function (resp) {
+	            self.paging.total = Math.max(1, Math.ceil(resp.data / self.paging.limit));
+	            self.paging.modulo_item = resp.data % self.paging.limit;
+	        });
+	        request.getAllProductByPage(self.paging.current, self.paging.limit, query, self.category_id).then(function (resp) {
+	            self.product = resp.data;
             self.loading = false;
         });
     };
 
     // pagination property
-    self.paging = {
+	    self.paging = {
         total: 0, // total whole item
         current: 1, // start page
         step: 3, // count number display
         limit: 30, // max item per page
         modulo_item: 0,
-        onPageChanged: self.loadPages,
-    };
+	        onPageChanged: self.loadPages,
+	    };
+	    self.loadPages();
 }

@@ -11,19 +11,22 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.ColorRes;
-import androidx.annotation.RequiresApi;
+import androidx.core.graphics.Insets;
 import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -38,37 +41,57 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
 
 public class Tools {
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static void setSystemBarColor(Activity act, int color) {
-        if (isLolipopOrHigher()) {
-            Window window = act.getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(color);
-        }
+        Window window = act.getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.setStatusBarColor(color);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static void setSystemBarColor(Activity act, String color) {
         setSystemBarColor(act, Color.parseColor(color));
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static void setSystemBarColorDarker(Activity act, String color) {
         setSystemBarColor(act, colorDarker(Color.parseColor(color)));
     }
 
-    public static boolean isLolipopOrHigher() {
-        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
+    public static void systemBarLolipop(Activity act) {
+        setSystemBarColor(act, act.getResources().getColor(R.color.colorPrimaryDark));
     }
 
-    public static void systemBarLolipop(Activity act) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = act.getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(act.getResources().getColor(R.color.colorPrimaryDark));
-        }
+    /**
+     * Keeps a screen header below the status bar on edge-to-edge Android versions.
+     * The original header padding is retained, so every screen uses the same inset
+     * without depending on a hard-coded status-bar height.
+     */
+    public static void applyTopWindowInsets(Activity activity, View header) {
+        if (header == null) return;
+
+        WindowCompat.setDecorFitsSystemWindows(activity.getWindow(), false);
+        systemBarLolipop(activity);
+        header.setFitsSystemWindows(false);
+
+        final int initialLeft = header.getPaddingLeft();
+        final int initialTop = header.getPaddingTop();
+        final int initialRight = header.getPaddingRight();
+        final int initialBottom = header.getPaddingBottom();
+        View content = activity.findViewById(android.R.id.content);
+
+        ViewCompat.setOnApplyWindowInsetsListener(content, (view, windowInsets) -> {
+            Insets safeTop = windowInsets.getInsets(
+                    WindowInsetsCompat.Type.statusBars()
+                            | WindowInsetsCompat.Type.displayCutout()
+            );
+            header.setPadding(
+                    initialLeft,
+                    initialTop + safeTop.top,
+                    initialRight,
+                    initialBottom
+            );
+            return windowInsets;
+        });
+        ViewCompat.requestApplyInsets(content);
     }
 
     public static void showDialogAbout(Activity activity) {

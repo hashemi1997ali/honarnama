@@ -105,7 +105,7 @@ public class AdapterProductAuction extends RecyclerView.Adapter<RecyclerView.Vie
             OriginalViewHolder vItem = (OriginalViewHolder) holder;
             vItem.name.setText(p.name);
             if(p.winner_price == null)
-                vItem.price.setText("- " + sharedPref.getInfoData().currency);
+                vItem.price.setText(R.string.no_bids_yet);
             else
                 vItem.price.setText(p.winner_price.longValue() + " " + sharedPref.getInfoData().currency);
             SimpleDateFormat sdformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

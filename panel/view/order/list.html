@@ -7,6 +7,7 @@
                         <th>ID</th>
                         <th>Customer</th>
                         <th>Code</th>
+                        <th>Items</th>
                         <th>Total</th>
                         <th>Delivery</th>
                         <th>Created</th>
@@ -19,6 +20,7 @@
                         <td data-title="ID">{{po.id}}</td>
                         <td data-title="Customer" class="panel-primary-cell">{{po.buyer}}</td>
                         <td data-title="Code"><span class="panel-code">{{po.code}}</span></td>
+                        <td data-title="Items">{{po.item_count || 0}}</td>
                         <td data-title="Total">€{{po.total_fees | number:2}}</td>
                         <td data-title="Delivery">{{po.date_ship | date:'dd MMM yyyy'}}</td>
                         <td data-title="Created">{{po.created_at | date:'dd MMM yyyy'}}</td>

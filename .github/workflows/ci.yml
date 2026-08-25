@@ -7,6 +7,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   php-lint:
     name: PHP and PostgreSQL
@@ -66,7 +70,7 @@ jobs:
           php panel/database/seed.php
           php -r 'require "panel/services/tools/db.php";
           $db = new DB();
-          $expected = array("category" => 4, "product" => 6, "news_info" => 3, "product_auction" => 2, "product_order" => 1);
+          $expected = array("category" => 5, "product" => 6, "news_info" => 3, "product_auction" => 2, "product_order" => 1);
           foreach ($expected as $table => $count) {
               $actual = $db->get_count("SELECT COUNT(*) FROM \"$table\"");
               if ($actual !== $count) { throw new RuntimeException("Unexpected sample count for $table"); }
@@ -91,3 +95,11 @@ jobs:
 
       - name: Lint and build
         run: ./gradlew lintDebug assembleDebug --stacktrace
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: honarnama-debug-apk
+          path: Market/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14

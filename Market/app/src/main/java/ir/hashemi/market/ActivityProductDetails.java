@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
@@ -31,6 +32,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import ir.hashemi.market.adapter.AdapterProductImage;
 import ir.hashemi.market.connection.API;
@@ -44,6 +46,7 @@ import ir.hashemi.market.model.Product;
 import ir.hashemi.market.model.ProductImage;
 import ir.hashemi.market.model.Wishlist;
 import ir.hashemi.market.utils.NetworkCheck;
+import ir.hashemi.market.utils.CartMenuBadge;
 import ir.hashemi.market.utils.Tools;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -84,6 +87,7 @@ public class ActivityProductDetails extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_details);
+        Tools.applyTopWindowInsets(this, findViewById(R.id.app_bar_layout));
         initpDialog();
         showpDialog();
         product_id = getIntent().getLongExtra(EXTRA_OBJECT_ID, -1L);
@@ -199,12 +203,21 @@ public class ActivityProductDetails extends AppCompatActivity {
         String date = Tools.getFormattedDate(product.last_update);
         Log.i("LOG", date);
         ((TextView) findViewById(R.id.date)).setText(ir.hashemi.market.ShamsiCalleder.getCurrentShamsidate(date));
-        ((TextView) findViewById(R.id.price)).setText(product.price.longValue() + " " + sharedPref.getInfoData().currency);
-        if (product.status.equalsIgnoreCase("READY STOCK")) {
+        String currency = sharedPref.getInfoData().currency;
+        ((TextView) findViewById(R.id.price)).setText(String.format(Locale.US, "%1$,.2f %2$s", product.getEffectivePrice(), currency));
+        TextView originalPrice = (TextView) findViewById(R.id.original_price);
+        if (product.hasDiscount()) {
+            originalPrice.setText(String.format(Locale.US, "%1$,.2f %2$s", product.price, currency));
+            originalPrice.setPaintFlags(originalPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            originalPrice.setVisibility(View.VISIBLE);
+        } else {
+            originalPrice.setVisibility(View.GONE);
+        }
+        if ("READY STOCK".equalsIgnoreCase(product.status)) {
             ((TextView) findViewById(R.id.status)).setText(getString(R.string.ready_stock));
-        } else if (product.status.equalsIgnoreCase("OUT OF STOCK")) {
+        } else if ("OUT OF STOCK".equalsIgnoreCase(product.status)) {
             ((TextView) findViewById(R.id.status)).setText(getString(R.string.out_of_stock));
-        } else if (product.status.equalsIgnoreCase("SUSPEND")) {
+        } else if ("SUSPEND".equalsIgnoreCase(product.status)) {
             ((TextView) findViewById(R.id.status)).setText(getString(R.string.suspend));
         } else {
             ((TextView) findViewById(R.id.status)).setText(product.status);
@@ -215,8 +228,8 @@ public class ActivityProductDetails extends AppCompatActivity {
 
         // display category list at bottom
         displayCategoryProduct();
+        refreshCartButton();
 
-        //Toast.makeText(this, R.string.msg_data_loaded, Toast.LENGTH_SHORT).show();
         hidepDialog();
     }
 
@@ -334,6 +347,7 @@ public class ActivityProductDetails extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_activity_product_details, menu);
+        CartMenuBadge.bind(this, menu);
         wishlist_menu = menu.findItem(R.id.action_wish);
         refreshWishlistMenu();
         return true;
@@ -374,6 +388,7 @@ public class ActivityProductDetails extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        invalidateOptionsMenu();
         if (webview != null) webview.onPause();
         refreshCartButton();
     }
@@ -394,15 +409,11 @@ public class ActivityProductDetails extends AppCompatActivity {
             Toast.makeText(this, R.string.remove_cart, Toast.LENGTH_SHORT).show();
         } else {
             // check stock product
-            if (product.stock == 0 || product.status.equalsIgnoreCase("OUT OF STOCK")) {
+            if (!product.isAvailable()) {
                 Toast.makeText(this, R.string.msg_out_of_stock, Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (product.status.equalsIgnoreCase("SUSPEND")) {
-                Toast.makeText(this, R.string.msg_suspend, Toast.LENGTH_SHORT).show();
-                return;
-            }
-            Cart cart = new Cart(product.id, product.name, product.image, 1, product.stock, product.price, System.currentTimeMillis());
+            Cart cart = new Cart(product.id, product.name, product.image, 1, product.stock, product.getEffectivePrice(), System.currentTimeMillis());
             db.saveCart(cart);
             Toast.makeText(this, R.string.add_cart, Toast.LENGTH_SHORT).show();
         }
@@ -411,6 +422,20 @@ public class ActivityProductDetails extends AppCompatActivity {
 
     private void refreshCartButton() {
         Cart c = db.getCart(product_id);
+        if (c != null && product != null) {
+            if (!product.isAvailable()) {
+                db.deleteActiveCart(product_id);
+                c = null;
+                Toast.makeText(this, R.string.cart_item_removed_unavailable, Toast.LENGTH_SHORT).show();
+            } else {
+                c.product_name = product.name;
+                c.image = product.image;
+                c.stock = product.stock;
+                c.price_item = product.getEffectivePrice();
+                c.amount = Math.min(c.amount, product.stock.intValue());
+                db.saveCart(c);
+            }
+        }
         flag_cart = (c != null);
         if (flag_cart) {
             lyt_add_cart.setBackgroundColor(getResources().getColor(R.color.colorRemoveCart));

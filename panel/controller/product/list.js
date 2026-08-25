@@ -80,7 +80,7 @@ angular.module('App').controller('ProductController', function ($rootScope, $sco
 			parent              : angular.element(document.body),
 			targetEvent         : ev,
 			clickOutsideToClose : true,
-			product             : p
+			locals              : { product: angular.copy(p) }
 		})
 	};
 
@@ -117,7 +117,8 @@ angular.module('App').controller('ProductController', function ($rootScope, $sco
     self.publishDialog = function (ev, o) {
         $mdDialog.show({
             controller : PublishProductDialogCtl,
-            parent: angular.element(document.body), targetEvent: ev, clickOutsideToClose: true, obj: o,
+	            parent: angular.element(document.body), targetEvent: ev, clickOutsideToClose: true,
+	            locals: { obj: angular.copy(o) },
             template:
             '<md-dialog ng-cloak aria-label="publishData">' +
             '  <md-dialog-content>' +

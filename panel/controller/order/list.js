@@ -62,8 +62,7 @@ angular.module('App').controller('OrderController', function ($rootScope, $scope
 			parent              : angular.element(document.body),
 			targetEvent         : ev,
 			clickOutsideToClose : true,
-			order               : po,
-            process             : false
+			locals              : { order: angular.copy(po), process: false }
 		})
 	};
 
@@ -79,8 +78,7 @@ angular.module('App').controller('OrderController', function ($rootScope, $scope
                 parent              : angular.element(document.body),
                 targetEvent         : ev,
                 clickOutsideToClose : true,
-                order               : po,
-                process             : true
+	            locals              : { order: angular.copy(po), process: true }
             })
         });
     };
@@ -130,15 +128,21 @@ function DetailsOrderControllerDialog($scope, $rootScope, $mdDialog, request, $m
 	var root            = $rootScope;
 	self.order      	= angular.copy(order);
 	self.process      	= process;
-	self.order_details 	=  null;
+	self.order_details 	= [];
+	self.loading_details = true;
+	self.processing = false;
 	self.hide   = function() { $mdDialog.hide(); };
 	self.cancel = function() { $mdDialog.cancel(); };
 	self.order.total_fees = parseFloat(self.order.total_fees).toFixed(2)
 
 	request.getAllProductOrderDetailByOrderId(order.id).then(function (resp) {
-		self.order_details = resp.data;
+		self.order_details = angular.isArray(resp.data) ? resp.data : [];
+		self.loading_details = false;
         // calculate data
         self.calculateTotal();
+	}, function() {
+		self.loading_details = false;
+		root.showInfoDialogSimple('Orders', 'Could not load the order items.');
 	});
 
     request.getAllConfig().then(function (resp) {
@@ -170,14 +174,14 @@ function DetailsOrderControllerDialog($scope, $rootScope, $mdDialog, request, $m
     };
 
     self.processOrder = function (od) {
+		if(self.processing || self.loading_details || self.order_details.length === 0) return;
+		self.processing = true;
         request.processProductOrder(od.id, od, self.order_details).then(function(resp){
-            //console.log(JSON.stringify(resp));
             $mdDialog.show({
                 templateUrl         : 'view/order/process_result.html',
                 parent              : angular.element(document.body),
                 clickOutsideToClose : false,
-                resp                : resp,
-                order               : od,
+				locals              : { resp: resp, order: od },
                 controller          : function DialogController($scope, $rootScope, $mdDialog, $route, resp, order) {
                     $scope.resp     = resp;
                     $scope.order    = order;
@@ -195,6 +199,9 @@ function DetailsOrderControllerDialog($scope, $rootScope, $mdDialog, request, $m
                     };
                 }
             });
+		}, function() {
+			self.processing = false;
+			root.showInfoDialogSimple('Orders', 'The order could not be processed. Please try again.');
         });
     };
 }

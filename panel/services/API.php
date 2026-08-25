@@ -89,6 +89,12 @@ class API {
     private function submitProductOrder(){
         $this->client->submitProductOrder();
     }
+    private function validateCart(){
+        $this->client->validateCart();
+    }
+    private function listOrderHistory(){
+        $this->client->listOrderHistory();
+    }
 
 	/*
  	* ALL API Related DASHBOARD page -----------------------------------------------------------------------------------

@@ -60,6 +60,11 @@
 
     <br>
     <h3>Order items:</h3>
+    <div class="panel-state" ng-if="loading_details">
+      <md-progress-circular md-mode="indeterminate" md-diameter="30"></md-progress-circular>
+      <p>Loading order items…</p>
+    </div>
+    <p class="hint" ng-if="!loading_details && order_details.length === 0">No items are stored for this order.</p>
     <md-divider></md-divider>
     <div layout="row">
       <item flex="5">No.</item> <item flex="55">Product</item> <item flex="15">Unit price</item> <item flex="5">Quantity</item>
@@ -90,7 +95,9 @@
     <br><br>
   </md-dialog-content>
   <div class="md-actions" layout="row" style="padding-left: 8px;" ng-if="process">
-    <md-button flex="100" md-no-ink ng-click="processOrder(order)" class="md-accent md-raised">Process Order</md-button>
+    <md-button flex="100" md-no-ink ng-disabled="processing || loading_details || order_details.length === 0" ng-click="processOrder(order)" class="md-accent md-raised">
+      {{processing ? 'Processing…' : 'Process Order'}}
+    </md-button>
   </div>
   </form>
 </md-dialog>

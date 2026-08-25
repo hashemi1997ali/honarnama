@@ -14,7 +14,11 @@
       <img class="md-center" style="margin: auto; max-width: 100%;" ng-src="uploads/product/{{product.image}}" flex="40">
       <md-divider ></md-divider>
       <div layout="row">
-        <item flex="25">Price</item> <item flex="5"> : </item> <item>{{product.price}}</item>
+        <item flex="25">Regular price</item> <item flex="5"> : </item> <item>{{product.price | number:2}} €</item>
+      </div>
+      <div layout="row">
+        <item flex="25">Discounted price</item> <item flex="5"> : </item>
+        <item><span ng-if="product.price_discount > 0">{{product.price_discount | number:2}} €</span><span ng-if="product.price_discount <= 0">—</span></item>
       </div>
       <div layout="row">
         <item flex="25">Stock</item> <item flex="5"> : </item> <item>{{product.stock}}</item>

@@ -126,7 +126,8 @@ angular.module('App').controller('AddNewsController', function ($rootScope, $sco
 	self.viewImage = function (ev, f) {
 		$mdDialog.show({
 			controller : ViewImageDialogController,
-			parent: angular.element(document.body), targetEvent: ev, clickOutsideToClose: true, file_url: f,
+			parent: angular.element(document.body), targetEvent: ev, clickOutsideToClose: true,
+			locals: { file_url: f },
 			template: '<md-dialog ng-cloak aria-label="viewImage">' +
 			'  <md-dialog-content style="max-width:800px;max-height:810px;" >' +
 			'   <img style="margin: auto; max-width: 100%; max-height= 100%;" ng-src="{{file_url}}">' +

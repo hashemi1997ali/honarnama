@@ -7,16 +7,22 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.view.Gravity;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -37,8 +43,12 @@ public class ActivitySettings extends PreferenceActivity {
         getDelegate().installViewFactory();
         getDelegate().onCreate(savedInstanceState);
         super.onCreate(savedInstanceState);
+        WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView())
+                .setAppearanceLightStatusBars(false);
         addPreferencesFromResource(R.xml.setting_preferences);
         parent_view = findViewById(android.R.id.content);
+        parent_view.setBackgroundColor(getResources().getColor(android.R.color.white));
+        addStatusBarBackground();
 
         final Preference prefVersion = (Preference) findPreference(getString(R.string.pref_title_build));
         prefVersion.setSummary(Tools.getVersionName(this));
@@ -57,6 +67,33 @@ public class ActivitySettings extends PreferenceActivity {
         });
 
         initToolbar();
+    }
+
+    private void addStatusBarBackground() {
+        ViewGroup decor = (ViewGroup) getWindow().getDecorView();
+        View statusBarBackground = new View(this);
+        statusBarBackground.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        statusBarBackground.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                0,
+                Gravity.TOP
+        );
+        decor.addView(statusBarBackground, params);
+
+        ViewCompat.setOnApplyWindowInsetsListener(statusBarBackground, (view, windowInsets) -> {
+            Insets safeTop = windowInsets.getInsets(
+                    WindowInsetsCompat.Type.statusBars()
+                            | WindowInsetsCompat.Type.displayCutout()
+            );
+            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+            if (layoutParams.height != safeTop.top) {
+                layoutParams.height = safeTop.top;
+                view.setLayoutParams(layoutParams);
+            }
+            return windowInsets;
+        });
+        ViewCompat.requestApplyInsets(statusBarBackground);
     }
 
     @Override

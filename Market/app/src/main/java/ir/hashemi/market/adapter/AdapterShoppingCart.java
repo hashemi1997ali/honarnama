@@ -81,7 +81,7 @@ public class AdapterShoppingCart extends RecyclerView.Adapter<RecyclerView.ViewH
             ViewHolder vItem = (ViewHolder) holder;
             final Cart c = items.get(position);
             vItem.title.setText(c.product_name);
-            String price_str = String.format(Locale.US, "%1$,.0f", c.price_item);
+            String price_str = String.format(Locale.US, "%1$,.2f", c.price_item);
             vItem.price.setText(price_str + " " + sharedPref.getInfoData().currency);
             vItem.amount.setText(c.amount + " " + ctx.getString(R.string.items));
             Tools.displayImageThumbnail(ctx, vItem.image, Constant.getURLimgProduct(c.image), 0.5f);

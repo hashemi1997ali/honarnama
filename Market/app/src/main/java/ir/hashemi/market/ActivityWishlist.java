@@ -36,6 +36,7 @@ public class ActivityWishlist extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wishlist);
+        Tools.applyTopWindowInsets(this, findViewById(R.id.app_bar_layout));
 
         db = new DatabaseHandler(this);
 

@@ -120,12 +120,12 @@ angular.module('App').controller('AddProductController', function ($rootScope, $
 			request.updateOneProduct(p.id, p).then(function(resp){
 				self.resp_submit = resp;
 				if(resp.status == 'success'){
-					self.prepareProductCategory(resp.data.id);
+					self.prepareProductCategory(p.id);
 					request.insertAllProductCategory(self.product_category).then(function(){ self.done_arr[0] = true; }); // insert table relation
 					if(self.image.file != null){
 						request.uploadFileToUrl(self.image.file, dir, p.image, oldname).then(function(){ self.done_arr[1] = true; }); // upload primary image
 					} else { self.done_arr[1] = true; }
-					self.uploadOptionalImages(resp.data.id, 0, 0); // upload optional image
+					self.uploadOptionalImages(p.id, 0, 0); // upload optional image
 				} else {
 					self.done_arr[0] = true;
 					self.submit_done = true;
@@ -224,8 +224,9 @@ angular.module('App').controller('AddProductController', function ($rootScope, $
 	/* dialog View Image*/
 	self.viewImage = function (ev, f) {
 		$mdDialog.show({
-			controller : ViewImageDialogController,
-			parent: angular.element(document.body), targetEvent: ev, clickOutsideToClose: true, file_url: f,
+				controller : ViewImageDialogController,
+				parent: angular.element(document.body), targetEvent: ev, clickOutsideToClose: true,
+				locals: { file_url: f },
 			template: '<md-dialog ng-cloak aria-label="viewImage">' +
 			'  <md-dialog-content style="max-width:800px;max-height:810px;" >' +
 			'   <img style="margin: auto; max-width: 100%; max-height= 100%;" ng-src="{{file_url}}">' +

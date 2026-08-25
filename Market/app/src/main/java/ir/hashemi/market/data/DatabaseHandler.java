@@ -19,7 +19,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     private SQLiteDatabase db;
     // Database Version
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     // Database Name
     private static final String DATABASE_NAME = "market.db";
@@ -38,6 +38,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // Table Columns names TABLE_ORDER
     private static final String COL_ORDER_ID = "COL_ORDER_ID";
     private static final String COL_ORDER_CODE = "COL_ORDER_CODE";
+    private static final String COL_ORDER_STATUS = "COL_ORDER_STATUS";
     private static final String COL_ORDER_TOTAL_FEES = "COL_ORDER_TOTAL_FEES";
     private static final String COL_ORDER_CREATED_AT = "COL_ORDER_CREATED_AT";
 
@@ -79,6 +80,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String CREATE_TABLE = "CREATE TABLE " + TABLE_ORDER + " ("
                 + COL_ORDER_ID + " INTEGER PRIMARY KEY, "
                 + COL_ORDER_CODE + " TEXT, "
+                + COL_ORDER_STATUS + " TEXT, "
                 + COL_ORDER_TOTAL_FEES + " TEXT, "
                 + COL_ORDER_CREATED_AT + " NUMERIC "
                 + ")";
@@ -106,6 +108,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Log.d("DB ", "onUpgrade " + oldVersion + " to " + newVersion);
         if (oldVersion < 2) {
             db.execSQL("DROP TABLE IF EXISTS notification");
+        }
+        if (oldVersion < 3) {
+            db.execSQL("ALTER TABLE " + TABLE_ORDER + " ADD COLUMN " + COL_ORDER_STATUS + " TEXT DEFAULT ''");
         }
     }
 
@@ -146,6 +151,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(COL_ORDER_ID, model.id);
         values.put(COL_ORDER_CODE, model.code);
+        values.put(COL_ORDER_STATUS, model.status);
         values.put(COL_ORDER_TOTAL_FEES, model.total_fees);
         values.put(COL_ORDER_CREATED_AT, model.created_at);
         return values;
@@ -212,7 +218,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Order obj = new Order();
         obj.id = cur.getLong(cur.getColumnIndexOrThrow(COL_ORDER_ID));
         obj.code = cur.getString(cur.getColumnIndexOrThrow(COL_ORDER_CODE));
-        obj.total_fees = cur.getString(cur.getColumnIndexOrThrow(COL_ORDER_TOTAL_FEES));
+        obj.status = cur.getString(cur.getColumnIndexOrThrow(COL_ORDER_STATUS));
+        obj.total_fees = cur.getDouble(cur.getColumnIndexOrThrow(COL_ORDER_TOTAL_FEES));
         obj.created_at = cur.getLong(cur.getColumnIndexOrThrow(COL_ORDER_CREATED_AT));
         obj.cart_list = getCartByOrderId(obj.id);
         return obj;
@@ -252,6 +259,25 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             items = getListOrderByCursor(cursor);
         }
         return items;
+    }
+
+    public void replaceOrderHistory(List<Order> orders) {
+        db.beginTransaction();
+        try {
+            db.delete(TABLE_ORDER, null, null);
+            db.delete(TABLE_CART, COL_CART_ORDER_ID + "<>?", new String[]{"-1"});
+            for (Order order : orders) {
+                db.insertWithOnConflict(TABLE_ORDER, null, getOrderValue(order), SQLiteDatabase.CONFLICT_REPLACE);
+                for (Cart cart : order.cart_list) {
+                    cart.id = null;
+                    cart.order_id = order.id;
+                    db.insert(TABLE_CART, null, getCartValue(cart));
+                }
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
     }
 
     public List<Cart> getActiveCartList() {
@@ -346,12 +372,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public int getActiveCartSize() {
-        String countQuery = "SELECT c." + COL_CART_ID + " FROM " + TABLE_CART + " c WHERE c." + COL_CART_ORDER_ID + "=" + (-1);
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(countQuery, null);
-        int count = cursor.getCount();
-        cursor.close();
-        return count;
+        String countQuery = "SELECT COALESCE(SUM(c." + COL_CART_AMOUNT + "), 0) FROM " + TABLE_CART
+                + " c WHERE c." + COL_CART_ORDER_ID + "=" + (-1);
+        return (int) DatabaseUtils.longForQuery(getReadableDatabase(), countQuery, null);
     }
 
 }

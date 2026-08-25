@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import ir.hashemi.market.R;
 import ir.hashemi.market.data.SharedPref;
@@ -71,7 +72,9 @@ public class AdapterOrderHistory extends RecyclerView.Adapter<RecyclerView.ViewH
             ViewHolder vItem = (ViewHolder) holder;
             final Order c = items.get(position);
             vItem.code.setText(c.code);
-            vItem.price.setText(c.total_fees + " " + sharedPref.getInfoData().currency);
+            double total = c.total_fees == null ? 0 : c.total_fees;
+            String currency = sharedPref.getInfoData() == null ? "EUR" : sharedPref.getInfoData().currency;
+            vItem.price.setText(String.format(Locale.US, "%1$,.2f %2$s", total, currency));
             String date = Tools.getFormattedDate(c.created_at);
             vItem.date.setText(ir.hashemi.market.ShamsiCalleder.getCurrentShamsidate(date));
             vItem.lyt_parent.setOnClickListener(new View.OnClickListener() {

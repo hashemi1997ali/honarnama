@@ -88,4 +88,6 @@ temp/
 /photos/
 /personal/
 /private/
-/docs/
+/docs/*
+!/docs/screenshots/
+!/docs/screenshots/*.png

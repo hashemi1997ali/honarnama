@@ -3,7 +3,6 @@ package ir.hashemi.market;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
@@ -13,7 +12,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -34,6 +32,7 @@ import ir.hashemi.market.data.Constant;
 import ir.hashemi.market.model.Category;
 import ir.hashemi.market.model.Product;
 import ir.hashemi.market.utils.CategoryIcons;
+import ir.hashemi.market.utils.CartMenuBadge;
 import ir.hashemi.market.utils.NetworkCheck;
 import ir.hashemi.market.utils.Tools;
 import retrofit2.Call;
@@ -65,11 +64,11 @@ public class ActivityCategoryDetails extends AppCompatActivity {
     private int post_total = 0;
     private int failed_page = 0;
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category_details);
+        Tools.applyTopWindowInsets(this, findViewById(R.id.app_bar_layout));
 
         parent_view = findViewById(android.R.id.content);
         category = (Category) getIntent().getSerializableExtra(EXTRA_OBJECT);
@@ -122,7 +121,6 @@ public class ActivityCategoryDetails extends AppCompatActivity {
         });
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void displayCategoryData(Category c) {
         ((AppBarLayout) findViewById(R.id.app_bar_layout)).setBackgroundColor(Color.parseColor(c.color));
         ((TextView) findViewById(R.id.name)).setText(c.name);
@@ -149,7 +147,14 @@ public class ActivityCategoryDetails extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_activity_category_details, menu);
+        CartMenuBadge.bind(this, menu);
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        invalidateOptionsMenu();
     }
 
     @Override

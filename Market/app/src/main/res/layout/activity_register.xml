@@ -14,7 +14,7 @@
     <include
         layout="@layout/include_brand_logo"
         android:layout_width="180dp"
-        android:layout_height="180dp"
+        android:layout_height="135dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="80dp" />
 

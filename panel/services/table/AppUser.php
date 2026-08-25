@@ -49,6 +49,9 @@ class AppUser extends REST {
         if (isset($response['data']['password'])) {
             unset($response['data']['password']);
         }
+        if ($response['status'] === 'success' && !empty($response['data']['id'])) {
+            $response['data']['auth_token'] = $this->createSession((int)$response['data']['id']);
+        }
         $this->show_response($response);
     }
 
@@ -80,7 +83,42 @@ class AppUser extends REST {
             );
         }
         unset($user['password'], $user['active']);
+        $user['auth_token'] = $this->createSession((int)$user['id']);
         $this->show_response(array('status' => 'success', 'data' => $user));
+    }
+
+    public function authenticateToken($token) {
+        $token = trim((string)$token);
+        if (!preg_match('/^hs_[a-f0-9]{64}$/', $token)) {
+            return array();
+        }
+
+        $tokenHash = hash('sha256', $token);
+        $user = $this->db->get_one(
+            'SELECT au.id, au.name, au.username FROM app_session session ' .
+            'INNER JOIN app_user au ON au.id = session.user_id ' .
+            'WHERE session.token_hash = :token_hash AND session.expires_at > now() ' .
+            'AND au.active = TRUE LIMIT 1',
+            array('token_hash' => $tokenHash)
+        );
+        if (!empty($user)) {
+            $this->db->execute(
+                'UPDATE app_session SET last_seen = now() WHERE token_hash = :token_hash',
+                array('token_hash' => $tokenHash)
+            );
+        }
+        return $user;
+    }
+
+    public function createSession($userId) {
+        $token = 'hs_' . bin2hex(random_bytes(32));
+        $this->db->execute('DELETE FROM app_session WHERE expires_at <= now()');
+        $this->db->execute(
+            "INSERT INTO app_session (token_hash, user_id, expires_at) " .
+            "VALUES (:token_hash, :user_id, now() + INTERVAL '90 days')",
+            array('token_hash' => hash('sha256', $token), 'user_id' => (int)$userId)
+        );
+        return $token;
     }
 
     public function findAllByPage() {

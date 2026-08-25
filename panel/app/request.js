@@ -137,7 +137,7 @@ angular.module('App').factory("request", function ($http, $cookies) {
         return $http.get(api_base + 'deleteOneProductOrder?id='+id, config).then(function (results) { return results.data; });
     };
 	obj.processProductOrder = function (id, order, order_detail) {
-		var data = {id:id, product_order:order, product_order_detail:order_detail};
+		var data = {id:id};
 		return $http.post(api_base + 'processProductOrder', data, config).then(function (results) { return results.data; });
 	};
 
@@ -229,7 +229,6 @@ angular.module('App').factory("request", function ($http, $cookies) {
 	
 	// FILE UTILITIES ---------------------------------------------------------------------------------
 	obj.uploadFileToUrl = function (f, dir, name, oldname) {
-		//console.log(JSON.stringify(resp.data));
 		var fd = new FormData();
 		fd.append("file", f);
 		fd.append("target_dir", dir);

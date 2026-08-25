@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -21,6 +20,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -79,6 +82,7 @@ public class ActivitySearch extends AppCompatActivity {
     private AdapterProduct adapterProduct;
     private AdapterProductAuction adapterProductAuction;
     private ImageButton bt_clear;
+    private ImageButton bt_search;
     private View parent_view;
     private SwipeRefreshLayout swipe_refresh;
     private Call<CallbackProduct> callbackCall = null;
@@ -94,7 +98,10 @@ public class ActivitySearch extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_search);
+
+        applySystemBarInsets();
 
         category_id = getIntent().getLongExtra(EXTRA_CATEGORY_ID, -1L);
         category_name = getIntent().getStringExtra(EXTRA_CATEGORY_NAME);
@@ -104,6 +111,41 @@ public class ActivitySearch extends AppCompatActivity {
         setupToolbar();
     }
 
+    private void applySystemBarInsets() {
+        final View root = findViewById(R.id.search_root);
+        final View appBar = findViewById(R.id.search_app_bar);
+        final int rootPaddingLeft = root.getPaddingLeft();
+        final int rootPaddingTop = root.getPaddingTop();
+        final int rootPaddingRight = root.getPaddingRight();
+        final int rootPaddingBottom = root.getPaddingBottom();
+        final int appBarPaddingLeft = appBar.getPaddingLeft();
+        final int appBarPaddingTop = appBar.getPaddingTop();
+        final int appBarPaddingRight = appBar.getPaddingRight();
+        final int appBarPaddingBottom = appBar.getPaddingBottom();
+
+        ViewCompat.setOnApplyWindowInsetsListener(root, (view, windowInsets) -> {
+            Insets statusBars = windowInsets.getInsets(
+                    WindowInsetsCompat.Type.statusBars() | WindowInsetsCompat.Type.displayCutout()
+            );
+            Insets navigationBars = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars());
+
+            appBar.setPadding(
+                    appBarPaddingLeft + statusBars.left,
+                    appBarPaddingTop + statusBars.top,
+                    appBarPaddingRight + statusBars.right,
+                    appBarPaddingBottom
+            );
+            root.setPadding(
+                    rootPaddingLeft,
+                    rootPaddingTop,
+                    rootPaddingRight,
+                    rootPaddingBottom + navigationBars.bottom
+            );
+            return windowInsets;
+        });
+        ViewCompat.requestApplyInsets(root);
+    }
+
     private void initComponent() {
         parent_view = findViewById(android.R.id.content);
         swipe_refresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
@@ -111,6 +153,7 @@ public class ActivitySearch extends AppCompatActivity {
         et_search.addTextChangedListener(textWatcher);
 
         bt_clear = (ImageButton) findViewById(R.id.bt_clear);
+        bt_search = (ImageButton) findViewById(R.id.bt_search);
         ((TextView) findViewById(R.id.category)).setText(getString(R.string.Category) + category_name);
         bt_clear.setVisibility(View.GONE);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
@@ -144,9 +187,7 @@ public class ActivitySearch extends AppCompatActivity {
             bt_clear.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    et_search.setText("");
-                    adapterProductAuction.resetListData();
-                    showNoItemView(true);
+                    clearSearch();
                 }
             });
 
@@ -154,6 +195,10 @@ public class ActivitySearch extends AppCompatActivity {
             swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
+                    if (query.isEmpty()) {
+                        swipeProgress(false);
+                        return;
+                    }
                     if (callbackProductAuctionCall != null && callbackProductAuctionCall.isExecuted())
                         callbackProductAuctionCall.cancel();
                     adapterProductAuction.resetListData();
@@ -187,9 +232,7 @@ public class ActivitySearch extends AppCompatActivity {
             bt_clear.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    et_search.setText("");
-                    adapterProduct.resetListData();
-                    showNoItemView(true);
+                    clearSearch();
                 }
             });
 
@@ -197,6 +240,10 @@ public class ActivitySearch extends AppCompatActivity {
             swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
+                    if (query.isEmpty()) {
+                        swipeProgress(false);
+                        return;
+                    }
                     if (callbackCall != null && callbackCall.isExecuted()) callbackCall.cancel();
                     adapterProduct.resetListData();
                     requestAction(1);
@@ -204,9 +251,18 @@ public class ActivitySearch extends AppCompatActivity {
             });
         }
 
+        bt_search.setOnClickListener(view -> {
+            hideKeyboard();
+            searchAction();
+        });
+
         et_search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                boolean keyboardSearch = actionId == EditorInfo.IME_ACTION_SEARCH;
+                boolean enterKey = event != null
+                        && event.getAction() == KeyEvent.ACTION_DOWN
+                        && event.getKeyCode() == KeyEvent.KEYCODE_ENTER;
+                if (keyboardSearch || enterKey) {
                     hideKeyboard();
                     searchAction();
                     return true;
@@ -219,8 +275,11 @@ public class ActivitySearch extends AppCompatActivity {
     }
 
     private void searchAction() {
-        query = et_search.getText().toString().trim();
-        if (!query.equals("")) {
+        String submittedQuery = et_search.getText().toString().trim();
+        if (!submittedQuery.isEmpty()) {
+            cancelSearchRequests();
+            query = submittedQuery;
+            post_total = 0;
             if (auction)
                 adapterProductAuction.resetListData();
             else
@@ -244,17 +303,10 @@ public class ActivitySearch extends AppCompatActivity {
                 adapterProduct.setLoading();
         }
 
-        // analytics track
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (auction)
-                    requestListProductAuction(page_no);
-                else
-                    requestListProduct(page_no);
-            }
-        }, 1000);
+        if (auction)
+            requestListProductAuction(page_no);
+        else
+            requestListProduct(page_no);
     }
 
     private void setupToolbar() {
@@ -271,7 +323,8 @@ public class ActivitySearch extends AppCompatActivity {
             @Override
             public void onResponse(Call<CallbackProductAuction> call, Response<CallbackProductAuction> response) {
                 CallbackProductAuction resp = response.body();
-                if (resp != null && resp.status.equals("success")) {
+                if (response.isSuccessful() && resp != null && "success".equals(resp.status)
+                        && resp.products_auction != null) {
                     post_total = resp.count_total;
                     displayApiResultAuction(resp.products_auction);
                 } else {
@@ -294,7 +347,8 @@ public class ActivitySearch extends AppCompatActivity {
             @Override
             public void onResponse(Call<CallbackProduct> call, Response<CallbackProduct> response) {
                 CallbackProduct resp = response.body();
-                if (resp != null && resp.status.equals("success")) {
+                if (response.isSuccessful() && resp != null && "success".equals(resp.status)
+                        && resp.products != null) {
                     post_total = resp.count_total;
                     displayApiResult(resp.products);
                 } else {
@@ -382,6 +436,27 @@ public class ActivitySearch extends AppCompatActivity {
         }
     }
 
+    private void clearSearch() {
+        cancelSearchRequests();
+        query = "";
+        post_total = 0;
+        et_search.setText("");
+        if (auction) {
+            adapterProductAuction.resetListData();
+        } else {
+            adapterProduct.resetListData();
+        }
+        swipeProgress(false);
+        showFailedView(false, "");
+        showNoItemView(true);
+        et_search.requestFocus();
+    }
+
+    private void cancelSearchRequests() {
+        if (callbackCall != null) callbackCall.cancel();
+        if (callbackProductAuctionCall != null) callbackProductAuctionCall.cancel();
+    }
+
     private void showFailedView(boolean show, String message) {
         View lyt_failed = (View) findViewById(R.id.lyt_failed);
         ((TextView) findViewById(R.id.failed_message)).setText(message);
@@ -422,6 +497,12 @@ public class ActivitySearch extends AppCompatActivity {
                 swipe_refresh.setRefreshing(show);
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        cancelSearchRequests();
+        super.onDestroy();
     }
 
 }

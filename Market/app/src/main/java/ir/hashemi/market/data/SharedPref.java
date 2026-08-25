@@ -36,6 +36,10 @@ public class SharedPref {
         return gson.fromJson(sharedPreferences.getString(USER_DATA, null), User.class);
     }
 
+    public void clearUserData() {
+        sharedPreferences.edit().remove(USER_DATA).apply();
+    }
+
     public boolean isUserDataEmpty() {
         if(getUserData() == null)
             return true;

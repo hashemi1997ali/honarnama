@@ -46,7 +46,10 @@
                             <draft ng-if="p.draft == 1">DRAFT</draft>
                             <publish ng-if="p.draft != 1">PUBLISHED</publish>
                         </td>
-                        <td data-title="Price">{{p.price}}</td>
+                        <td data-title="Price">
+                            <span ng-if="p.price_discount > 0"><s>{{p.price | number:2}}</s> {{p.price_discount | number:2}}</span>
+                            <span ng-if="p.price_discount <= 0">{{p.price | number:2}}</span>
+                        </td>
                         <td data-title="Stock">{{p.stock}}</td>
                         <td data-title="Status">
                             <ready-stock ng-if="p.status=='READY STOCK'">{{p.status}}</ready-stock>
@@ -55,9 +58,9 @@
                         </td>
                         <td data-title="Action">
                             <div layout="row" layout-align="left" ng-if="!isExistAtProductOrder(p.id)">
-                                <md-button layout-align="center" class="md-btn-small" ng-click="addItem($event, p)">
+                                <md-button layout-align="center" class="md-btn-small" ng-disabled="!isAvailable(p)" ng-click="addItem($event, p)">
                                     <md-icon class="md-ic-small ic-small">add_circle</md-icon>
-                                    <md-tooltip>Add to order</md-tooltip>
+                                    <md-tooltip>{{isAvailable(p) ? 'Add to order' : 'Product is unavailable'}}</md-tooltip>
                                 </md-button>
                             </div>
                         </td>

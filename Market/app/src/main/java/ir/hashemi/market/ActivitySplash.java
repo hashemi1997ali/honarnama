@@ -15,6 +15,7 @@ import ir.hashemi.market.connection.API;
 import ir.hashemi.market.connection.RestAdapter;
 import ir.hashemi.market.connection.callbacks.CallbackInfo;
 import ir.hashemi.market.data.SharedPref;
+import ir.hashemi.market.model.User;
 import ir.hashemi.market.utils.CallbackDialog;
 import ir.hashemi.market.utils.DialogUtils;
 import ir.hashemi.market.utils.NetworkCheck;
@@ -91,7 +92,8 @@ public class ActivitySplash extends AppCompatActivity {
     }
 
     private void startNextActivity() {
-        if (sharedPref.isUserDataEmpty()) {
+        User user = sharedPref.getUserData();
+        if (user == null || user.auth_token == null || user.auth_token.trim().isEmpty()) {
             startActivityLogin();
         } else {
             startActivityMainDelay();

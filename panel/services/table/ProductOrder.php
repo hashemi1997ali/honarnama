@@ -17,7 +17,11 @@ class ProductOrder extends REST {
 
     public function findAll() {
         if ($this->get_request_method() != "GET") $this->response('', 406);
-        $this->show_response($this->db->get_list('SELECT * FROM product_order po ORDER BY po.id DESC'));
+        $this->show_response($this->db->get_list(
+            'SELECT po.*, COALESCE(SUM(pod.amount), 0) AS item_count ' .
+            'FROM product_order po LEFT JOIN product_order_detail pod ON pod.order_id = po.id ' .
+            'GROUP BY po.id ORDER BY po.id DESC'
+        ));
     }
 
     public function findOne() {
@@ -55,8 +59,9 @@ class ProductOrder extends REST {
             $where = ' WHERE ' . implode(' OR ', $conditions);
         }
 
-        $query = 'SELECT DISTINCT * FROM product_order po' . $where .
-            " ORDER BY po.id DESC LIMIT {$limit} OFFSET {$offset}";
+        $query = 'SELECT po.*, COALESCE(SUM(pod.amount), 0) AS item_count ' .
+            'FROM product_order po LEFT JOIN product_order_detail pod ON pod.order_id = po.id' . $where .
+            " GROUP BY po.id ORDER BY po.id DESC LIMIT {$limit} OFFSET {$offset}";
         $this->show_response($this->db->get_list($query, $params));
     }
 
@@ -90,9 +95,12 @@ class ProductOrder extends REST {
     }
 
     public function insertOnePlain($data) {
-        $columns = array('code', 'buyer', 'address', 'email', 'shipping', 'date_ship', 'phone', 'comment', 'status', 'total_fees', 'tax', 'created_at', 'last_update');
+        $columns = array('app_user_id', 'code', 'buyer', 'address', 'email', 'shipping', 'date_ship', 'phone', 'comment', 'status', 'total_fees', 'tax', 'created_at', 'last_update');
+        $now = (int)round(microtime(true) * 1000);
         $data['code'] = $this->getRandomCode();
         $data['status'] = $this->normalizeStatus(isset($data['status']) ? $data['status'] : 'WAITING');
+        $data['created_at'] = $now;
+        $data['last_update'] = $now;
         return $this->db->post_one($data, 'id', $columns, 'product_order');
     }
 
@@ -100,9 +108,17 @@ class ProductOrder extends REST {
         if ($this->get_request_method() != "POST") $this->response('', 406);
         $data = json_decode(file_get_contents("php://input"), true);
         if (!isset($data['id'])) $this->responseInvalidParam();
+        $current = $this->findOnePlain((int)$data['id']);
+        if (empty($current) || $current['status'] === 'PROCESSED') {
+            $this->show_response(array('status' => 'failed', 'msg' => 'Processed or missing orders cannot be edited.', 'data' => null));
+        }
         if (isset($data['product_order']['status'])) {
             $data['product_order']['status'] = $this->normalizeStatus($data['product_order']['status']);
+            if ($data['product_order']['status'] === 'PROCESSED') {
+                $this->show_response(array('status' => 'failed', 'msg' => 'Use Process Order to confirm stock changes.', 'data' => null));
+            }
         }
+        $data['product_order']['last_update'] = (int)round(microtime(true) * 1000);
         $columns = array('buyer', 'address', 'email', 'shipping', 'date_ship', 'phone', 'comment', 'status', 'total_fees', 'tax', 'created_at', 'last_update');
         $this->show_response($this->db->post_update((int)$data['id'], $data, 'id', $columns, 'product_order'));
     }
@@ -110,6 +126,10 @@ class ProductOrder extends REST {
     public function deleteOne() {
         if ($this->get_request_method() != "GET") $this->response('', 406);
         if (!isset($this->_request['id'])) $this->responseInvalidParam();
+        $order = $this->findOnePlain((int)$this->_request['id']);
+        if (empty($order) || $order['status'] !== 'CANCEL') {
+            $this->show_response(array('status' => 'failed', 'msg' => 'Only cancelled orders can be deleted.', 'data' => null));
+        }
         $this->show_response($this->deleteOnePlain((int)$this->_request['id']));
     }
 
@@ -127,22 +147,40 @@ class ProductOrder extends REST {
     public function processOrder() {
         if ($this->get_request_method() != "POST") $this->response('', 406);
         $data = json_decode(file_get_contents("php://input"), true);
-        if (!isset($data['id'], $data['product_order'], $data['product_order_detail'])) {
+        if (!isset($data['id'])) {
             $this->responseInvalidParam();
         }
 
-        $order = $data['product_order'];
-        $orderDetails = $data['product_order_detail'];
-        $response = $this->product_order_detail->checkAvailableProductOrderDetail($orderDetails);
+        $orderId = (int)$data['id'];
+        $response = array('status' => 'failed', 'msg' => 'Order not found.', 'data' => array());
 
-        if ($response['status'] === 'success') {
-            try {
-                $this->db->transaction(function ($db) use ($order, $orderDetails) {
-                    foreach ($orderDetails as $detail) {
+        try {
+            $processed = $this->db->transaction(function ($db) use ($orderId, &$response) {
+                $lockedOrder = $db->get_one(
+                    'SELECT status FROM product_order WHERE id = :order_id FOR UPDATE',
+                    array('order_id' => $orderId)
+                );
+                if (empty($lockedOrder)) return false;
+                if ($lockedOrder['status'] !== 'WAITING') {
+                    $response['msg'] = 'Only waiting orders can be processed.';
+                    return false;
+                }
+
+                $orderDetails = $this->product_order_detail->findAllByOrderIdPlain($orderId);
+                $response = $this->product_order_detail->checkAvailableProductOrderDetail($orderDetails);
+                if ($response['status'] !== 'success') return false;
+
+                    $now = (int)round(microtime(true) * 1000);
+                    foreach ($response['data'] as $detail) {
                         $updated = $db->execute(
-                            'UPDATE product SET stock = stock - :amount WHERE id = :product_id AND stock >= :minimum_stock',
+                            "UPDATE product SET stock = stock - :amount, " .
+                            "status = CASE WHEN stock - :status_amount = 0 THEN 'OUT OF STOCK' ELSE status END, " .
+                            'last_update = :last_update ' .
+                            "WHERE id = :product_id AND status = 'READY STOCK' AND stock >= :minimum_stock",
                             array(
                                 'amount' => (int)$detail['amount'],
+                                'status_amount' => (int)$detail['amount'],
+                                'last_update' => $now,
                                 'product_id' => (int)$detail['product_id'],
                                 'minimum_stock' => (int)$detail['amount'],
                             )
@@ -152,16 +190,25 @@ class ProductOrder extends REST {
                         }
                     }
                     $db->execute(
-                        "UPDATE product_order SET status = 'PROCESSED' WHERE id = :order_id",
-                        array('order_id' => (int)$order['id'])
+                        "UPDATE product_order SET status = 'PROCESSED', last_update = :last_update WHERE id = :order_id",
+                        array('last_update' => $now, 'order_id' => $orderId)
                     );
-                });
-                $this->mail_handler->sendOrderProcess((int)$order['id']);
-            } catch (Throwable $exception) {
-                error_log($exception->getMessage());
-                $response['status'] = 'failed';
-                $response['msg'] = 'Order could not be processed because stock changed.';
+                return true;
+            });
+
+            if ($processed) {
+                $response['msg'] = 'Order processed and stock updated successfully.';
+                try {
+                    $this->mail_handler->sendOrderProcess($orderId);
+                } catch (Throwable $exception) {
+                    // Stock and order state are already committed; keep the successful response.
+                    error_log('Processed order email failed: ' . $exception->getMessage());
+                }
             }
+        } catch (Throwable $exception) {
+            error_log($exception->getMessage());
+            $response['status'] = 'failed';
+            $response['msg'] = 'Order could not be processed because its status or stock changed.';
         }
 
         $this->show_response($response);

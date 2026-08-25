@@ -68,7 +68,7 @@ angular.module('App').controller('AppUserController', function ($rootScope, $sco
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose: true,
-                user: response.data
+                locals: {user: response.data}
             });
         }, self.handleLoadError);
     };

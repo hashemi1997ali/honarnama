@@ -16,6 +16,7 @@ class CLIENT extends REST{
     private $product_image 			= NULL;
     private $category 				= NULL;
     private $user 					= NULL;
+    private $app_user               = NULL;
     private $news_info 				= NULL;
     private $currency 				= NULL;
     private $config 				= NULL;
@@ -26,6 +27,7 @@ class CLIENT extends REST{
         parent::__construct();
         $this->db = $db;
         $this->user = new User($this->db);
+        $this->app_user = new AppUser($this->db);
         $this->product = new Product($this->db);
         $this->product_auction = new ProductAuction($this->db);
         $this->product_category = new ProductCategory($this->db);
@@ -193,6 +195,91 @@ class CLIENT extends REST{
         $this->show_response($response);
     }
 
+    /* Validate and refresh locally cached Android cart data. */
+    public function validateCart(){
+        if($this->get_request_method() != "POST") $this->response('', 406);
+        $data = json_decode(file_get_contents("php://input"), true);
+        if(!isset($data['product_order_detail']) || !is_array($data['product_order_detail'])) {
+            $this->responseInvalidParam();
+        }
+        if(!isset($this->_header['Security']) || $this->_header['Security'] != $this->conf->SECURITY_CODE){
+            $this->show_response(array('status' => 'failed', 'valid' => false, 'msg' => 'Invalid security code', 'data' => array()));
+        }
+
+        $validation = $this->product_order_detail->validateAndNormalizeForSubmission($data['product_order_detail'], true);
+        $this->show_response(array(
+            'status' => 'success',
+            'valid' => $validation['status'] === 'success',
+            'msg' => $validation['msg'],
+            'data' => $validation['data'],
+        ));
+    }
+
+    /* Return account-owned orders and their current server-side totals/details. */
+    public function listOrderHistory(){
+        if($this->get_request_method() != "POST") $this->response('', 406);
+        $data = json_decode(file_get_contents("php://input"), true);
+        if(!isset($this->_header['Security']) || $this->_header['Security'] != $this->conf->SECURITY_CODE){
+            $this->show_response(array('status' => 'failed', 'msg' => 'Invalid security code', 'data' => array()));
+        }
+
+        $appUser = $this->app_user->authenticateToken(isset($data['auth_token']) ? $data['auth_token'] : '');
+        if(empty($appUser)) {
+            $this->show_response(array('status' => 'failed', 'msg' => 'Your session has expired. Please log in again.', 'data' => array()));
+        }
+        $userId = (int)$appUser['id'];
+
+        $legacyOrders = isset($data['legacy_orders']) && is_array($data['legacy_orders'])
+            ? array_slice($data['legacy_orders'], 0, 100)
+            : array();
+        $this->db->transaction(function ($db) use ($legacyOrders, $userId) {
+            foreach($legacyOrders as $legacyOrder) {
+                $orderId = isset($legacyOrder['id']) ? (int)$legacyOrder['id'] : 0;
+                $code = isset($legacyOrder['code']) ? trim((string)$legacyOrder['code']) : '';
+                if($orderId < 1 || $code === '') continue;
+                $db->execute(
+                    'UPDATE product_order SET app_user_id = :user_id ' .
+                    'WHERE id = :order_id AND code = :code AND app_user_id IS NULL',
+                    array('user_id' => $userId, 'order_id' => $orderId, 'code' => $code)
+                );
+            }
+        });
+
+        $orders = $this->db->get_list(
+            'SELECT id, code, status, total_fees, created_at FROM product_order ' .
+            'WHERE app_user_id = :user_id ORDER BY id DESC',
+            array('user_id' => $userId)
+        );
+        $details = $this->db->get_list(
+            'SELECT pod.order_id, pod.product_id, pod.product_name, pod.amount, pod.price_item, ' .
+            "COALESCE(p.image, '') AS image, COALESCE(p.stock, 0) AS stock, pod.created_at " .
+            'FROM product_order_detail pod ' .
+            'INNER JOIN product_order po ON po.id = pod.order_id ' .
+            'LEFT JOIN product p ON p.id = pod.product_id ' .
+            'WHERE po.app_user_id = :user_id ORDER BY pod.id ASC',
+            array('user_id' => $userId)
+        );
+
+        $detailsByOrder = array();
+        foreach($details as $detail) {
+            $orderId = (int)$detail['order_id'];
+            if(!isset($detailsByOrder[$orderId])) $detailsByOrder[$orderId] = array();
+            $detail['id'] = null;
+            $detailsByOrder[$orderId][] = $detail;
+        }
+        foreach($orders as &$order) {
+            $orderId = (int)$order['id'];
+            $order['cart_list'] = isset($detailsByOrder[$orderId]) ? $detailsByOrder[$orderId] : array();
+        }
+        unset($order);
+
+        $this->show_response(array(
+            'status' => 'success',
+            'msg' => 'Order history loaded.',
+            'data' => $orders,
+        ));
+    }
+
     /* Submit Product Order */
     public function submitProductOrder(){
         if($this->get_request_method() != "POST") $this->response('', 406);
@@ -206,28 +293,62 @@ class CLIENT extends REST{
             return;
         }
 
-        // submit order
-        $resp_po = $this->product_order->insertOnePlain($data['product_order']);
-        if($resp_po['status'] == "success"){
-            $order_id = (int)$resp_po['data']['id'];
-            $resp_pod = $this->product_order_detail->insertAllPlain($order_id, $data['product_order_detail']);
-            if($resp_pod['status'] == 'success'){
-                $status = 'success';
-                $msg = 'Success submit product order';
-                // send email
-                $this->mail_handler->sendNewOrder($order_id);
-            } else {
-                $this->product_order->deleteOnePlain($order_id);
-                $status = 'failed';
-                $msg = 'Failed when submit order.';
-            }
-        } else {
-            $status = 'failed';
-            $msg = 'Failed when submit order';
+        $validation = $this->product_order_detail->validateAndNormalizeForSubmission($data['product_order_detail'], true);
+        if($validation['status'] !== 'success') {
+            $this->show_response(array(
+                'status' => 'failed',
+                'msg' => $validation['msg'],
+                'data' => null,
+                'errors' => $validation['data'],
+            ));
         }
-        $m = array('status' => $status, 'msg' => $msg, 'data' => $resp_po['data']);
-        $this->show_response($m);
-        return;
+
+        $appUser = $this->app_user->authenticateToken(isset($data['auth_token']) ? $data['auth_token'] : '');
+        if(empty($appUser)) {
+            $this->show_response(array('status' => 'failed', 'msg' => 'Your session has expired. Please log in again.', 'data' => null));
+        }
+
+        $config = $this->config->findAllArr();
+        $tax = (float)$this->getValue($config, 'TAX');
+        $subtotal = 0;
+        foreach($validation['details'] as $detail) {
+            $subtotal += (float)$detail['price_item'] * (int)$detail['amount'];
+        }
+        $orderData = $data['product_order'];
+        $orderData['app_user_id'] = (int)$appUser['id'];
+        $orderData['status'] = 'WAITING';
+        $orderData['tax'] = max(0, $tax);
+        $orderData['total_fees'] = round($subtotal * (1 + ($orderData['tax'] / 100)), 2);
+
+        try {
+            $createdOrder = $this->db->transaction(function () use ($orderData, $validation) {
+                $orderResponse = $this->product_order->insertOnePlain($orderData);
+                if($orderResponse['status'] !== 'success' || empty($orderResponse['data']['id'])) {
+                    throw new RuntimeException(isset($orderResponse['msg']) ? $orderResponse['msg'] : 'Order could not be created.');
+                }
+                $orderId = (int)$orderResponse['data']['id'];
+                $detailResponse = $this->product_order_detail->insertAllPlain($orderId, $validation['details']);
+                if($detailResponse['status'] !== 'success') {
+                    throw new RuntimeException(isset($detailResponse['msg']) ? $detailResponse['msg'] : 'Order items could not be created.');
+                }
+                return $orderResponse['data'];
+            });
+        } catch (Throwable $exception) {
+            error_log($exception->getMessage());
+            $this->show_response(array('status' => 'failed', 'msg' => 'The order could not be placed.', 'data' => null));
+        }
+
+        try {
+            $this->mail_handler->sendNewOrder((int)$createdOrder['id']);
+        } catch (Throwable $exception) {
+            // The order is already committed; notification failure must not cause a duplicate retry.
+            error_log('New order email failed: ' . $exception->getMessage());
+        }
+        $this->show_response(array(
+            'status' => 'success',
+            'msg' => 'Order placed successfully.',
+            'data' => $createdOrder,
+        ));
     }
 
     private function getValue($data, $code){

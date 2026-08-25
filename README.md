@@ -1,165 +1,81 @@
-# 🎨 Honarnama Market
+# Honarnama
 
-Honarnama is a university artwork marketplace consisting of a native Android application, a PHP REST API, an AngularJS administration panel, and a PostgreSQL database.
+[![CI](https://github.com/hashemi1997ali/honarnama/actions/workflows/ci.yml/badge.svg)](https://github.com/hashemi1997ali/honarnama/actions/workflows/ci.yml)
 
-The project was originally presented in January 2021 and has since been cleaned, modernized, and migrated to Neon/PostgreSQL for portfolio and educational use.
+Honarnama is a university artwork marketplace with a native Android application, an AngularJS administration panel, a PHP REST API, and a PostgreSQL database. The project was originally presented in January 2021 and has since been modernized for portfolio and educational use.
 
----
+<p align="center">
+  <img src="docs/screenshots/android-home.png" width="270" alt="Honarnama Android home screen">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/android-auctions.png" width="270" alt="Honarnama Android auctions screen">
+</p>
 
-## ✨ Features
+<p align="center">
+  <img src="docs/screenshots/admin-dashboard.png" width="900" alt="Honarnama administration dashboard">
+</p>
 
-### Android Application
+## Highlights
 
-- Browse and search artwork, categories, and art news
-- View product details and image galleries
-- Customer registration and login
-- Local wishlist, shopping cart, and order history
-- Submit orders to the backend
-- Browse auctions and place bids
+- Browse, search, wishlist, cart, checkout, order history, and demo auctions
+- Product discounts, live stock validation, and atomic inventory updates
+- Admin management for orders, products, categories, auctions, users, news, and settings
+- PHP/PDO backend with parameterized PostgreSQL queries
+- Repeatable Neon/PostgreSQL migration and sample-data seed
+- GitHub Actions checks for PHP, database migration, Android lint, and APK builds
 
-### Administration Panel
+## Stack
 
-- Dashboard for products, orders, categories, and news
-- Product, category, news, and order management
-- Application, currency, tax, shipping, and email settings
-- Administrator profile and password management
-
-### Backend
-
-- PHP REST API with parameterized PDO queries
-- Neon/PostgreSQL with pooled runtime connections
-- Repeatable database migration and initial administrator setup
-- Optional SMTP order notifications
-- Local development without requiring Apache
-
----
-
-## 🛠️ Technology Stack
-
-| Part | Technologies |
+| Component | Technology |
 | --- | --- |
-| Android | Java 17, AndroidX, Material Components, Retrofit, Gson, Glide |
-| Admin panel | AngularJS 1.8.3, AngularJS Material, HTML, CSS |
+| Android | Java 17, AndroidX, Material Components, Retrofit, Glide |
+| Admin panel | AngularJS 1.8.3, AngularJS Material |
 | Backend | PHP 8.2+, PDO PostgreSQL |
 | Database | Neon/PostgreSQL |
-| Automation | GitHub Actions, Gradle |
 
----
+## Run Locally
 
-## 📁 Project Structure
+### Backend and admin panel
 
-```text
-honarnama/
-├── Market/                  # Android application
-├── panel/                   # Admin panel and PHP API
-│   ├── database/            # PostgreSQL schema and migration
-│   ├── services/            # Backend services
-│   └── uploads/             # Ignored runtime uploads
-├── .github/workflows/       # Continuous integration
-├── .env.example             # Environment template
-└── dev-router.php           # Local PHP router
-```
-
----
-
-## 🚀 Getting Started
-
-### Requirements
-
-- PHP 8.2 or later with `PDO` and `pdo_pgsql`
-- A Neon/PostgreSQL database
-- Android Studio, JDK 17, and Android SDK 37
-
-### Backend and Admin Panel
-
-Create the local environment file:
+Requirements: PHP 8.2+ with `pdo_pgsql` and a PostgreSQL or Neon database.
 
 ```bash
 cp .env.example .env
-```
-
-Set the following values in `.env`:
-
-```env
-DATABASE_URL=postgresql://USER:PASSWORD@POOLED-ENDPOINT/DATABASE?sslmode=require
-DATABASE_URL_UNPOOLED=postgresql://USER:PASSWORD@DIRECT-ENDPOINT/DATABASE?sslmode=require
-SECURITY_CODE=replace-with-a-random-local-value
-
-ADMIN_NAME=Administrator
-ADMIN_USERNAME=admin
-ADMIN_EMAIL=admin@example.com
-ADMIN_PASSWORD=replace-with-at-least-12-characters
-```
-
-Use the pooled Neon URL for regular API traffic and the direct URL for migration. Never place database credentials inside the Android application.
-
-Prepare the database and start the local server:
-
-```bash
 php panel/database/migrate.php
 php panel/database/seed.php
 php -S 127.0.0.1:8000 dev-router.php
 ```
 
-The optional seed command adds a small, repeatable set of sample categories, products, news, auctions, and one demo order. It does not modify administrator or Android user accounts.
+Complete `.env` before running the migration. Use the pooled Neon URL for normal traffic and the direct URL for migrations. The admin panel is available at `http://127.0.0.1:8000/panel/`.
 
-- Admin panel: `http://127.0.0.1:8000/panel/`
-- API: `http://127.0.0.1:8000/panel/services/`
+### Android app
 
-Test the database connection:
-
-```bash
-curl http://127.0.0.1:8000/panel/services/checkResponse
-```
-
-Running the migration again does not overwrite the password of an existing administrator.
-
-### Android Application
-
-Open the `Market/` directory in Android Studio and add these values to `Market/local.properties`:
+Open `Market/` in Android Studio and add the following values to `Market/local.properties`:
 
 ```properties
 BACKEND_URL=http://10.0.2.2:8000/panel/
-SECURITY_CODE=use-the-same-value-as-the-root-env-file
+SECURITY_CODE=the-same-value-used-in-.env
 CONTACT_EMAIL=contact@example.com
 ```
 
-Start the PHP server, select an emulator, and run the `app` configuration. `10.0.2.2` connects the Android Emulator to the host computer.
+Start the PHP server, select an emulator, and run the `app` configuration. `10.0.2.2` lets the Android Emulator reach the host machine.
 
-The debug build permits local HTTP connections; release builds require HTTPS.
-
----
-
-## ✅ Checks
-
-GitHub Actions validates PHP syntax, applies the PostgreSQL schema, runs Android lint, and builds the debug APK.
-
-Useful local commands:
+## Build and CI
 
 ```bash
 find panel -type f -name '*.php' -print0 | xargs -0 -n1 php -l
 cd Market && ./gradlew lintDebug assembleDebug
 ```
 
----
+Every successful [CI run](https://github.com/hashemi1997ali/honarnama/actions/workflows/ci.yml) provides a `honarnama-debug-apk` artifact for 14 days. Generated APK files are intentionally excluded from Git history.
 
-## 🎓 Project History
+## Project History
 
-Honarnama was presented as a university project in **January 2021**. It was created collaboratively by [Ali Hashemi](https://github.com/hashemi1997ali) and his friend [Ali Ferasatpour](https://www.linkedin.com/in/ali-ferasatpour-a15b08108/).
+Honarnama was created by [Ali Hashemi](https://github.com/hashemi1997ali) and his friend [Ali Ferasatpour](https://www.linkedin.com/in/ali-ferasatpour-a15b08108/).
 
-### 🕊️ In Memory of Ali Ferasatpour
+Ali Ferasatpour has passed away. This repository is preserved in gratitude for his friendship, contribution, and the work created together. May his memory always be honored.
 
-Ali Ferasatpour, a friend and collaborator on this project, has passed away. This repository is preserved in appreciation of his friendship, contribution, and the work created together.
+## Security and Usage
 
-> May his memory always be honored.
-
----
-
-## 🔐 Security and Usage
-
-- Do not commit `.env`, database URLs, uploads, customer data, or signing keys.
-- Treat `SECURITY_CODE` as a compatibility value, not a real client secret.
-- Use HTTPS and review authentication and upload handling before public deployment.
-- See [SECURITY.md](SECURITY.md) for additional guidance.
+Never commit `.env`, database credentials, runtime uploads, customer data, or signing keys. Review authentication, upload handling, and HTTPS configuration before production use. See [SECURITY.md](SECURITY.md) for details.
 
 No project-wide license has been granted. The repository is available for portfolio and educational review only.

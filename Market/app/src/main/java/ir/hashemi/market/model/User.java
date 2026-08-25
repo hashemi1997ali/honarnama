@@ -9,6 +9,7 @@ public class User implements Serializable {
     public String name;
     public String username;
     public String password;
+    public String auth_token;
     public String created_at;
 
     public User() {

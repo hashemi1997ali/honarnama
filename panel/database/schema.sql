@@ -22,6 +22,14 @@ CREATE TABLE IF NOT EXISTS app_user (
 
 ALTER TABLE app_user ADD COLUMN IF NOT EXISTS active BOOLEAN NOT NULL DEFAULT TRUE;
 
+CREATE TABLE IF NOT EXISTS app_session (
+    token_hash CHAR(64) PRIMARY KEY,
+    user_id BIGINT NOT NULL REFERENCES app_user(id) ON DELETE CASCADE,
+    expires_at TIMESTAMPTZ NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    last_seen TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 CREATE TABLE IF NOT EXISTS product (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(160) NOT NULL,
@@ -89,6 +97,9 @@ CREATE TABLE IF NOT EXISTS product_order (
     last_update BIGINT NOT NULL
 );
 
+ALTER TABLE product_order
+    ADD COLUMN IF NOT EXISTS app_user_id BIGINT REFERENCES app_user(id) ON DELETE SET NULL;
+
 CREATE TABLE IF NOT EXISTS product_order_detail (
     id BIGSERIAL PRIMARY KEY,
     order_id BIGINT NOT NULL REFERENCES product_order(id) ON DELETE CASCADE,
@@ -143,6 +154,8 @@ CREATE INDEX IF NOT EXISTS product_order_status_id_idx ON product_order(status, 
 CREATE INDEX IF NOT EXISTS product_order_detail_order_id_idx ON product_order_detail(order_id);
 CREATE INDEX IF NOT EXISTS product_auction_end_date_idx ON product_auction(end_date DESC);
 CREATE INDEX IF NOT EXISTS app_user_active_id_idx ON app_user(active, id DESC);
+CREATE INDEX IF NOT EXISTS app_session_user_expiry_idx ON app_session(user_id, expires_at DESC);
+CREATE INDEX IF NOT EXISTS product_order_app_user_id_idx ON product_order(app_user_id, id DESC);
 
 INSERT INTO config (code, value) VALUES
     ('CURRENCY', 'EUR'),

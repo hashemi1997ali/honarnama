@@ -104,7 +104,7 @@ angular.module('App').controller('AuctionController', function ($rootScope, $sco
             parent: angular.element(document.body),
             targetEvent: event,
             clickOutsideToClose: true,
-            file_url: fileUrl,
+            locals: {file_url: fileUrl},
             template: '<md-dialog ng-cloak aria-label="Auction image">' +
                 '<md-dialog-content style="max-width:800px;max-height:810px">' +
                 '<img class="auction-dialog-image" ng-src="{{file_url}}" alt="Auction image">' +

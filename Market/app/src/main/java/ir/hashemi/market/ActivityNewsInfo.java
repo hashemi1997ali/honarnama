@@ -44,6 +44,7 @@ public class ActivityNewsInfo extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_info);
+        Tools.applyTopWindowInsets(this, findViewById(R.id.app_bar_layout));
 
         parent_view = findViewById(android.R.id.content);
         initToolbar();

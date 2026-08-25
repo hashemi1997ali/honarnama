@@ -86,6 +86,7 @@ public class ActivityCheckout extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkout);
+        Tools.applyTopWindowInsets(this, findViewById(R.id.app_bar_layout));
 
         db = new DatabaseHandler(this);
         sharedPref = new SharedPref(this);
@@ -207,9 +208,9 @@ public class ActivityCheckout extends AppCompatActivity {
         }
         _price_tax = _total_order * info.tax / 100;
         _total_fees = _total_order + _price_tax;
-        _price_tax_str = String.format(Locale.US, "%1$,.0f", _price_tax);
-        _total_order_str = String.format(Locale.US, "%1$,.0f", _total_order);
-        _total_fees_str = String.format(Locale.US, "%1$,.0f", _total_fees);
+        _price_tax_str = String.format(Locale.US, "%1$,.2f", _price_tax);
+        _total_order_str = String.format(Locale.US, "%1$,.2f", _total_order);
+        _total_fees_str = String.format(Locale.US, "%1$,.2f", _total_fees);
 
         // set to display
         total_order.setText(_total_order_str + " " + info.currency);
@@ -220,6 +221,10 @@ public class ActivityCheckout extends AppCompatActivity {
 
 
     private void submitForm() {
+        if (adapter == null || adapter.getItemCount() == 0) {
+            Snackbar.make(parent_view, R.string.msg_cart_empty, Snackbar.LENGTH_SHORT).show();
+            return;
+        }
         if (!validateName()) {
             Snackbar.make(parent_view, R.string.invalid_name, Snackbar.LENGTH_SHORT).show();
             return;
@@ -264,6 +269,7 @@ public class ActivityCheckout extends AppCompatActivity {
     private void submitOrderData() {
         // prepare checkout data
         Checkout checkout = new Checkout();
+        checkout.auth_token = sharedPref.getUserData() == null ? null : sharedPref.getUserData().auth_token;
         ProductOrder productOrder = new ProductOrder(buyerProfile, shipping.getSelectedItem().toString(), date_ship_millis, comment.getText().toString().trim());
         productOrder.status = "WAITING";
         productOrder.total_fees = _total_fees;
@@ -284,7 +290,9 @@ public class ActivityCheckout extends AppCompatActivity {
             public void onResponse(Call<CallbackOrder> call, Response<CallbackOrder> response) {
                 CallbackOrder resp = response.body();
                 if (response.isSuccessful() && resp != null && "success".equals(resp.status) && resp.data != null) {
-                    Order order = new Order(resp.data.id, resp.data.code, _total_fees_str);
+                    Double confirmedTotal = resp.data.total_fees == null ? _total_fees : resp.data.total_fees;
+                    Order order = new Order(resp.data.id, resp.data.code, confirmedTotal);
+                    order.status = "WAITING";
                     for (Cart c : adapter.getItem()) {
                         c.order_id = order.id;
                         order.cart_list.add(c);
@@ -292,7 +300,7 @@ public class ActivityCheckout extends AppCompatActivity {
                     db.saveOrder(order);
                     dialogSuccess(order.code);
                 } else {
-                    dialogFailedRetry();
+                    dialogFailedRetry(resp != null ? resp.msg : null);
                 }
 
             }
@@ -300,7 +308,7 @@ public class ActivityCheckout extends AppCompatActivity {
             @Override
             public void onFailure(Call<CallbackOrder> call, Throwable t) {
                 Log.e("onFailure", t.getMessage());
-                if (!call.isCanceled()) dialogFailedRetry();
+                if (!call.isCanceled()) dialogFailedRetry(null);
             }
         });
     }
@@ -324,11 +332,13 @@ public class ActivityCheckout extends AppCompatActivity {
         builder.show();
     }
 
-    public void dialogFailedRetry() {
+    public void dialogFailedRetry(String serverMessage) {
         progressDialog.dismiss();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.failed);
-        builder.setMessage(getString(R.string.failed_checkout));
+        builder.setMessage(serverMessage == null || serverMessage.trim().isEmpty()
+                ? getString(R.string.failed_checkout)
+                : serverMessage);
         builder.setPositiveButton(R.string.TRY_AGAIN, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
