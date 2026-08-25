@@ -5,13 +5,13 @@
 Honarnama is a university artwork marketplace with a native Android application, an AngularJS administration panel, a PHP REST API, and a PostgreSQL database. The project was originally presented in January 2021 and has since been modernized for portfolio and educational use.
 
 <p align="center">
-  <img src="docs/screenshots/android-home.png" width="270" alt="Honarnama Android home screen">
+  <img src="docs/screenshots/android-home-loaded.png" width="270" alt="Honarnama Android home screen with loaded news artwork">
   &nbsp;&nbsp;
   <img src="docs/screenshots/android-auctions.png" width="270" alt="Honarnama Android auctions screen">
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/admin-dashboard.png" width="900" alt="Honarnama administration dashboard">
+  <img src="docs/screenshots/admin-dashboard-icons.png" width="900" alt="Honarnama administration dashboard with card icons">
 </p>
 
 ## Highlights
