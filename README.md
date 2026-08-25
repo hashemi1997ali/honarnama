@@ -74,8 +74,6 @@ Honarnama was created by [Ali Hashemi](https://github.com/hashemi1997ali) and hi
 
 Ali Ferasatpour has passed away. This repository is preserved in gratitude for his friendship, contribution, and the work created together. May his memory always be honored.
 
-## Security and Usage
-
-Never commit `.env`, database credentials, runtime uploads, customer data, or signing keys. Review authentication, upload handling, and HTTPS configuration before production use. See [SECURITY.md](SECURITY.md) for details.
+## Usage
 
 No project-wide license has been granted. The repository is available for portfolio and educational review only.
