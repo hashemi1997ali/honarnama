@@ -129,10 +129,7 @@ public class ActivityCategoryDetails extends AppCompatActivity {
         ((TextView) findViewById(R.id.brief)).setText(c.brief);
         ImageView icon = (ImageView) findViewById(R.id.icon);
         icon.setImageResource(CategoryIcons.drawableFor(c.name, c.icon));
-        icon.clearColorFilter();
-        float iconScale = CategoryIcons.scaleFor(c.name, c.icon);
-        icon.setScaleX(iconScale);
-        icon.setScaleY(iconScale);
+        icon.setColorFilter(Color.WHITE);
         Tools.setSystemBarColorDarker(this, c.color);
     }
 
