@@ -27,6 +27,19 @@ public final class CategoryIcons {
         return searchableKey(name, icon).contains("auction");
     }
 
+    /**
+     * The original PNG files contain different amounts of transparent space. These values
+     * normalize their longest visible edge so the shared layout padding stays visually equal.
+     */
+    public static float scaleFor(String name, String icon) {
+        String key = searchableKey(name, icon);
+
+        if (key.contains("painting")) return 1.105f;
+        if (key.contains("photography")) return 1.075f;
+        if (key.contains("handicraft")) return 1.316f;
+        return 1.0f;
+    }
+
     private static String searchableKey(String name, String icon) {
         return ((icon == null ? "" : icon) + " " + (name == null ? "" : name))
                 .toLowerCase(Locale.US);

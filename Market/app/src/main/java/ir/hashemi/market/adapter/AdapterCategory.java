@@ -74,8 +74,9 @@ public class AdapterCategory extends RecyclerView.Adapter<RecyclerView.ViewHolde
             vItem.lyt_color.setBackgroundColor(Color.parseColor(c.color));
             vItem.image.setImageResource(CategoryIcons.drawableFor(c.name, c.icon));
             vItem.image.setColorFilter(Color.WHITE);
-            vItem.image.setScaleX(1.0f);
-            vItem.image.setScaleY(1.0f);
+            float iconScale = CategoryIcons.scaleFor(c.name, c.icon);
+            vItem.image.setScaleX(iconScale);
+            vItem.image.setScaleY(iconScale);
 
             vItem.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override

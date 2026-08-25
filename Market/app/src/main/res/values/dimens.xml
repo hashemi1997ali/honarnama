@@ -32,4 +32,9 @@
     <dimen name="min_height_featured_news">100dp</dimen>
     <dimen name="min_height_categories">100dp</dimen>
 
+    <!-- Keep category artwork aligned to the same visual inset in every screen. -->
+    <dimen name="category_list_icon_size">96dp</dimen>
+    <dimen name="category_detail_icon_size">84dp</dimen>
+    <dimen name="category_icon_padding">6dp</dimen>
+
 </resources>

@@ -37,8 +37,10 @@
 
                 <ImageView
                     android:id="@+id/icon"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="@dimen/category_detail_icon_size"
+                    android:layout_height="@dimen/category_detail_icon_size"
+                    android:padding="@dimen/category_icon_padding"
+                    android:scaleType="centerInside"
                     android:src="@drawable/img_auction" />
 
                 <LinearLayout
