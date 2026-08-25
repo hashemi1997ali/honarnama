@@ -15,9 +15,12 @@ CREATE TABLE IF NOT EXISTS app_user (
     name VARCHAR(100) NOT NULL,
     username VARCHAR(64) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     last_update TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+ALTER TABLE app_user ADD COLUMN IF NOT EXISTS active BOOLEAN NOT NULL DEFAULT TRUE;
 
 CREATE TABLE IF NOT EXISTS product (
     id BIGSERIAL PRIMARY KEY,
@@ -139,6 +142,7 @@ CREATE INDEX IF NOT EXISTS news_info_draft_status_id_idx ON news_info(draft, sta
 CREATE INDEX IF NOT EXISTS product_order_status_id_idx ON product_order(status, id DESC);
 CREATE INDEX IF NOT EXISTS product_order_detail_order_id_idx ON product_order_detail(order_id);
 CREATE INDEX IF NOT EXISTS product_auction_end_date_idx ON product_auction(end_date DESC);
+CREATE INDEX IF NOT EXISTS app_user_active_id_idx ON app_user(active, id DESC);
 
 INSERT INTO config (code, value) VALUES
     ('CURRENCY', 'EUR'),

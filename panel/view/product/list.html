@@ -1,97 +1,82 @@
-<div layout="row">
-	<md-card flex="35">
-		<md-input-container flex md-no-float class="header-table-display">
-			<md-select ng-model="category_id" class="option-plain" ng-change="loadPages()" aria-label="category product">
-				<md-option ng-repeat="c in categories_data" value="{{c.id}}">{{c.name}}</md-option>
-			</md-select>
-		</md-input-container>
-	</md-card>
-	<md-card flex="15">
-		<md-input-container flex md-no-float class="header-table-display">
-			<md-select ng-model="max_item" class="option-plain" ng-change="loadPages()" aria-label="Max Item">
-				<md-option ng-repeat="m in max_item_array" value="{{m.value}}">{{m.text}}</md-option>
-			</md-select>
-		</md-input-container>
-	</md-card>
-</div>
+<section class="panel-page">
+    <md-card class="panel-card panel-filter-card md-whiteframe-1dp">
+        <div class="panel-filter-bar" layout="row" layout-xs="column" layout-align="start center">
+            <md-input-container>
+                <label>Category</label>
+                <md-select ng-model="category_id" ng-change="paging.current = 1; loadPages()" aria-label="Product category">
+                    <md-option ng-repeat="c in categories_data" value="{{c.id}}">{{c.name}}</md-option>
+                </md-select>
+            </md-input-container>
+            <md-input-container>
+                <label>Rows per page</label>
+                <md-select ng-model="max_item" ng-change="paging.current = 1; loadPages()" aria-label="Rows per page">
+                    <md-option ng-repeat="m in max_item_array" value="{{m.value}}">{{m.text}}</md-option>
+                </md-select>
+            </md-input-container>
+        </div>
+    </md-card>
 
-<md-card class="md-whiteframe-1dp">
-	<div class="table-responsive-vertical">
-		<table id="table" class="table table-hover">
-			<thead class="sub-menu-bg" >
-				<tr >
-					<th width="1%">ID</th>
-					<th width="20%">Name</th>
-					<th width="5%">Type</th>
-					<th width="5%">Price</th>
-					<th width="5%">Discount</th>
-					<th width="3%">Stock</th>
-					<th width="8%">Status</th>
-					<th width="5%">Updated</th>
-					<th width="5%">Actions</th>
-				</tr>
-			</thead>
-			<md-divider></md-divider>
-			<tbody>
-				<tr ng-repeat="p in product">
-					<td data-title="No">{{($index+1) + (paging.current * paging.limit) - paging.limit}}</td>
-					<td data-title="Name">{{p.name | cut:false:40:' ...'}}</td>
-					<td data-title="Type">
-						<draft ng-if="p.draft == 1">Draft</draft>
-						<publish ng-if="p.draft != 1">Published</publish>
-					</td>	
-					<td data-title="Price">{{p.price}}</td>
-					<td data-title="Stock">{{p.price_discount}}</td>
-					<td data-title="Stock">{{p.stock}}</td>
-					<td data-title="Status">
-						<ready-stock ng-if="p.status=='READY STOCK'">{{p.status}}</ready-stock>
-						<suspend ng-if="p.status=='SUSPEND'">{{p.status}}</suspend>
-						<out-of-stock ng-if="p.status=='OUT OF STOCK'">{{p.status}}</out-of-stock>
-					</td>
-					<td data-title="Update">{{p.last_update | date:'dd MMM yy'}}</td>
-					<td data-title="Action">
-						<md-menu md-position-mode="target-right target" >
-							<md-button class="md-btn-small" ng-click="$mdOpenMenu($event)">
-								<md-icon class="md-ic-small" ng-style="{'font-size': '15px'}">more_vert</md-icon>
-							</md-button>
-							<md-menu-content width=3>
-								<md-title class="md-padding"><b>Menu — {{p.name}}</b></md-title>
-								<md-menu-item>
-									<md-button layout-fill md-ink-ripple ng-click="detailsProduct($event, p)">
-										<md-icon md-class="md-primary" md-menu-align-target>launch</md-icon>Details
-									</md-button>
-								</md-menu-item>
-								<md-menu-item>
-									<md-button layout-fill md-ink-ripple ng-click="editProduct($event, p)">
-										<md-icon md-class="md-primary" md-menu-align-target>create</md-icon>Edit
-									</md-button>
-								</md-menu-item>
-								<md-menu-item ng-if="p.draft == 1">
-									<md-button layout-fill md-ink-ripple ng-click="publishDialog($event, p)">
-										<md-icon md-class="md-primary" md-menu-align-target>check_circle</md-icon>Publish
-									</md-button>
-								</md-menu-item>
-								<md-menu-item>
-									<md-button layout-fill md-ink-ripple ng-click="deleteProduct($event, p)">
-										<md-icon md-class="md-primary" md-menu-align-target>delete</md-icon>Delete
-									</md-button>
-								</md-menu-item>
-							</md-menu-content>  
-						</md-menu>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<div ng-if="loading" style="text-align:center;" colspan="10">
-			<p>Loading...</p>
-			<md-progress-linear md-mode="indeterminate"/>
-		</div>
-	</div>
+    <md-card class="panel-card panel-table-card md-whiteframe-1dp">
+        <div class="table-responsive-vertical">
+            <table class="table table-hover panel-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Visibility</th>
+                        <th>Price</th>
+                        <th>Discount</th>
+                        <th>Stock</th>
+                        <th>Status</th>
+                        <th>Updated</th>
+                        <th class="panel-actions-heading">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="p in product">
+                        <td data-title="ID">{{p.id}}</td>
+                        <td data-title="Image"><img class="panel-thumbnail" ng-src="uploads/product/{{p.image}}" alt="{{p.name}}"></td>
+                        <td data-title="Name" class="panel-primary-cell">{{p.name | cut:false:40:' …'}}</td>
+                        <td data-title="Visibility">
+                            <span class="status-chip status-chip-neutral" ng-if="p.draft == 1">Draft</span>
+                            <span class="status-chip status-chip-info" ng-if="p.draft != 1">Published</span>
+                        </td>
+                        <td data-title="Price">€{{p.price | number:2}}</td>
+                        <td data-title="Discount"><span ng-if="p.price_discount > 0">€{{p.price_discount | number:2}}</span><span ng-if="p.price_discount <= 0">—</span></td>
+                        <td data-title="Stock">{{p.stock}}</td>
+                        <td data-title="Status">
+                            <span class="status-chip status-chip-success" ng-if="p.status === 'READY STOCK'">In stock</span>
+                            <span class="status-chip status-chip-danger" ng-if="p.status === 'OUT OF STOCK'">Out of stock</span>
+                            <span class="status-chip status-chip-neutral" ng-if="p.status === 'SUSPEND'">Suspended</span>
+                        </td>
+                        <td data-title="Updated">{{p.last_update | date:'dd MMM yyyy'}}</td>
+                        <td data-title="Actions" class="panel-actions-cell">
+                            <div class="panel-row-actions">
+                                <md-button class="md-icon-button panel-action-button" aria-label="View product details" ng-click="detailsProduct($event, p)">
+                                    <md-icon>visibility</md-icon><md-tooltip>Details</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button panel-action-button" aria-label="Edit product" ng-click="editProduct($event, p)">
+                                    <md-icon>edit</md-icon><md-tooltip>Edit</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button panel-action-button panel-action-success" aria-label="Publish product" ng-if="p.draft == 1" ng-click="publishDialog($event, p)">
+                                    <md-icon>publish</md-icon><md-tooltip>Publish</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button panel-action-button panel-action-danger" aria-label="Delete product" ng-click="deleteProduct($event, p)">
+                                    <md-icon>delete</md-icon><md-tooltip>Delete</md-tooltip>
+                                </md-button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
-	<!--pagination view-->
-	<md-divider></md-divider>
-	<section layout="row" class="sub-menu-bg" flex>
-		<cl-paging flex cl-pages="paging.total" , cl-steps="paging.step" , cl-page-changed="paging.onPageChanged()" , cl-align="center center" , cl-current-page="paging.current"/>
-	</section>
+            <div ng-if="loading" class="panel-state"><md-progress-circular md-mode="indeterminate" md-diameter="36"></md-progress-circular><p>Loading products…</p></div>
+            <div ng-if="!loading && product.length === 0" class="panel-state panel-empty-state"><md-icon>inventory_2</md-icon><p>No products found.</p></div>
+        </div>
 
-</md-card>
+        <div class="panel-pagination" ng-if="paging.total > 1">
+            <cl-paging flex cl-pages="paging.total" cl-steps="paging.step" cl-page-changed="paging.onPageChanged()" cl-align="center center" cl-current-page="paging.current"></cl-paging>
+        </div>
+    </md-card>
+</section>

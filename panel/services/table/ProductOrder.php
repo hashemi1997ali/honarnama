@@ -62,7 +62,24 @@ class ProductOrder extends REST {
 
     public function allCount() {
         if ($this->get_request_method() != "GET") $this->response('', 406);
-        $this->show_response_plain($this->db->get_count('SELECT COUNT(DISTINCT po.id) FROM product_order po'));
+        $q = isset($this->_request['q']) ? $this->_request['q'] : '';
+        $params = array();
+        $where = '';
+        if ($q !== '') {
+            $search = '%' . $q . '%';
+            $fields = array('buyer', 'code', 'address', 'email', 'phone', 'comment', 'shipping');
+            $conditions = array();
+            foreach ($fields as $field) {
+                $parameter = 'q_' . $field;
+                $conditions[] = 'po.' . $field . ' ILIKE :' . $parameter;
+                $params[$parameter] = $search;
+            }
+            $where = ' WHERE ' . implode(' OR ', $conditions);
+        }
+        $this->show_response_plain($this->db->get_count(
+            'SELECT COUNT(DISTINCT po.id) FROM product_order po' . $where,
+            $params
+        ));
     }
 
     public function insertOne() {

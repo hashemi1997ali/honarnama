@@ -31,10 +31,10 @@ angular.module('App').factory("request", function ($http, $cookies) {
 		return $http.get(api_base + 'getOneProduct?id='+id);
 	};
 	obj.getAllProductByPage = function (page, limit, q, category_id) {
-		return $http.get(api_base + 'getAllProductByPage?page='+page+'&limit='+limit+'&q='+q+'&category_id='+category_id);
+		return $http.get(api_base + 'getAllProductByPage?page='+page+'&limit='+limit+'&q='+encodeURIComponent(q || '')+'&category_id='+category_id);
 	};
 	obj.getAllProductCount = function(q, category_id) {
-		return $http.get(api_base + 'getAllProductCount?q='+q+'&category_id='+category_id);
+		return $http.get(api_base + 'getAllProductCount?q='+encodeURIComponent(q || '')+'&category_id='+category_id);
 	};
 	obj.insertOneProduct = function (object) {
 		return $http.post(api_base + 'insertOneProduct', object, config).then(function (results) { return results.data; });
@@ -43,10 +43,6 @@ angular.module('App').factory("request", function ($http, $cookies) {
 		var data = {id:id, product:object};
 		return $http.post(api_base + 'updateOneProduct', data, config).then(function (results) { return results.data; });
 	};
-	obj.updateOneProduct = function (id, object) {
-		var data = {id:id, product:object};
-		return $http.post(api_base + 'updateOneProduct', data, config).then(function (results) { return results.data; });
-	};	
 	obj.deleteOneProduct = function (id) {
 		return $http.get(api_base + 'deleteOneProduct?id='+id, config).then(function (results) { return results.data; });
 	};
@@ -101,10 +97,10 @@ angular.module('App').factory("request", function ($http, $cookies) {
 		return $http.get(api_base + 'getOneCategory?id='+id);
 	};
 	obj.getAllCategoryByPage = function (page, limit, q) {
-		return $http.get(api_base + 'getAllCategoryByPage?page='+page+'&limit='+limit+'&q='+q);
+		return $http.get(api_base + 'getAllCategoryByPage?page='+page+'&limit='+limit+'&q='+encodeURIComponent(q || ''));
 	};
 	obj.getAllCategoryCount = function(q) {
-		return $http.get(api_base + 'getAllCategoryCount?q='+q);
+		return $http.get(api_base + 'getAllCategoryCount?q='+encodeURIComponent(q || ''));
 	};	
 	obj.getAllCategoryByProductId = function(product_id) {
 		return $http.get(api_base + 'getAllCategoryByProductId?product_id='+product_id);
@@ -125,10 +121,10 @@ angular.module('App').factory("request", function ($http, $cookies) {
 		return $http.get(api_base + 'getOneProductOrder?id='+id);
 	};
 	obj.getAllProductOrderByPage = function (page, limit, q) {
-		return $http.get(api_base + 'getAllProductOrderByPage?page=' +page+'&limit='+limit+'&q='+q);
+		return $http.get(api_base + 'getAllProductOrderByPage?page=' +page+'&limit='+limit+'&q='+encodeURIComponent(q || ''));
 	};
 	obj.getAllProductOrderCount = function(q) {
-		return $http.get(api_base + 'getAllProductOrderCount?q='+q);
+		return $http.get(api_base + 'getAllProductOrderCount?q='+encodeURIComponent(q || ''));
 	};
     obj.updateOneProductOrder = function (id, object) {
         var data = {id:id, product_order:object};
@@ -169,6 +165,23 @@ angular.module('App').factory("request", function ($http, $cookies) {
 	obj.insertOneUser = function (user) {
 		return $http.post(api_base + 'insertOneUser', user, config).then(function (results) { return results.data; });
 	};
+
+	// APP USER -------------------------------------------------------------------------------
+	obj.getAllAppUserByPage = function (page, limit, q) {
+		return $http.get(api_base + 'getAllAppUserByPage?page=' + page + '&limit=' + limit + '&q=' + encodeURIComponent(q || ''), config);
+	};
+	obj.getAllAppUserCount = function (q) {
+		return $http.get(api_base + 'getAllAppUserCount?q=' + encodeURIComponent(q || ''), config);
+	};
+	obj.getOneAppUser = function (id) {
+		return $http.get(api_base + 'getOneAppUser?id=' + id, config);
+	};
+	obj.updateAppUserStatus = function (id, active) {
+		return $http.post(api_base + 'updateAppUserStatus', {id: id, active: active}, config).then(function (results) { return results.data; });
+	};
+	obj.deleteAppUser = function (id) {
+		return $http.get(api_base + 'deleteAppUser?id=' + id, config).then(function (results) { return results.data; });
+	};
 	
 	// NEWS INFO -----------------------------------------------------------------------
 	obj.getAllNewsInfo  = function (id) {
@@ -178,10 +191,10 @@ angular.module('App').factory("request", function ($http, $cookies) {
 		return $http.get(api_base + 'getOneNewsInfo?id='+id);
 	};
 	obj.getAllNewsInfoByPage = function (page, limit, q) {
-		return $http.get(api_base + 'getAllNewsInfoByPage?page='+page+'&limit='+limit+'&q='+q);
+		return $http.get(api_base + 'getAllNewsInfoByPage?page='+page+'&limit='+limit+'&q='+encodeURIComponent(q || ''));
 	};
 	obj.getAllNewsInfoCount = function(q) {
-		return $http.get(api_base + 'getAllNewsInfoCount?q='+q);
+		return $http.get(api_base + 'getAllNewsInfoCount?q='+encodeURIComponent(q || ''));
 	};	
 	obj.insertOneNewsInfo = function (object) {
 		return $http.post(api_base + 'insertOneNewsInfo', object, config).then(function (results) { return results.data; });

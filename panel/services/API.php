@@ -266,6 +266,31 @@ class API {
 		$this->app_user->loginUser();
 	}
 
+	private function getAllAppUserByPage(){
+		$this->user->checkAuthorization();
+		$this->app_user->findAllByPage();
+	}
+
+	private function getAllAppUserCount(){
+		$this->user->checkAuthorization();
+		$this->app_user->allCount();
+	}
+
+	private function getOneAppUser(){
+		$this->user->checkAuthorization();
+		$this->app_user->findOneAdmin();
+	}
+
+	private function updateAppUserStatus(){
+		$this->user->checkAuthorization();
+		$this->app_user->updateStatus();
+	}
+
+	private function deleteAppUser(){
+		$this->user->checkAuthorization();
+		$this->app_user->deleteAdmin();
+	}
+
 	/*
 	 * TABLE BID TRANSACTION -----------------------------------------------------------------------------------------
 	 */

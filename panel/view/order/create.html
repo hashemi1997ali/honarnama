@@ -1,5 +1,5 @@
-<md-card class="md-whiteframe-1dp md-padding">
-  <form role="form" name="thisForm" id="thisForm" novalidate class="md-padding">
+<md-card class="panel-card panel-form-card md-whiteframe-1dp md-padding">
+  <form role="form" name="thisForm" id="thisForm" novalidate class="md-padding panel-form">
 
 	  <!--original = { buyer: null, address: null, email: null, shipping: null, date_ship: now, phone: null, comment: null, status: "WAITING", total_fees: 0 , created_at: now, last_update: now };-->
 	<div layout="row">
@@ -12,12 +12,12 @@
 	<div layout="row">
 		<md-input-container flex="20">
 			<label>Phone *</label>
-		  	<input required name="email" ng-model="order.email" maxlength="50">
+			<input required name="phone" ng-model="order.phone" maxlength="50">
 		</md-input-container>
 		<span flex="5"></span>
 		<md-input-container flex="20">
 			<label>Email *</label>
-			<input required name="phone" ng-model="order.phone" maxlength="50">
+			<input required type="email" name="email" ng-model="order.email" maxlength="254">
 		</md-input-container>
 	</div>
 

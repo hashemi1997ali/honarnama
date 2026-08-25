@@ -1,4 +1,4 @@
-angular.module('App').controller('RootCtrl', function ($rootScope, $scope, $mdSidenav, $mdToast, $mdDialog, $cookies, request, focus) {
+angular.module('App').controller('RootCtrl', function ($rootScope, $scope, $location, $mdSidenav, $mdToast, $mdDialog, $cookies, request, focus) {
 
     var self = $scope;
     var root = $rootScope;
@@ -21,6 +21,7 @@ angular.module('App').controller('RootCtrl', function ($rootScope, $scope, $mdSi
 			{ name: 'Products', icon: 'widgets', link: '#/product', sub: false },
 			{ name: 'Categories', icon: 'dns', link: '#/category', sub : false },
 			{ name: 'Auctions', icon: 'gavel', link: '#/auction', sub: false },
+			{ name: 'Users', icon: 'people', link: '#/users', sub: false },
 			{ name: 'News', icon: 'subject', link: '#/news', sub: false },
 			{ name: 'Settings', icon: 'settings', link: '#/setting', sub: false },
 		]
@@ -146,6 +147,10 @@ angular.module('App').controller('RootCtrl', function ($rootScope, $scope, $mdSi
         root.sub_obj = '';
         self.toggleSidenav();
         window.location.href = href;
+    };
+
+    self.isActiveRoute = function (href) {
+        return href === '#' + $location.path();
     };
 
     root.sub_obj = '';

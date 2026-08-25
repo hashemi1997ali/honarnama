@@ -1,0 +1,23 @@
+<md-dialog class="panel-dialog" aria-label="User details">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>User Details</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" aria-label="Close user details" ng-click="cancel()"><md-icon>close</md-icon></md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content class="panel-dialog-content">
+        <div class="panel-detail-grid">
+            <div class="panel-detail-label">Name</div><div>{{user.name}}</div>
+            <div class="panel-detail-label">Username</div><div>{{user.username}}</div>
+            <div class="panel-detail-label">Status</div>
+            <div><span class="status-chip" ng-class="isActive ? 'status-chip-success' : 'status-chip-neutral'">{{isActive ? 'Active' : 'Disabled'}}</span></div>
+            <div class="panel-detail-label">Bids</div><div>{{user.bid_count || 0}}</div>
+            <div class="panel-detail-label">Registered</div><div>{{asDate(user.created_at) | date:'dd MMM yyyy, HH:mm'}}</div>
+            <div class="panel-detail-label">Last updated</div><div>{{asDate(user.last_update) | date:'dd MMM yyyy, HH:mm'}}</div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row" layout-align="end center">
+        <md-button ng-click="cancel()">Close</md-button>
+    </md-dialog-actions>
+</md-dialog>

@@ -7,6 +7,7 @@ angular.module('App').controller('NewsController', function ($rootScope, $scope,
 	
 	root.pagetitle = 'News';
 	self.loading = true;
+	self.news = [];
 
 	root.search_enable = true;
 	root.toolbar_menu = { title: 'Add News' }
@@ -20,26 +21,27 @@ angular.module('App').controller('NewsController', function ($rootScope, $scope,
 	// receiver submitSearch from rootScope
 	self.$on('submitSearch', function (event, data) {
 		self.q = data;
+		self.paging.current = 1;
 		self.loadPages();
 	});
 	
 	// load pages from database and display
 	self.loadPages = function () {
-		$_q = self.q ? self.q : '';
-		request.getAllNewsInfoCount($_q).then(function (resp) {
-			self.paging.total = Math.ceil(resp.data / self.paging.limit);
-			self.paging.modulo_item = resp.data % self.paging.limit;
-		});
-		$limit = self.paging.limit;
-		$current = (self.paging.current * self.paging.limit) - self.paging.limit + 1;
-		if (self.paging.current == self.paging.total && self.paging.modulo_item > 0) {
-			self.limit = self.paging.modulo_item;
-		}
-		request.getAllNewsInfoByPage($current, $limit, $_q).then(function (resp) {
-			self.news = resp.data;
+		var query = self.q || '';
+		self.loading = true;
+		request.getAllNewsInfoCount(query).then(function (resp) {
+			self.paging.total = Math.max(1, Math.ceil(Number(resp.data || 0) / self.paging.limit));
+		}, self.handleLoadError);
+		request.getAllNewsInfoByPage(self.paging.current, self.paging.limit, query).then(function (resp) {
+			self.news = angular.isArray(resp.data) ? resp.data : [];
 			self.loading = false;
-		});
+		}, self.handleLoadError);
 		
+	};
+
+	self.handleLoadError = function () {
+		self.loading = false;
+		root.showInfoDialogSimple('News', 'Could not load news. Please check the database connection.');
 	};
 
 	// pagination property
@@ -48,9 +50,9 @@ angular.module('App').controller('NewsController', function ($rootScope, $scope,
 		current: 1, // start page
 		step: 3, // count number display
 		limit: 30, // max item per page
-		modulo_item: 0,
 		onPageChanged: self.loadPages,
 	};
+	self.loadPages();
 	
 	self.editNewsInfo = function(ev, n) {
 		root.setCurNewsInfoId(n.id);
@@ -81,7 +83,7 @@ angular.module('App').controller('NewsController', function ($rootScope, $scope,
 				if(resp.status == 'success'){
 					request.deleteFiles(dir, images_obj).then(function(res){ });
 				    root.showConfirmDialogSimple('', 'News item '+n.title+' was <b>deleted successfully</b>.', function(){
-				        window.location.reload();
+		        self.loadPages();
 				    });
 				}else{
 				    var failed_txt = '';
@@ -118,7 +120,7 @@ angular.module('App').controller('NewsController', function ($rootScope, $scope,
                 request.updateOneNewsInfo($scope.obj.id, $scope.obj).then(function(resp){
                     if(resp.status == 'success'){
                         root.showConfirmDialogSimple('', 'News item '+obj.title+' was <b>published successfully</b>.', function(){
-                            window.location.reload();
+							self.loadPages();
                         });
                     }else{
                         var failed_txt = 'Could not publish news item: '+obj.title;

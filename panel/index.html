@@ -39,6 +39,7 @@
   <script src="controller/category/create.js"></script>
   <script src="controller/auction/list.js"></script>
   <script src="controller/auction/create.js"></script>
+  <script src="controller/user/list.js"></script>
   <script src="controller/news/list.js"></script>
   <script src="controller/news/create.js"></script>
   <script src="controller/setting/setting.js"></script>
@@ -81,7 +82,7 @@
 			<!-- SIDE MENU -->
 			<md-content role="navigation">
 				<div ng-repeat="action in sidenav.actions">
-				<md-list-item ng-click="directHref(action.link)" ng-if="!action.sub">
+				<md-list-item ng-click="directHref(action.link)" ng-class="{'panel-nav-active': isActiveRoute(action.link)}" ng-if="!action.sub">
 					<md-icon>{{action.icon}}</md-icon>
 					<p class="md-body-2">{{action.name}}</p>
 				</md-list-item>
@@ -127,7 +128,9 @@
 					<md-button ng-if="search_enable && !search_show" class="md-icon-button" ng-click="searchAction($event)"><md-icon>search</md-icon></md-button>
 					
 					<!-- add button -->
-					<md-button ng-if="toolbar_menu != null" class="md-primary" ng-click="barAction($event)">{{toolbar_menu.title}}</md-button>
+					<md-button ng-if="toolbar_menu != null" class="panel-toolbar-action" aria-label="{{toolbar_menu.title}}" ng-click="barAction($event)">
+						<md-icon>add</md-icon>{{toolbar_menu.title}}
+					</md-button>
 
 					<!-- more -->
 					<md-menu md-position-mode="target-right target" >
@@ -144,7 +147,7 @@
 
 			<!-- Angular Route supports one active ng-view. The previous duplicate views
 			     instantiated every controller twice and caused Angular Material digest loops. -->
-			<md-content layout md-scroll-y flex class="md-padding" ng-style="{'background' : bgColor}">
+			<md-content layout md-scroll-y flex class="md-padding panel-content">
 				<div ng-view layout-fill flex></div>
 			</md-content>
 		</div>

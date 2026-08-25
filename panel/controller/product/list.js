@@ -28,6 +28,7 @@ angular.module('App').controller('ProductController', function ($rootScope, $sco
 	// receiver submitSearch from rootScope
 	self.$on('submitSearch', function (event, data) {
 		self.q = data;
+		self.paging.current = 1;
 		self.loadPages();
 	});
 
@@ -39,22 +40,22 @@ angular.module('App').controller('ProductController', function ($rootScope, $sco
 	
 	// load pages from database and display
 	self.loadPages = function () {
-		$_q = self.q ? self.q : '';
+		var query = self.q || '';
+		self.loading = true;
 		self.paging.limit = self.max_item;
-		request.getAllProductCount($_q, self.category_id).then(function (resp) {
-			self.paging.total = Math.ceil(resp.data / self.paging.limit);
-			self.paging.modulo_item = resp.data % self.paging.limit;
-		});
-		$limit = self.paging.limit;
-		$current = (self.paging.current * self.paging.limit) - self.paging.limit + 1;
-		if (self.paging.current == self.paging.total && self.paging.modulo_item > 0) {
-			self.limit = self.paging.modulo_item;
-		}
-		request.getAllProductByPage($current, $limit, $_q, self.category_id).then(function (resp) {
-			self.product = resp.data;
+		request.getAllProductCount(query, self.category_id).then(function (resp) {
+			self.paging.total = Math.max(1, Math.ceil(Number(resp.data || 0) / self.paging.limit));
+		}, self.handleLoadError);
+		request.getAllProductByPage(self.paging.current, self.paging.limit, query, self.category_id).then(function (resp) {
+			self.product = angular.isArray(resp.data) ? resp.data : [];
 			self.loading = false;
-		});
+		}, self.handleLoadError);
 		
+	};
+
+	self.handleLoadError = function () {
+		self.loading = false;
+		root.showInfoDialogSimple('Products', 'Could not load products. Please check the database connection.');
 	};
 
 	// pagination property
@@ -63,9 +64,9 @@ angular.module('App').controller('ProductController', function ($rootScope, $sco
 		current: 1, // start page
 		step: 3, // count number display
 		limit: self.max_item, // max item per page
-		modulo_item: 0,
 		onPageChanged: self.loadPages,
 	};
+	self.loadPages();
 	
 	self.editProduct = function(ev, p) {
 		root.setCurProductId(p.id);
@@ -102,7 +103,7 @@ angular.module('App').controller('ProductController', function ($rootScope, $sco
 				if(res.status == 'success'){
 					request.deleteFiles(dir, images_obj).then(function(res){ });
                     root.showConfirmDialogSimple('', 'Product '+p.name+' was <b>deleted successfully</b>.', function(){
-                        window.location.reload();
+                        self.loadPages();
                     });
 				}else{
                     root.showInfoDialogSimple('', 'Could not delete product: '+p.name);
@@ -137,7 +138,7 @@ angular.module('App').controller('ProductController', function ($rootScope, $sco
                 request.updateOneProduct($scope.obj.id, $scope.obj).then(function(resp){
                     if(resp.status == 'success'){
                         root.showConfirmDialogSimple('', 'Product '+obj.name+' was <b>published successfully</b>.', function(){
-                            window.location.reload();
+							self.loadPages();
                         });
                     }else{
                         var failed_txt = 'Could not publish product: '+obj.name;

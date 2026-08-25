@@ -1,81 +1,66 @@
-<md-card class="md-whiteframe-1dp">
-<div class="table-responsive-vertical">
-	<table id="table" class="table table-hover">
-		<thead>
-			<tr >
-				<th width="1%">ID</th>
-				<th width="25%">Customer</th>
-				<th width="10%">Code</th>
-				<th width="10%">Total</th>
-				<th width="10%">Delivery date</th>
-				<th width="10%">Created</th>
-				<th width="5%">Status</th>
-				<th width="5%">Actions</th>
-			</tr>
-		</thead>
+<section class="panel-page">
+    <md-card class="panel-card panel-table-card md-whiteframe-1dp">
+        <div class="table-responsive-vertical">
+            <table class="table table-hover panel-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer</th>
+                        <th>Code</th>
+                        <th>Total</th>
+                        <th>Delivery</th>
+                        <th>Created</th>
+                        <th>Status</th>
+                        <th class="panel-actions-heading">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="po in product_order">
+                        <td data-title="ID">{{po.id}}</td>
+                        <td data-title="Customer" class="panel-primary-cell">{{po.buyer}}</td>
+                        <td data-title="Code"><span class="panel-code">{{po.code}}</span></td>
+                        <td data-title="Total">€{{po.total_fees | number:2}}</td>
+                        <td data-title="Delivery">{{po.date_ship | date:'dd MMM yyyy'}}</td>
+                        <td data-title="Created">{{po.created_at | date:'dd MMM yyyy'}}</td>
+                        <td data-title="Status">
+                            <span class="status-chip status-chip-warning" ng-if="po.status === 'WAITING'">Waiting</span>
+                            <span class="status-chip status-chip-success" ng-if="po.status === 'PROCESSED'">Processed</span>
+                            <span class="status-chip status-chip-neutral" ng-if="po.status === 'CANCEL'">Cancelled</span>
+                        </td>
+                        <td data-title="Actions" class="panel-actions-cell">
+                            <div class="panel-row-actions">
+                                <md-button class="md-icon-button panel-action-button" aria-label="View order details" ng-click="detailsOrder($event, po)">
+                                    <md-icon>visibility</md-icon><md-tooltip>Details</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button panel-action-button" aria-label="Edit order" ng-if="po.status !== 'PROCESSED'" ng-click="editOrder($event, po)">
+                                    <md-icon>edit</md-icon><md-tooltip>Edit</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button panel-action-button panel-action-success" aria-label="Process order" ng-if="po.status === 'WAITING'" ng-click="processedOrderConfirm($event, po)">
+                                    <md-icon>done_all</md-icon><md-tooltip>Process</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button panel-action-button" aria-label="Cancel order" ng-if="po.status === 'WAITING'" ng-click="cancelOrder($event, po)">
+                                    <md-icon>block</md-icon><md-tooltip>Cancel</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button panel-action-button panel-action-danger" aria-label="Delete order" ng-if="po.status === 'CANCEL'" ng-click="deleteOrder($event, po)">
+                                    <md-icon>delete</md-icon><md-tooltip>Delete</md-tooltip>
+                                </md-button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
-		<tbody>
-			<tr ng-repeat="po in product_order">
-				<td data-title="No">{{($index+1) + (paging.current * paging.limit) - paging.limit}}</td>
-				<td data-title="Buyer">{{po.buyer}}</td>
-				<td data-title="Code">{{po.code}}</td>
-				<td data-title="Total Fees">{{po.total_fees}}</td>
-				<td data-title="Date Ship">{{po.date_ship | date:'dd MMM yy'}}</td>
-				<td data-title="Created at">{{po.created_at | date:'dd MMM yy'}}</td>
-				<td data-title="Status">
-					<waiting ng-if="po.status=='WAITING'">{{po.status}}</waiting>
-					<processed ng-if="po.status=='PROCESSED'">{{po.status}}</processed>
-					<cancel ng-if="po.status=='CANCEL'">{{po.status}}</cancel>
-				</td>
-				<td data-title="Action">
-					<md-menu md-position-mode="target-right target" >
-						<md-button class="md-btn-small" ng-click="$mdOpenMenu($event)">
-							<md-icon class="md-ic-small" ng-style="{'font-size': '15px'}">more_vert</md-icon>
-						</md-button>
-						<md-menu-content width=3>
-							<md-title class="md-padding">Menu — {{po.buyer}}</md-title>
-							<md-menu-item>
-								<md-button layout-fill md-ink-ripple ng-click="detailsOrder($event, po)">
-									<md-icon md-class="md-primary" md-menu-align-target>launch</md-icon>Details
-								</md-button>
-							</md-menu-item>
-							<md-menu-item ng-if="po.status=='WAITING'">
-								<md-button layout-fill md-ink-ripple ng-click="processedOrderConfirm($event, po)">
-									<md-icon md-class="md-primary" md-menu-align-target>assignment_turned_in</md-icon>Process
-								</md-button>
-							</md-menu-item>
-							<md-menu-item ng-if="po.status!='PROCESSED'">
-								<md-button layout-fill md-ink-ripple ng-click="editOrder($event, po)">
-									<md-icon md-class="md-primary" md-menu-align-target>create</md-icon>Edit
-								</md-button>
-							</md-menu-item>
+            <div ng-if="loading" class="panel-state">
+                <md-progress-circular md-mode="indeterminate" md-diameter="36"></md-progress-circular>
+                <p>Loading orders…</p>
+            </div>
+            <div ng-if="!loading && product_order.length === 0" class="panel-state panel-empty-state">
+                <md-icon>receipt_long</md-icon><p>No orders found.</p>
+            </div>
+        </div>
 
-							<md-menu-item ng-if="po.status=='WAITING'">
-								<md-button layout-fill md-ink-ripple ng-click="cancelOrder($event, po)">
-									<md-icon md-class="md-primary" md-menu-align-target>block</md-icon>Cancel
-								</md-button>
-							</md-menu-item>
-
-							<md-menu-item ng-if="po.status!='PROCESSED'">
-								<md-button layout-fill md-ink-ripple ng-click="deleteOrder($event, po)">
-									<md-icon md-class="md-primary" md-menu-align-target>delete</md-icon>Delete
-								</md-button>
-							</md-menu-item>
-						</md-menu-content>
-					</md-menu>
-				</td>
-			</tr>
-		</tbody>
-	</table>
-	<div ng-if="loading" style="text-align:center;" colspan="10">
-		<p>Loading...</p>
-		<md-progress-linear md-mode="indeterminate"/>
-	</div>
-</div>
-
-<!--pagination view-->
-<section layout="row" class="sub-menu-bg" flex>
-	<cl-paging flex cl-pages="paging.total" , cl-steps="paging.step" , cl-page-changed="paging.onPageChanged()" , cl-align="center center" , cl-current-page="paging.current"/>
+        <div class="panel-pagination" ng-if="paging.total > 1">
+            <cl-paging flex cl-pages="paging.total" cl-steps="paging.step" cl-page-changed="paging.onPageChanged()" cl-align="center center" cl-current-page="paging.current"></cl-paging>
+        </div>
+    </md-card>
 </section>
-
-</md-card>

@@ -1,102 +1,58 @@
-<md-card class="md-whiteframe-1dp md-padding">
+<section class="panel-page dashboard-page">
+    <div class="dashboard-grid">
+        <md-card class="panel-card dashboard-card md-whiteframe-1dp">
+            <md-card-content>
+                <div class="dashboard-card-header"><span class="dashboard-icon dashboard-icon-orders"><md-icon>receipt_long</md-icon></span><div><h2>Orders</h2><p>Customer order activity</p></div></div>
+                <div class="dashboard-metric"><span>Waiting</span><strong>{{order.waiting || 0}}</strong></div>
+                <div class="dashboard-metric"><span>Processed</span><strong>{{order.processed || 0}}</strong></div>
+                <div class="dashboard-metric dashboard-metric-total"><span>Total orders</span><strong>{{order.total || 0}}</strong></div>
+            </md-card-content>
+        </md-card>
 
-    <div layout="row" layout-sm="column">
-        <md-card-content flex>
-            <p class="md-title title-no-top">Orders</p>
-            <md-divider></md-divider>
-            <div layout="row">
-                <item flex="40">Waiting</item> <item flex="5">:</item> <item flex>{{order.waiting}}</item>
-            </div>
-            <div layout="row">
-                <item flex="40">Processed</item> <item flex="5">:</item> <item flex>{{order.processed}}</item>
-            </div>
-            <div layout="row">
-                <item flex="40">Total orders</item> <item flex="5">:</item> <item flex>{{order.total}}</item>
-            </div>
-        </md-card-content>
-        <md-card-content flex></md-card-content>
-    </div>
-    <div layout="row" layout-sm="column">
-        <md-card-content flex>
-            <p class="md-title title-no-top">Product Overview</p>
-            <md-divider></md-divider>
-            <div layout="row">
-                <item flex="40">Published</item> <item flex="5">:</item> <item flex>{{product.published}}</item>
-            </div>
-            <div layout="row">
-                <item flex="40">Draft</item> <item flex="5">:</item> <item flex>{{product.draft}}</item>
-            </div>
-            <md-divider></md-divider>
-            <div layout="row">
-                <item flex="40">In stock</item> <item flex="5">:</item> <item flex>{{product.ready_stock}}</item>
-            </div>
-            <div layout="row">
-                <item flex="40">Out of stock</item> <item flex="5">:</item> <item flex>{{product.out_of_stock}}</item>
-            </div>
-            <div layout="row">
-                <item flex="40">Suspended</item> <item flex="5">:</item> <item flex>{{product.suspend}}</item>
-            </div>
-        </md-card-content>
-        <md-card-content flex>
-            <p class="md-title title-no-top">Category Overview</p>
-            <md-divider></md-divider>
-            <div layout="row">
-                <item flex="40">Published</item> <item flex="5">:</item> <item flex>{{category.published}}</item>
-            </div>
-            <div layout="row">
-                <item flex="40">Draft</item> <item flex="5">:</item> <item flex>{{category.draft}}</item>
-            </div>
-        </md-card-content>
-    </div>
-    <div layout="row" layout-sm="column">
-        <md-card-content flex>
-            <p class="md-title title-no-top">Auction Overview</p>
-            <md-divider></md-divider>
-            <div layout="row">
-                <item flex="40">Scheduled</item> <item flex="5">:</item> <item flex>{{auction.scheduled}}</item>
-            </div>
-            <div layout="row">
-                <item flex="40">Active</item> <item flex="5">:</item> <item flex>{{auction.active}}</item>
-            </div>
-            <div layout="row">
-                <item flex="40">Ended</item> <item flex="5">:</item> <item flex>{{auction.ended}}</item>
-            </div>
-            <div layout="row">
-                <item flex="40">Total auctions</item> <item flex="5">:</item> <item flex>{{auction.total}}</item>
-            </div>
-        </md-card-content>
-        <md-card-content flex></md-card-content>
-    </div>
-</md-card>
-<br>
-<md-card class="md-whiteframe-1dp md-padding">
-    <div layout="row" layout-sm="column">
-        <md-card-content flex>
-            <p class="md-title title-no-top">News Overview</p>
-            <md-divider></md-divider>
-            <div layout="row">
-                <item flex="40">Featured</item> <item flex="5">:</item> <item flex>{{news.featured}} (maximum {{setting.featured_news}})</item>
-            </div>
-            <div layout="row">
-                <item flex="40">Published</item> <item flex="5">:</item> <item flex>{{news.published}}</item>
-            </div>
-            <div layout="row">
-                <item flex="40">Draft</item> <item flex="5">:</item> <item flex>{{news.draft}}</item>
-            </div>
-        </md-card-content>
-    </div>
-    <div layout="row" layout-sm="column">
-        <md-card-content flex>
-            <p class="md-title title-no-top">Application Settings</p>
-            <md-divider></md-divider>
-            <div layout="row">
-                <item flex="40">Currency</item> <item flex="5">:</item> <item flex>{{setting.currency}}</item>
-            </div>
-            <div layout="row">
-                <item flex="40">Tax</item> <item flex="5">:</item> <item flex>{{setting.tax}} %</item>
-            </div>
-        </md-card-content>
-    </div>
-</md-card>
+        <md-card class="panel-card dashboard-card md-whiteframe-1dp">
+            <md-card-content>
+                <div class="dashboard-card-header"><span class="dashboard-icon dashboard-icon-products"><md-icon>inventory_2</md-icon></span><div><h2>Products</h2><p>Catalog and stock</p></div></div>
+                <div class="dashboard-metric"><span>Published</span><strong>{{product.published || 0}}</strong></div>
+                <div class="dashboard-metric"><span>Draft</span><strong>{{product.draft || 0}}</strong></div>
+                <div class="dashboard-metric"><span>In stock</span><strong>{{product.ready_stock || 0}}</strong></div>
+                <div class="dashboard-metric"><span>Out of stock</span><strong>{{product.out_of_stock || 0}}</strong></div>
+                <div class="dashboard-metric"><span>Suspended</span><strong>{{product.suspend || 0}}</strong></div>
+            </md-card-content>
+        </md-card>
 
-<br>
+        <md-card class="panel-card dashboard-card md-whiteframe-1dp">
+            <md-card-content>
+                <div class="dashboard-card-header"><span class="dashboard-icon dashboard-icon-categories"><md-icon>category</md-icon></span><div><h2>Categories</h2><p>Catalog organization</p></div></div>
+                <div class="dashboard-metric"><span>Published</span><strong>{{category.published || 0}}</strong></div>
+                <div class="dashboard-metric"><span>Draft</span><strong>{{category.draft || 0}}</strong></div>
+            </md-card-content>
+        </md-card>
+
+        <md-card class="panel-card dashboard-card md-whiteframe-1dp">
+            <md-card-content>
+                <div class="dashboard-card-header"><span class="dashboard-icon dashboard-icon-auctions"><md-icon>gavel</md-icon></span><div><h2>Auctions</h2><p>Live bidding overview</p></div></div>
+                <div class="dashboard-metric"><span>Scheduled</span><strong>{{auction.scheduled || 0}}</strong></div>
+                <div class="dashboard-metric"><span>Active</span><strong>{{auction.active || 0}}</strong></div>
+                <div class="dashboard-metric"><span>Ended</span><strong>{{auction.ended || 0}}</strong></div>
+                <div class="dashboard-metric dashboard-metric-total"><span>Total auctions</span><strong>{{auction.total || 0}}</strong></div>
+            </md-card-content>
+        </md-card>
+
+        <md-card class="panel-card dashboard-card md-whiteframe-1dp">
+            <md-card-content>
+                <div class="dashboard-card-header"><span class="dashboard-icon dashboard-icon-news"><md-icon>article</md-icon></span><div><h2>News</h2><p>Published content</p></div></div>
+                <div class="dashboard-metric"><span>Featured</span><strong>{{news.featured || 0}} / {{setting.featured_news || 0}}</strong></div>
+                <div class="dashboard-metric"><span>Published</span><strong>{{news.published || 0}}</strong></div>
+                <div class="dashboard-metric"><span>Draft</span><strong>{{news.draft || 0}}</strong></div>
+            </md-card-content>
+        </md-card>
+
+        <md-card class="panel-card dashboard-card md-whiteframe-1dp">
+            <md-card-content>
+                <div class="dashboard-card-header"><span class="dashboard-icon dashboard-icon-settings"><md-icon>tune</md-icon></span><div><h2>Application</h2><p>Current store settings</p></div></div>
+                <div class="dashboard-metric"><span>Currency</span><strong>{{setting.currency || 'EUR'}}</strong></div>
+                <div class="dashboard-metric"><span>Tax</span><strong>{{setting.tax || 0}}%</strong></div>
+            </md-card-content>
+        </md-card>
+    </div>
+</section>

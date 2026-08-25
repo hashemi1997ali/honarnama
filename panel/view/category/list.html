@@ -1,61 +1,57 @@
-<md-card class="md-whiteframe-1dp">
-	<div class="table-responsive-vertical">
-		<table id="table" class="table table-hover">
-			<thead>
-				<tr >
-					<th width="2%">ID</th>
-					<th width="25%">Name</th>
-					<th width="3%">Priority</th>
-					<th width="5%">Color</th>
-					<th width="5%">Type</th>
-					<th width="5%">Updated</th>
-					<th width="5%" style="text-align:center;">Actions</th>
-				</tr>
-			</thead>
-
-			<tbody>
-				<tr ng-repeat="c in category">
-					<td data-title="No">{{($index+1) + (paging.current * paging.limit) - paging.limit}}</td>
-					<td data-title="Name">{{c.name}}</td>
-					<td data-title="Name">{{c.priority}}</td>
-					<td data-title="Color"><generic style="background:{{c.color}};">{{c.color}}</generic></td>
-					<td data-title="Type">
-						<draft ng-if="c.draft == 1">Draft</draft>
-						<publish ng-if="c.draft != 1">Published</publish>
-					</td>	
-					<td data-title="Update">{{c.last_update | date:'dd MMM yy'}}</td>
-					<td data-title="Action">
-						<div layout="row" layout-align="center">
-							<md-button layout-align="center" class="md-btn-small" ng-click="viewIcon($event, 'uploads/category/'+c.icon)">
-								<md-icon class="md-ic-small ic-small">wallpaper</md-icon>
-								<md-tooltip>View icon</md-tooltip>
-							</md-button>
-							<md-button layout-align="center" class="md-btn-small" ng-click="deleteCategory($event, c)">
-								<md-icon class="md-ic-small ic-small">delete</md-icon>
-								<md-tooltip>Delete category</md-tooltip>
-							</md-button>
-							<md-button layout-align="center" class="md-btn-small" ng-click="editCategory($event, c)">
-								<md-icon class="md-ic-small ic-small">create</md-icon>
-								<md-tooltip>Edit category</md-tooltip>
-							</md-button>
-							<md-button layout-align="center" class="md-btn-small" ng-disabled="c.draft==0" ng-click="publishDialog($event, c)">
-								<md-icon class="md-ic-small ic-small">check_circle</md-icon>
-								<md-tooltip>Publish</md-tooltip>
-							</md-button>
-						</div>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<div ng-if="loading" style="text-align:center;" colspan="10">
-			<p>Loading...</p>
-			<md-progress-linear md-mode="indeterminate"/>
-		</div>
-	</div>
-
-	<!--pagination view-->
-	<section layout="row" class="sub-menu-bg" flex>
-		<cl-paging flex cl-pages="paging.total" , cl-steps="paging.step" , cl-page-changed="paging.onPageChanged()" , cl-align="center center" , cl-current-page="paging.current"/>
-	</section>
-
-</md-card>
+<section class="panel-page">
+    <md-card class="panel-card panel-table-card md-whiteframe-1dp">
+        <div class="table-responsive-vertical">
+            <table class="table table-hover panel-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Icon</th>
+                        <th>Name</th>
+                        <th>Priority</th>
+                        <th>Visibility</th>
+                        <th>Updated</th>
+                        <th class="panel-actions-heading">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="c in category">
+                        <td data-title="ID">{{c.id}}</td>
+                        <td data-title="Icon">
+                            <button type="button" class="category-icon-button" ng-style="{'background-color': c.color}" ng-click="viewIcon($event, 'uploads/category/' + c.icon)">
+                                <img class="category-thumbnail" ng-src="uploads/category/{{c.icon}}" alt="{{c.name}}">
+                            </button>
+                        </td>
+                        <td data-title="Name" class="panel-primary-cell">{{c.name}}</td>
+                        <td data-title="Priority">{{c.priority}}</td>
+                        <td data-title="Visibility">
+                            <span class="status-chip status-chip-neutral" ng-if="c.draft == 1">Draft</span>
+                            <span class="status-chip status-chip-info" ng-if="c.draft != 1">Published</span>
+                        </td>
+                        <td data-title="Updated">{{c.last_update | date:'dd MMM yyyy'}}</td>
+                        <td data-title="Actions" class="panel-actions-cell">
+                            <div class="panel-row-actions">
+                                <md-button class="md-icon-button panel-action-button" aria-label="View category icon" ng-click="viewIcon($event, 'uploads/category/' + c.icon)">
+                                    <md-icon>visibility</md-icon><md-tooltip>View icon</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button panel-action-button" aria-label="Edit category" ng-click="editCategory($event, c)">
+                                    <md-icon>edit</md-icon><md-tooltip>Edit</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button panel-action-button panel-action-success" aria-label="Publish category" ng-if="c.draft == 1" ng-click="publishDialog($event, c)">
+                                    <md-icon>publish</md-icon><md-tooltip>Publish</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button panel-action-button panel-action-danger" aria-label="Delete category" ng-click="deleteCategory($event, c)">
+                                    <md-icon>delete</md-icon><md-tooltip>Delete</md-tooltip>
+                                </md-button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div ng-if="loading" class="panel-state"><md-progress-circular md-mode="indeterminate" md-diameter="36"></md-progress-circular><p>Loading categories…</p></div>
+            <div ng-if="!loading && category.length === 0" class="panel-state panel-empty-state"><md-icon>category</md-icon><p>No categories found.</p></div>
+        </div>
+        <div class="panel-pagination" ng-if="paging.total > 1">
+            <cl-paging flex cl-pages="paging.total" cl-steps="paging.step" cl-page-changed="paging.onPageChanged()" cl-align="center center" cl-current-page="paging.current"></cl-paging>
+        </div>
+    </md-card>
+</section>

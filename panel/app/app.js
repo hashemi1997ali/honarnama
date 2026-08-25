@@ -47,6 +47,8 @@ angular.module('App').config(['$routeProvider', '$locationProvider',
 
 		when('/auction', { templateUrl: 'view/auction/list.html', controller: 'AuctionController' }).
 		when('/create_auction', { templateUrl: 'view/auction/create.html', controller: 'AddAuctionController' }).
+
+		when('/users', { templateUrl: 'view/user/list.html', controller: 'AppUserController' }).
 		
 		when('/news', { templateUrl: 'view/news/list.html', controller: 'NewsController' }).
 		when('/create_news', { templateUrl: 'view/news/create.html', controller: 'AddNewsController' }).

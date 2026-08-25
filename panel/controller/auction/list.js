@@ -50,6 +50,7 @@ angular.module('App').controller('AuctionController', function ($rootScope, $sco
         limit: 20,
         onPageChanged: self.loadPages
     };
+    self.loadPages();
 
     self.statusOf = function (auction) {
         var now = new Date();

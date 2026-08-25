@@ -7,6 +7,8 @@ angular.module('App').controller('OrderController', function ($rootScope, $scope
 	root.search_enable = true;
     root.toolbar_menu = { title: 'Add Order' };
 	root.pagetitle = 'Orders';
+	self.loading = true;
+	self.product_order = [];
 
 	// receiver barAction from rootScope
     self.$on('barAction', function (event, data) {
@@ -17,26 +19,26 @@ angular.module('App').controller('OrderController', function ($rootScope, $scope
     // receiver submitSearch from rootScope
     self.$on('submitSearch', function (event, data) {
         self.q = data;
+        self.paging.current = 1;
         self.loadPages();
     });
 
 	self.loadPages = function () {
-		$_q = self.q ? self.q : '';
-        request.getAllProductOrderCount($_q).then(function (resp) {
-            self.paging.total = Math.ceil(resp.data / self.paging.limit);
-            self.paging.modulo_item = resp.data % self.paging.limit;
-        });
-		$limit = self.paging.limit;
-		$current = (self.paging.current * self.paging.limit) - self.paging.limit + 1;
-		if (self.paging.current == self.paging.total && self.paging.modulo_item > 0) {
-			self.limit = self.paging.modulo_item;
-		}
-		request.getAllProductOrderByPage($current, $limit, $_q).then(function (resp) {
-			self.product_order = resp.data;
+		var query = self.q || '';
+		self.loading = true;
+		request.getAllProductOrderCount(query).then(function (resp) {
+			self.paging.total = Math.max(1, Math.ceil(Number(resp.data || 0) / self.paging.limit));
+		}, self.handleLoadError);
+		request.getAllProductOrderByPage(self.paging.current, self.paging.limit, query).then(function (resp) {
+			self.product_order = angular.isArray(resp.data) ? resp.data : [];
 			self.loading = false;
-			//console.log(JSON.stringify(resp.data));
-		});
+		}, self.handleLoadError);
 	}
+
+	self.handleLoadError = function () {
+		self.loading = false;
+		root.showInfoDialogSimple('Orders', 'Could not load orders. Please check the database connection.');
+	};
 
 	//pagination property
 	self.paging = {
@@ -44,9 +46,9 @@ angular.module('App').controller('OrderController', function ($rootScope, $scope
 		current: 1, // start page
 		step: 3, // count number display
 		limit: 20, // max item per page
-		modulo_item: 0,
 		onPageChanged: self.loadPages,
 	};
+	self.loadPages();
 
     self.editOrder = function(ev, po) {
         root.setCurOrderId(po.id);
@@ -66,9 +68,8 @@ angular.module('App').controller('OrderController', function ($rootScope, $scope
 	};
 
     self.processedOrderConfirm = function(ev, po) {
-        var confirm = $mdDialog.confirm().title('Confirm Order Processing');
-            confirm.textContent('After processing, the order status cannot be changed and product stock will be updated.' +
-                            '<br>Please review the order carefully before clicking <b>Process</b>.');
+        var confirm = $mdDialog.confirm().title('Process Order');
+            confirm.textContent('Processing is final and reduces product stock. Review the order before continuing.');
             confirm.targetEvent(ev).ok('Process').cancel('Cancel');
 
         $mdDialog.show(confirm).then(function() {
@@ -85,17 +86,17 @@ angular.module('App').controller('OrderController', function ($rootScope, $scope
     };
 
     self.cancelOrder = function(ev, po) {
-        var confirm = $mdDialog.confirm().title('Confirm Order Deletion');
-            confirm.textContent('Are you sure you want to delete the order for '+po.buyer+'?');
-            confirm.targetEvent(ev).ok('Yes').cancel('Cancel');
+        var confirm = $mdDialog.confirm().title('Cancel Order');
+            confirm.textContent('Cancel the order for '+po.buyer+'? The record will be kept.');
+            confirm.targetEvent(ev).ok('Cancel Order').cancel('Keep Order');
 
         $mdDialog.show(confirm).then(function() {
             var new_ob = angular.copy(po);
             new_ob.status = 'CANCEL';
             request.updateOneProductOrder(new_ob.id, new_ob).then(function(resp){
                 if(resp.status == 'success'){
-				    root.showConfirmDialogSimple('', 'The order for '+po.buyer+' was <b>deleted successfully</b>.', function(){
-				        window.location.reload();
+				    root.showConfirmDialogSimple('', 'The order for '+po.buyer+' was <b>cancelled successfully</b>.', function(){
+				        self.loadPages();
 				    });
                 }else{
                     root.showInfoDialogSimple('', 'Could not delete the order for '+po.buyer+'.');
@@ -105,18 +106,18 @@ angular.module('App').controller('OrderController', function ($rootScope, $scope
     };
 
     self.deleteOrder = function(ev, po) {
-        var confirm = $mdDialog.confirm().title('Confirm Order Cancellation');
-            confirm.textContent('Are you sure you want to cancel the order for '+po.buyer+'?');
-            confirm.targetEvent(ev).ok('Yes').cancel('Cancel');
+        var confirm = $mdDialog.confirm().title('Delete Order');
+            confirm.textContent('Permanently delete the cancelled order for '+po.buyer+'? This cannot be undone.');
+            confirm.targetEvent(ev).ok('Delete').cancel('Keep Order');
 
         $mdDialog.show(confirm).then(function() {
             request.deleteOneProductOrder(po.id).then(function(resp){
                 if(resp.status == 'success'){
-                    root.showConfirmDialogSimple('', 'The order for '+po.buyer+' was <b>cancelled successfully</b>.', function(){
-                        window.location.reload();
+                    root.showConfirmDialogSimple('', 'The order for '+po.buyer+' was <b>deleted successfully</b>.', function(){
+                        self.loadPages();
                     });
                 }else{
-                    root.showInfoDialogSimple('', 'Could not cancel the order for '+po.buyer+'.');
+                    root.showInfoDialogSimple('', 'Could not delete the order for '+po.buyer+'.');
                 }
             });
         });

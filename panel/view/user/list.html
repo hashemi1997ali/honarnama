@@ -1,0 +1,61 @@
+<section class="panel-page">
+    <md-card class="panel-card panel-table-card md-whiteframe-1dp">
+        <div class="table-responsive-vertical">
+            <table class="table table-hover panel-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Bids</th>
+                        <th>Registered</th>
+                        <th>Last updated</th>
+                        <th>Status</th>
+                        <th class="panel-actions-heading">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="user in users">
+                        <td data-title="ID">{{user.id}}</td>
+                        <td data-title="Name" class="panel-primary-cell">{{user.name}}</td>
+                        <td data-title="Username">{{user.username}}</td>
+                        <td data-title="Bids">{{user.bid_count || 0}}</td>
+                        <td data-title="Registered">{{asDate(user.created_at) | date:'dd MMM yyyy'}}</td>
+                        <td data-title="Last updated">{{asDate(user.last_update) | date:'dd MMM yyyy'}}</td>
+                        <td data-title="Status">
+                            <span class="status-chip" ng-class="isActive(user) ? 'status-chip-success' : 'status-chip-neutral'">
+                                {{isActive(user) ? 'Active' : 'Disabled'}}
+                            </span>
+                        </td>
+                        <td data-title="Actions" class="panel-actions-cell">
+                            <div class="panel-row-actions">
+                                <md-button class="md-icon-button panel-action-button" aria-label="View user details" ng-click="detailsUser($event, user)">
+                                    <md-icon>visibility</md-icon><md-tooltip>Details</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button panel-action-button" aria-label="Toggle user status" ng-click="toggleUserStatus($event, user)">
+                                    <md-icon>{{isActive(user) ? 'block' : 'check_circle'}}</md-icon><md-tooltip>{{isActive(user) ? 'Disable' : 'Enable'}}</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button panel-action-button panel-action-danger" aria-label="Delete user" ng-click="deleteUser($event, user)">
+                                    <md-icon>delete</md-icon><md-tooltip>Delete</md-tooltip>
+                                </md-button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div ng-if="loading" class="panel-state">
+                <md-progress-circular md-mode="indeterminate" md-diameter="36"></md-progress-circular>
+                <p>Loading users…</p>
+            </div>
+            <div ng-if="!loading && users.length === 0" class="panel-state panel-empty-state">
+                <md-icon>people_outline</md-icon>
+                <p>No users found.</p>
+            </div>
+        </div>
+
+        <div class="panel-pagination" ng-if="paging.total > 1">
+            <cl-paging flex cl-pages="paging.total" cl-steps="paging.step" cl-page-changed="paging.onPageChanged()" cl-align="center center" cl-current-page="paging.current"></cl-paging>
+        </div>
+    </md-card>
+</section>
